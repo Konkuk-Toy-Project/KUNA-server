@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  #datasource:
+    #url: jdbc:mysql://localhost:3306/tcudb?serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8
+    #username: root
+    #password: password
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    #url: jdbc:h2:tcp://localhost/~/tcu
+    #username: sa
+    #password:
+    #driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: /h2-console
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 1000
+        #dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+logging.level:
+  org.hibernate.SQL: debug
+  #org.apache.coyote.http11: debug # http 요청 메시지 보기
+
+spring.servlet.multipart.maxFileSize: 10MB
+spring.servlet.multipart.maxRequestSize: 10MB
+
+image:
+  review: /Users/hongseungtaeg/Desktop/toyproject/toyProject5-backend/shop/src/main/resources/static/reviewImage/
+  item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5-backend/shop/src/main/resources/static/itemImage/
