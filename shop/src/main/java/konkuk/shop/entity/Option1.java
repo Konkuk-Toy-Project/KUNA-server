@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -16,4 +18,8 @@ public class Option1 {
     @GeneratedValue
     @Column(name = "option1_id")
     private Long id;
+
+    private Item item;
+    private String name;
+    private List<Option2> option2s = new ArrayList<>();
 }

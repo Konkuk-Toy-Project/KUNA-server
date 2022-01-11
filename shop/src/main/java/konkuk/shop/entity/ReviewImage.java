@@ -16,4 +16,8 @@ public class ReviewImage {
     @GeneratedValue
     @Column(name = "review_image_id")
     private Long id;
+
+    private Review review;
+    private String upload_name;
+    private String store_name;
 }

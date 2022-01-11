@@ -16,4 +16,12 @@ public class Qna {
     @GeneratedValue
     @Column(name = "qna_id")
     private Long id;
+
+    private Item item;
+    private Member member;
+    private AdminMember adminMember;
+    private boolean isSecret;
+    private boolean isAnswered;
+    private String question;
+    private String answer;
 }

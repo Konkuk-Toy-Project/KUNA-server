@@ -3,10 +3,8 @@ package konkuk.shop.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -16,4 +14,20 @@ public class Coupon {
     @GeneratedValue
     @Column(name = "coupon_id")
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="coupon_kind")
+    private CouponKind couponKind;
+
+    private Integer rate;
+    @Column(name="expired_date")
+    private LocalDateTime expiredDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="coupon_condition")
+    private CouponCondition couponCondition;
+
+    private String description;
+    private String name;
+    private Member member;
 }

@@ -8,20 +8,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+
 @Entity
 @NoArgsConstructor
 @Getter
-public class OrderItem {
+public class DetailImage {
     @Id
     @GeneratedValue
-    @Column(name = "order_item_id")
+    @Column(name = "delivery_id")
     private Long id;
 
-    private Order order;
     private Item item;
-    @Column(name="single_price")
-    private Integer singlePrice;
-    private Option1 option1;
-    private Option2 option2;
-    private Integer count;
+    private String upload_name;
+    private String store_name;
 }

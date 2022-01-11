@@ -16,4 +16,10 @@ public class CartItem {
     @GeneratedValue
     @Column(name = "cart_item_id")
     private Long id;
+
+    private String itemVersion;
+    private Member member;
+    private Option1 option1;
+    private Option2 option2;
+    private Integer count;
 }

@@ -16,4 +16,6 @@ public class PreferenceItem {
     @GeneratedValue
     @Column(name = "preference_item_id")
     private Long id;
+
+    private Item item;
 }

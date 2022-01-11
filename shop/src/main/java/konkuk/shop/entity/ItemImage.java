@@ -16,4 +16,8 @@ public class ItemImage {
     @GeneratedValue
     @Column(name = "item_image_id")
     private Long id;
+
+    private Item item;
+    private String upload_name;
+    private String store_name;
 }

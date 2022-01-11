@@ -16,4 +16,7 @@ public class CategoryItem {
     @GeneratedValue
     @Column(name = "category_item_id")
     private Long id;
+
+    private Item item;
+    private Category category;
 }

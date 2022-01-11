@@ -16,4 +16,8 @@ public class Thumbnail {
     @GeneratedValue
     @Column(name = "thumbnail_id")
     private Long id;
+
+    private Item item;
+    private String upload_name;
+    private String store_name;
 }
