@@ -3,10 +3,7 @@ package konkuk.shop.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
@@ -18,8 +15,22 @@ public class CartItem {
     private Long id;
 
     private String itemVersion;
-    private Member member;
-    private Option1 option1;
-    private Option2 option2;
     private Integer count;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="option1_id")
+    private Option1 option1;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="option2_id")
+    private Option2 option2;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="item_id")
+    private Item item;
+
 }

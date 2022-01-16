@@ -3,10 +3,7 @@ package konkuk.shop.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
@@ -17,7 +14,10 @@ public class ReviewImage {
     @Column(name = "review_image_id")
     private Long id;
 
-    private Review review;
     private String upload_name;
     private String store_name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="review_id")
+    private Review review;
 }

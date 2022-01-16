@@ -17,22 +17,43 @@ public class Item {
     @Column(name = "item_id")
     private Long id;
 
-    private List<Category> categories = new ArrayList<>();
-    private Thumbnail thumbnail;
-    private AdminMember adminMember;
-    private String name;
     @Column(name="preference_count")
     private Integer preferenceCount;
-    private List<DetailImage> detailImages = new ArrayList<>();
-    private Integer version;
-    private Integer sale;
+
     @Enumerated(EnumType.STRING)
     @Column(name="item_state")
     private ItemState itemState;
+
     @Column(name="registry_date")
     private LocalDateTime registryDate;
+
+    private Integer version;
+    private Integer sale;
+    private String name;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="thumbnail_id")
+    private Thumbnail thumbnail;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="admin_member_id")
+    private AdminMember adminMember;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Qna> qna = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemImage> itemImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Option1> option1s = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetailImage> detailImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CategoryItem> categoryItems = new ArrayList<>();
 }

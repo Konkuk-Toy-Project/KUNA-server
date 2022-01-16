@@ -19,7 +19,6 @@ public class Coupon {
     @Column(name="coupon_kind")
     private CouponKind couponKind;
 
-    private Integer rate;
     @Column(name="expired_date")
     private LocalDateTime expiredDate;
 
@@ -27,7 +26,13 @@ public class Coupon {
     @Column(name="coupon_condition")
     private CouponCondition couponCondition;
 
+    private Integer rate;
     private String description;
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
     private Member member;
+
+    private boolean isUsed;
 }

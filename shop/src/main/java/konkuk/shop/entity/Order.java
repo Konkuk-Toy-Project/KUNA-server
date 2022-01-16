@@ -17,18 +17,19 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    private Member member;
-    private Delivery delivery;
     @Column(name="order_date")
     private LocalDateTime orderDate;
+
     @Column(name="total_price")
     private Integer totalPrice;
-    private Coupon coupon;
+
     @Column(name="used_point")
     private Integer usedPoint;
+
     @Column(name="pay_method")
     @Enumerated(EnumType.STRING)
     private PayMethod payMethod;
+
     @Column(name="shipping_charge")
     private Integer shippingCharge;
 
@@ -36,5 +37,18 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderState orderState;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="coupon_id")
+    private Coupon coupon;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
+    private Member member;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="delivery_id")
+    private Delivery delivery;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 }

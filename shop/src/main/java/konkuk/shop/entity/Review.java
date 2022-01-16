@@ -3,10 +3,7 @@ package konkuk.shop.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +17,21 @@ public class Review {
     @Column(name = "review_id")
     private Long id;
 
-    private Item item;
+    @Column(name = "registry_date")
+    private LocalDateTime registryDate;
+
     private String option;
-    private Member member;
     private String description;
     private Integer rate;
-    private LocalDateTime registry_date;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="item_id")
+    private Item item;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewImage> reviewImages = new ArrayList<>();
 }
