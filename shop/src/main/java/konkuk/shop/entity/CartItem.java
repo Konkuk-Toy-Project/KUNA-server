@@ -1,20 +1,24 @@
 package konkuk.shop.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartItem {
     @Id
     @GeneratedValue
     @Column(name = "cart_item_id")
     private Long id;
 
-    private String itemVersion;
+    private Integer itemVersion;
     private Integer count;
 
     @ManyToOne(fetch = FetchType.LAZY)

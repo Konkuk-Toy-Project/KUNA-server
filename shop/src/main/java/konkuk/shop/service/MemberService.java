@@ -4,9 +4,12 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import konkuk.shop.dto.SignupDto;
+import konkuk.shop.entity.AdminMember;
 import konkuk.shop.entity.Member;
+import konkuk.shop.entity.MemberRole;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
+import konkuk.shop.repository.AdminMemberRepository;
 import konkuk.shop.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +24,13 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final AdminMemberRepository adminMemberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final Environment env;
 
 
     public boolean isDuplicateEmail(String email) {
-        return memberRepository.findByEmail(email).isPresent();
+        return memberRepository.existsByEmail(email);
     }
 
     public Long signup(SignupDto dto) {
@@ -61,7 +65,27 @@ public class MemberService {
         return tempPassword;
     }
 
-    public static String randomPw() {
+    public void changePassword(Long userId, String newPassword) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        boolean match = passwordEncoder.matches(newPassword, member.getPassword());
+        if (match) throw new ApiException(ExceptionEnum.NOTHING_CHANGE_PASSWORD);
+
+        member.setPassword(passwordEncoder.encode(newPassword));
+        memberRepository.save(member);
+    }
+
+    public AdminMember addAdminMember(Long userId) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        member.setMemberRole(MemberRole.ADMIN);
+
+        AdminMember adminMember = new AdminMember(member);
+        memberRepository.save(member);
+        return adminMemberRepository.save(adminMember);
+    }
+
+    private String randomPw() {
         char pwCollectionSpCha[] = new char[]{'!', '@', '#', '$', '%', '^', '&', '*', '(', ')'};
         char pwCollectionNum[] = new char[]{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0',};
         char pwCollectionAll[] = new char[]{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -71,7 +95,7 @@ public class MemberService {
         return getRandPw(1, pwCollectionSpCha) + getRandPw(8, pwCollectionAll) + getRandPw(1, pwCollectionNum);
     }
 
-    public static String getRandPw(int size, char[] pwCollection) {
+    private String getRandPw(int size, char[] pwCollection) {
         String ranPw = "";
         for (int i = 0; i < size; i++) {
             int selectRandomPw = (int) (Math.random() * (pwCollection.length));

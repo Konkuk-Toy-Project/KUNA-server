@@ -1,4 +1,4 @@
-package konkuk.shop.form.requestForm;
+package konkuk.shop.form.requestForm.member;
 
 import lombok.Data;
 

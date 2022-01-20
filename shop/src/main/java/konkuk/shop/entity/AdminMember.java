@@ -24,4 +24,8 @@ public class AdminMember {
     private List<Qna> qnas = new ArrayList<>();
     @OneToMany(mappedBy = "adminMember")
     private List<Item> items = new ArrayList<>();
+
+    public AdminMember(Member member) {
+        this.member = member;
+    }
 }

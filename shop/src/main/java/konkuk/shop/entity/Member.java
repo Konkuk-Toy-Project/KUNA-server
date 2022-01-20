@@ -66,4 +66,8 @@ public class Member {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setMemberRole(MemberRole memberRole) {
+        this.memberRole=memberRole;
+    }
 }

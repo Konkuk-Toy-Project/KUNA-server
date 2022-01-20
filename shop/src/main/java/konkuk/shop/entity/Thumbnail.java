@@ -19,4 +19,9 @@ public class Thumbnail {
 
     @OneToOne(mappedBy = "thumbnail")
     private Item item;
+
+    public Thumbnail(String upload_name, String store_name) {
+        this.upload_name = upload_name;
+        this.store_name = store_name;
+    }
 }

@@ -2,18 +2,17 @@ package konkuk.shop.controller;
 
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.Member;
-import konkuk.shop.form.requestForm.*;
+import konkuk.shop.form.requestForm.member.*;
 import konkuk.shop.form.responseForm.ResponseSignupForm;
 import konkuk.shop.security.TokenProvider;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -79,6 +78,12 @@ public class MemberController {
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("tempPassword", tempPassword);
         return result;
+    }
+
+    @PostMapping("/change/password")
+    public void changePassword(@AuthenticationPrincipal Long userId,
+                                                  @RequestBody RequestChangePasswordForm form) {
+        memberService.changePassword(userId, form.getNewPassword());
     }
 
 

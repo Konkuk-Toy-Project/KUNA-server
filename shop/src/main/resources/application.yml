@@ -41,7 +41,9 @@ spring.servlet.multipart.maxRequestSize: 10MB
 image:
   review: /Users/hongseungtaeg/Desktop/toyproject/toyProject5-backend/shop/src/main/resources/static/reviewImage/
   item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5-backend/shop/src/main/resources/static/itemImage/
+  detail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5-backend/shop/src/main/resources/static/detailImage/
+  thumbnail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5-backend/shop/src/main/resources/static/thumbnail/
 
 token:
-  expiration_time: 3600
+  expiration_time: 600000
   secret: thisIsSecretKey
