@@ -37,19 +37,12 @@ public class MemberService {
         return memberRepository.save(member).getId();
     }
 
-    public String login(String email, String password) {
+    public Member login(String email, String password) {
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER_EMAIL));
         boolean match = passwordEncoder.matches(password, findMember.getPassword());
         if (!match) throw new ApiException(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD);
-
-        return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setIssuedAt(new Date())
-                .claim("email", email)
-                .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty("token.expiration_time"))))
-                .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
-                .compact();
+        return findMember;
     }
 
     public String findEmail(String name, String phone) {

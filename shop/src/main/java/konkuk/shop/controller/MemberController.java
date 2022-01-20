@@ -1,11 +1,14 @@
 package konkuk.shop.controller;
 
 import konkuk.shop.dto.SignupDto;
+import konkuk.shop.entity.Member;
 import konkuk.shop.form.requestForm.*;
 import konkuk.shop.form.responseForm.ResponseSignupForm;
+import konkuk.shop.security.TokenProvider;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +24,7 @@ import java.util.HashMap;
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final TokenProvider tokenProvider;
     private final Environment env;
 
     @GetMapping("/health_check")
@@ -42,18 +46,20 @@ public class MemberController {
     }
 
     @PostMapping("/duplication/email")
-    public HashMap<String, Object> isDuplicationEmail(@RequestBody RequestIsDuplicationEmail form){
-        HashMap<String,Object> result = new HashMap<String,Object>();
-        result.put("isDuplicate", memberService.isDuplicateEmail(form.getEmail()));
+    public HashMap<String, Object> isDuplicationEmail(@RequestBody RequestIsDuplicationEmail form) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("isDuplication", memberService.isDuplicateEmail(form.getEmail()));
+
         return result;
     }
 
     @PostMapping("/login")
     public HashMap<String, Object> isDuplicationEmail(@RequestBody RequestLoginForm form) {
-        String loginToken = memberService.login(form.getEmail(), form.getPassword());
+        Member loginMember = memberService.login(form.getEmail(), form.getPassword());
+        String token = tokenProvider.create(loginMember);
 
         HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("token", loginToken);
+        result.put("token", token);
         return result;
     }
 

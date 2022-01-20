@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class ApiExceptionAdvice {
+
     @ExceptionHandler({ApiException.class})
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final ApiException e) {
         e.printStackTrace();
@@ -28,7 +29,6 @@ public class ApiExceptionAdvice {
                         .build());
     }
      */
-
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final Exception e) {
