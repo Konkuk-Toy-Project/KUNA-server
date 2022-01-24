@@ -18,10 +18,12 @@ public enum ExceptionEnum {
     NO_FIND_OPTION1_BY_ID(HttpStatus.BAD_REQUEST, "P001", "존재하지 않는 옵션1입니다."),
     NO_FIND_OPTION2_BY_ID(HttpStatus.BAD_REQUEST, "P002", "존재하지 않는 옵션2입니다."),
 
-    NO_FIND_THUMBNAIL_BY_ID(HttpStatus.BAD_REQUEST, "T001", "존재하지 않는 썸네일입니다."),
-    FAIL_STORE_THUMBNAIL(HttpStatus.BAD_REQUEST, "T002", "썸네일 저장 실패")
-    ;
+    NO_FIND_THUMBNAIL_BY_ID(HttpStatus.BAD_REQUEST, "T001", "존재하지 않는 이미지입니다."),
+    FAIL_STORE_IMAGE(HttpStatus.BAD_REQUEST, "T002", "이미지 저장 실패"),
 
+    NO_FIND_COUPON(HttpStatus.BAD_REQUEST, "C001", "존재하지 않는 쿠폰입니다.")
+
+    ;
     private final HttpStatus status;
     private final String code;
     private String message;

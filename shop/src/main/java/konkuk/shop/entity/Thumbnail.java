@@ -20,8 +20,9 @@ public class Thumbnail {
     @OneToOne(mappedBy = "thumbnail")
     private Item item;
 
-    public Thumbnail(String upload_name, String store_name) {
+    public Thumbnail(String upload_name, String store_name, Item item) {
         this.upload_name = upload_name;
         this.store_name = store_name;
+        this.item=item;
     }
 }

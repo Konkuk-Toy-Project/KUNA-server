@@ -3,7 +3,7 @@ package konkuk.shop.controller;
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.Member;
 import konkuk.shop.form.requestForm.member.*;
-import konkuk.shop.form.responseForm.ResponseSignupForm;
+import konkuk.shop.form.responseForm.member.ResponseSignupForm;
 import konkuk.shop.security.TokenProvider;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;

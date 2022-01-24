@@ -1,8 +1,7 @@
 package konkuk.shop.service;
 
 import konkuk.shop.dto.AddItemDto;
-import konkuk.shop.entity.Item;
-import konkuk.shop.entity.Thumbnail;
+import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.repository.*;
@@ -13,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -30,23 +31,53 @@ public class ItemService {
     @Value("${image.thumbnail}")
     private String thumbnailPath;
 
-    // thumbnail, detailImage, itemImage 은 이 메소드에서 저장
-    // adminMemberId, CategoryItemId, option1Id 은 Id만 전달 받음
-    public Item addItem(AddItemDto dto) {
+    @Value("${image.item}")
+    private String itemPath;
 
-        /**
-         * 계속.. 이어서... 나가줘..
-         */
+    @Value("${image.detail}")
+    private String detailPath;
+
+    // thumbnail, detailImage, itemImage 은 이 메소드에서 저장
+    // adminMember, CategoryItem, option1 은 객체를 전달 받음
+    public Item addItem(AddItemDto dto) {
+        Item item = Item.builder()
+                .itemState(ItemState.NORMALITY)
+                .adminMember(dto.getAdminMember())
+                .name(dto.getItemName())
+                .preferenceCount(0)
+                .registryDate(LocalDateTime.now())
+                .version(1) // 첫 번째 버전 : 1
+                .sale(0) // 첫 등록시 세일 정책 : 0%
+                .build();
+
         MultipartFile thumbnail = dto.getThumbnail();
-        String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
+        List<MultipartFile> itemImages = dto.getItemImage();
+        List<MultipartFile> detailImages = dto.getDetailImage();
         try{
+            String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
             thumbnail.transferTo(new File(thumbnailPath + thumbnailFullName));
-            thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName));
+            Thumbnail saveThumbnail = thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName, item));
+            item.setThumbnail(saveThumbnail);
+
+            for(MultipartFile itemImage:itemImages){
+                String itemImageFullName = createStoreFileName(itemImage.getOriginalFilename());
+                itemImage.transferTo(new File(itemPath + itemImageFullName));
+                ItemImage saveItemImage = itemImageRepository.save(new ItemImage(itemImage.getOriginalFilename(), itemImageFullName, item));
+                item.getItemImages().add(saveItemImage);
+            }
+
+            for(MultipartFile detailImage:detailImages){
+                String detailImageFullName = createStoreFileName(detailImage.getOriginalFilename());
+                detailImage.transferTo(new File(detailPath + detailImageFullName));
+                DetailImage saveDetailImage = detailImageRepository.save(new DetailImage(detailImage.getOriginalFilename(), detailImageFullName, item));
+                item.getDetailImages().add(saveDetailImage);
+            }
         } catch (Exception e){
             e.printStackTrace();
-            throw new ApiException(ExceptionEnum.FAIL_STORE_THUMBNAIL));
+            throw new ApiException(ExceptionEnum.FAIL_STORE_IMAGE);
         }
 
+        return itemRepository.save(item);
     }
 
     private String createStoreFileName(String originalFileName) {

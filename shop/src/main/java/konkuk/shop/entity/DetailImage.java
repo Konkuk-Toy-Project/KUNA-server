@@ -21,4 +21,10 @@ public class DetailImage {
 
     private String upload_name;
     private String store_name;
+
+    public DetailImage(String upload_name, String store_name, Item item) {
+        this.item = item;
+        this.upload_name = upload_name;
+        this.store_name = store_name;
+    }
 }

@@ -20,11 +20,6 @@ import org.springframework.web.filter.CorsFilter;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-   public PasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // http 시큐리티 빌더
@@ -37,7 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //session 기반이 아님을 선언
                 .and()
-                .authorizeRequests().antMatchers("/member/signup", "/member/duplication/email", "/member/login", "/member/find/**").permitAll()
+                .authorizeRequests()
+                  .antMatchers("/member/signup", "/member/duplication/email", "/member/login", "/member/find/**",
+                          "/coupon", "/h2-console/**").permitAll()
                 .anyRequest().authenticated(); //이외의 모든 경로는 인증 해야 함
 
         // filter 등록

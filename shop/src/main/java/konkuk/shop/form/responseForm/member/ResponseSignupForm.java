@@ -1,4 +1,4 @@
-package konkuk.shop.form.responseForm;
+package konkuk.shop.form.responseForm.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

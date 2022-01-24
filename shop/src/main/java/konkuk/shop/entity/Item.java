@@ -32,7 +32,8 @@ public class Item {
     private LocalDateTime registryDate;
 
     private Integer version;
-    private Integer sale;
+    private Integer sale; //% 할인
+    private Integer price;
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,4 +61,8 @@ public class Item {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryItem> categoryItems = new ArrayList<>();
+
+    public void setThumbnail(Thumbnail thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 }
