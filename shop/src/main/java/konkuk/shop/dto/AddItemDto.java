@@ -20,7 +20,7 @@ public class AddItemDto {
     AdminMember adminMember;
     //CategoryItem CategoryItem;
     Category category;
-    List<Option1> option1;
+    //List<Option1> option1;
 
     MultipartFile thumbnail;
     List<MultipartFile> detailImage;

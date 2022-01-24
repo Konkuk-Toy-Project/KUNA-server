@@ -21,4 +21,8 @@ public class CategoryService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
     }
 
+    public Category addCategory(String name){
+        return categoryRepository.save(new Category(name));
+    }
+
 }

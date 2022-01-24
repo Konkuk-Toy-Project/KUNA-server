@@ -1,5 +1,6 @@
 package konkuk.shop.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,13 @@ public class Option1 {
 
     @OneToMany(mappedBy = "option1", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Option2> option2s = new ArrayList<>();
+
+    public Option1(String name, Integer stock) {
+        this.name = name;
+        this.stock = stock;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
 }

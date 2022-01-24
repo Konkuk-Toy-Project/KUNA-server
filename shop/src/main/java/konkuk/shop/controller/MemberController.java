@@ -82,8 +82,13 @@ public class MemberController {
 
     @PostMapping("/change/password")
     public void changePassword(@AuthenticationPrincipal Long userId,
-                                                  @RequestBody RequestChangePasswordForm form) {
+                               @RequestBody RequestChangePasswordForm form) {
         memberService.changePassword(userId, form.getNewPassword());
+    }
+
+    @PutMapping("/admin")
+    public void registryAdmin(@AuthenticationPrincipal Long userId) {
+        memberService.addAdminMember(userId);
     }
 
 

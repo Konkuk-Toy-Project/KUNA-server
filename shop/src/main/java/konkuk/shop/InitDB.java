@@ -1,6 +1,7 @@
 package konkuk.shop;
 
 import konkuk.shop.dto.SignupDto;
+import konkuk.shop.service.CategoryService;
 import konkuk.shop.service.ItemService;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +19,15 @@ import java.util.ArrayList;
 @Slf4j
 public class InitDB {
     private final MemberService memberService;
+    private final CategoryService categoryService;
     private final ItemService itemService;
-
-
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initDB() {
         log.info("initialize database");
         initMember();
+        initCategory();
     }
 
     public void initMember() {
@@ -34,6 +35,12 @@ public class InitDB {
         SignupDto dto2=new SignupDto("asdf2@asdf.com", "asdfasdf@", "testMember2", "01087654321", "19991003");
         memberService.signup(dto1);
         memberService.signup(dto2);
+    }
+
+    public void initCategory(){
+        categoryService.addCategory("상의");
+        categoryService.addCategory("하의");
+        categoryService.addCategory("신발");
     }
 
     public void initItem() {

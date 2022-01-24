@@ -4,6 +4,8 @@ import konkuk.shop.dto.AddItemDto;
 import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
+import konkuk.shop.form.requestForm.item.OptionOneForm;
+import konkuk.shop.form.requestForm.item.OptionTwoForm;
 import konkuk.shop.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -40,10 +45,8 @@ public class ItemService {
 
     // thumbnail, detailImage, itemImage 은 이 메소드에서 저장
     // adminMember, CategoryItem, option1 은 객체를 전달 받음
+    @Transactional
     public Item addItem(AddItemDto dto) {
-        /**
-         *  옵션 부분을 추가해야 하는데.. 화이팅!
-         */
         Item item = Item.builder()
                 .itemState(ItemState.NORMALITY)
                 .adminMember(dto.getAdminMember())
@@ -52,36 +55,38 @@ public class ItemService {
                 .registryDate(LocalDateTime.now())
                 .version(1) // 첫 번째 버전 : 1
                 .sale(dto.getSale()) // 첫 등록시 세일 정책 : 0%
-                .option1s(dto.getOption1())
+                //.option1s(dto.getOption1())
                 .price(dto.getPrice())
                 .category(dto.getCategory())
+                .itemImages(new ArrayList<>())
+                .detailImages(new ArrayList<>())
                 .build();
 
         MultipartFile thumbnail = dto.getThumbnail();
         List<MultipartFile> itemImages = dto.getItemImage();
         List<MultipartFile> detailImages = dto.getDetailImage();
-        try{
+        try {
             String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
             thumbnail.transferTo(new File(thumbnailPath + thumbnailFullName));
             Thumbnail saveThumbnail = thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName, item));
             item.setThumbnail(saveThumbnail);
 
-            item = itemRepository.save(item);
-
-            for(MultipartFile itemImage:itemImages){
+            for (MultipartFile itemImage : itemImages) {
                 String itemImageFullName = createStoreFileName(itemImage.getOriginalFilename());
                 itemImage.transferTo(new File(itemPath + itemImageFullName));
                 ItemImage saveItemImage = itemImageRepository.save(new ItemImage(itemImage.getOriginalFilename(), itemImageFullName, item));
                 item.getItemImages().add(saveItemImage);
             }
 
-            for(MultipartFile detailImage:detailImages){
+            for (MultipartFile detailImage : detailImages) {
                 String detailImageFullName = createStoreFileName(detailImage.getOriginalFilename());
                 detailImage.transferTo(new File(detailPath + detailImageFullName));
                 DetailImage saveDetailImage = detailImageRepository.save(new DetailImage(detailImage.getOriginalFilename(), detailImageFullName, item));
                 item.getDetailImages().add(saveDetailImage);
             }
-        } catch (Exception e){
+
+            item = itemRepository.save(item);
+        } catch (Exception e) {
             e.printStackTrace();
             throw new ApiException(ExceptionEnum.FAIL_STORE_IMAGE);
         }
@@ -102,11 +107,30 @@ public class ItemService {
 
 
     public List<Item> findItemListByCategory(String categoryName) {
-        if(categoryName.equals("all")) return itemRepository.findAll();
+        if (categoryName.equals("all")) return itemRepository.findAll();
 
         Category category = categoryRepository.findByName(categoryName)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
 
         return itemRepository.findByCategory(category);
+    }
+
+    @Transactional
+    public void saveOption(List<OptionOneForm> option1s, Long itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+
+        for (OptionOneForm option1 : option1s) {
+            Option1 saveOption1 = option1Repository.save(new Option1(option1.getName(), option1.getStock()));
+
+            List<OptionTwoForm> option2s = option1.getOption2s();
+            for (OptionTwoForm option2 : option2s) {
+                Option2 saveOption2 = option2Repository.save(new Option2(option2.getStock(), option2.getName(), saveOption1));
+                saveOption1.getOption2s().add(saveOption2);
+            }
+
+            saveOption1.setItem(item);
+            item.getOption1s().add(saveOption1);
+        }
     }
 }

@@ -22,4 +22,10 @@ public class Option2 {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="option1_id")
     private Option1 option1;
+
+    public Option2(Integer stock, String name, Option1 option1) {
+        this.stock = stock;
+        this.name = name;
+        this.option1 = option1;
+    }
 }
