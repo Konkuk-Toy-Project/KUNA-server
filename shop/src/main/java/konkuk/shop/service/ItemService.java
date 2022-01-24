@@ -18,7 +18,6 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -54,10 +53,10 @@ public class ItemService {
                 .preferenceCount(0)
                 .registryDate(LocalDateTime.now())
                 .version(1) // 첫 번째 버전 : 1
-                .sale(dto.getSale()) // 첫 등록시 세일 정책 : 0%
-                //.option1s(dto.getOption1())
+                .sale(dto.getSale())
                 .price(dto.getPrice())
                 .category(dto.getCategory())
+                .option1s(new ArrayList<>())
                 .itemImages(new ArrayList<>())
                 .detailImages(new ArrayList<>())
                 .build();

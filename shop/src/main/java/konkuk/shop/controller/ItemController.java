@@ -50,7 +50,6 @@ public class ItemController {
                 .thumbnail(form.getThumbnail())
                 .detailImage(form.getDetailImages())
                 .itemImage(form.getItemImages())
-                //.option1(option1s)
                 .build();
 
         Item item = itemService.addItem(addItemDto);
