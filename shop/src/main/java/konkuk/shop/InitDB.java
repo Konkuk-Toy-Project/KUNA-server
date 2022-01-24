@@ -3,6 +3,7 @@ package konkuk.shop;
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.*;
 import konkuk.shop.repository.*;
+import konkuk.shop.service.CartService;
 import konkuk.shop.service.CategoryService;
 import konkuk.shop.service.ItemService;
 import konkuk.shop.service.MemberService;
@@ -29,6 +30,7 @@ public class InitDB {
     private final ItemRepository itemRepository;
     private final Option1Repository option1Repository;
     private final Option2Repository option2Repository;
+    private final CartService cartService;
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
@@ -36,7 +38,8 @@ public class InitDB {
         log.info("initialize database");
         AdminMember adminMember = initMember();
         Category category = initCategory();
-        initItem(adminMember, category);
+        Item item = initItem(adminMember, category);
+        initCart(adminMember.getMember().getId(), item);
     }
 
     public AdminMember initMember() {
@@ -54,7 +57,7 @@ public class InitDB {
         return category;
     }
 
-    public void initItem(AdminMember adminMember, Category category) {
+    public Item initItem(AdminMember adminMember, Category category) {
         Item item = Item.builder()
                 .itemState(ItemState.NORMALITY)
                 .adminMember(adminMember)
@@ -97,5 +100,11 @@ public class InitDB {
         saveOption1.getOption2s().add(saveOption2);
         saveOption1.setItem(item);
         item.getOption1s().add(saveOption1);
+
+        return item;
+    }
+
+    public void initCart(Long memberId, Item item){
+        cartService.addItem(memberId, item.getId(), item.getOption1s().get(0).getId(), item.getOption1s().get(0).getOption2s().get(0).getId(), 2);
     }
 }

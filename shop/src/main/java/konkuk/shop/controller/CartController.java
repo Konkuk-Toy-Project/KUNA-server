@@ -1,6 +1,7 @@
 package konkuk.shop.controller;
 
 import konkuk.shop.form.requestForm.cart.RequestAddItemInCartForm;
+import konkuk.shop.form.requestForm.cart.RequestDeleteItemInCartForm;
 import konkuk.shop.service.CartService;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,22 @@ public class CartController {
     private final Environment env;
 
 
-    @PostMapping("/item")
+    @PostMapping
     public void addItemInCart(@AuthenticationPrincipal Long userId,
                               @RequestBody RequestAddItemInCartForm form) {
         cartService.addItem(userId, form.getItemId(), form.getOption1Id(), form.getOption2Id(), form.getCount());
+    }
+
+    @DeleteMapping
+    public void deleteItemInCart(@RequestBody RequestDeleteItemInCartForm form) {
+        cartService.deleteItem(form.getCartItemId());
+    }
+
+    @GetMapping
+    public void findByAllInCart(@AuthenticationPrincipal Long userId) {
+        /**
+         * 화이팅!
+         */
     }
 
 }

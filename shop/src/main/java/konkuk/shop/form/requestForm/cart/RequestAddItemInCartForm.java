@@ -7,5 +7,5 @@ public class RequestAddItemInCartForm {
     Long itemId;
     Long option1Id;
     Long option2Id;
-    int count;
+    Integer count;
 }

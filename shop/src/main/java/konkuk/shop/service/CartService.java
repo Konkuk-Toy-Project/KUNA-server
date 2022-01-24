@@ -44,4 +44,8 @@ public class CartService {
         member.getCartItems().add(saveCartItem);
         memberRepository.save(member);
     }
+
+    public void deleteItem(Long cartItemId) {
+        cartRepository.deleteById(cartItemId);
+    }
 }
