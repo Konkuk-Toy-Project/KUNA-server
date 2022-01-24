@@ -17,6 +17,7 @@ public class Option1 {
     private Long id;
 
     private String name;
+    private Integer stock;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="item_id")

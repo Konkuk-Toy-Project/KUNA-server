@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -102,5 +103,12 @@ public class MemberService {
             ranPw += pwCollection[selectRandomPw];
         }
         return ranPw;
+    }
+
+    public AdminMember findAdminById(Long userId) {
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        return adminMemberRepository.findByMember(member)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NOT_ADMIN_MEMBER));
     }
 }

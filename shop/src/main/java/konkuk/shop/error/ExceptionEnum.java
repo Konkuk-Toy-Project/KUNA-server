@@ -12,6 +12,7 @@ public enum ExceptionEnum {
     NO_MATCH_MEMBER_PASSWORD(HttpStatus.BAD_REQUEST, "M004", "이메일과 비밀번호가 일치하지 않습니다."),
     NO_FIND_MEMBER(HttpStatus.BAD_REQUEST, "M005", "존재하지 않은 회원 정보입니다."),
     NOTHING_CHANGE_PASSWORD(HttpStatus.BAD_REQUEST, "M006", "전에 사용하던 비밀번호와 일치합니다."),
+    NOT_ADMIN_MEMBER(HttpStatus.BAD_REQUEST, "M007", "현재 admin 회원이 아닙니다."),
 
     NO_FIND_ITEM_BY_ID(HttpStatus.BAD_REQUEST, "I001", "존재하지 않는 아이템입니다."),
 
@@ -21,7 +22,9 @@ public enum ExceptionEnum {
     NO_FIND_THUMBNAIL_BY_ID(HttpStatus.BAD_REQUEST, "T001", "존재하지 않는 이미지입니다."),
     FAIL_STORE_IMAGE(HttpStatus.BAD_REQUEST, "T002", "이미지 저장 실패"),
 
-    NO_FIND_COUPON(HttpStatus.BAD_REQUEST, "C001", "존재하지 않는 쿠폰입니다.")
+    NO_FIND_COUPON(HttpStatus.BAD_REQUEST, "C001", "존재하지 않는 쿠폰입니다."),
+
+    NO_FIND_CATEGORY(HttpStatus.BAD_REQUEST, "CT01", "존재하지 않는 카테고리입니다.")
 
     ;
     private final HttpStatus status;

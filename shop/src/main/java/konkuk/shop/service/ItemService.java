@@ -27,6 +27,7 @@ public class ItemService {
     private final ItemImageRepository itemImageRepository;
     private final ThumbnailRepository thumbnailRepository;
     private final DetailImageRepository detailImageRepository;
+    private final CategoryRepository categoryRepository;
 
     @Value("${image.thumbnail}")
     private String thumbnailPath;
@@ -40,6 +41,9 @@ public class ItemService {
     // thumbnail, detailImage, itemImage 은 이 메소드에서 저장
     // adminMember, CategoryItem, option1 은 객체를 전달 받음
     public Item addItem(AddItemDto dto) {
+        /**
+         *  옵션 부분을 추가해야 하는데.. 화이팅!
+         */
         Item item = Item.builder()
                 .itemState(ItemState.NORMALITY)
                 .adminMember(dto.getAdminMember())
@@ -47,7 +51,10 @@ public class ItemService {
                 .preferenceCount(0)
                 .registryDate(LocalDateTime.now())
                 .version(1) // 첫 번째 버전 : 1
-                .sale(0) // 첫 등록시 세일 정책 : 0%
+                .sale(dto.getSale()) // 첫 등록시 세일 정책 : 0%
+                .option1s(dto.getOption1())
+                .price(dto.getPrice())
+                .category(dto.getCategory())
                 .build();
 
         MultipartFile thumbnail = dto.getThumbnail();
@@ -58,6 +65,8 @@ public class ItemService {
             thumbnail.transferTo(new File(thumbnailPath + thumbnailFullName));
             Thumbnail saveThumbnail = thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName, item));
             item.setThumbnail(saveThumbnail);
+
+            item = itemRepository.save(item);
 
             for(MultipartFile itemImage:itemImages){
                 String itemImageFullName = createStoreFileName(itemImage.getOriginalFilename());
@@ -77,7 +86,7 @@ public class ItemService {
             throw new ApiException(ExceptionEnum.FAIL_STORE_IMAGE);
         }
 
-        return itemRepository.save(item);
+        return item;
     }
 
     private String createStoreFileName(String originalFileName) {
@@ -92,4 +101,12 @@ public class ItemService {
     }
 
 
+    public List<Item> findItemListByCategory(String categoryName) {
+        if(categoryName.equals("all")) return itemRepository.findAll();
+
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
+
+        return itemRepository.findByCategory(category);
+    }
 }
