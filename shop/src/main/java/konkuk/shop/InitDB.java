@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class InitDB {
     private final Option1Repository option1Repository;
     private final Option2Repository option2Repository;
     private final CartService cartService;
+    private final CouponRepository couponRepository;
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
@@ -40,6 +42,7 @@ public class InitDB {
         Category category = initCategory();
         Item item = initItem(adminMember, category);
         initCart(adminMember.getMember().getId(), item);
+        initCoupon();
     }
 
     public AdminMember initMember() {
@@ -106,5 +109,12 @@ public class InitDB {
 
     public void initCart(Long memberId, Item item){
         cartService.addItem(memberId, item.getId(), item.getOption1s().get(0).getId(), item.getOption1s().get(0).getOption2s().get(0).getId(), 2);
+    }
+
+    public void initCoupon(){
+        Coupon coupon = new Coupon(CouponKind.STATIC, LocalDateTime.now().plusDays(1), "total_price_5000", 1000, "회원가입 감사쿠폰");
+        coupon.setUsed(false);
+        coupon.setSerialNumber(UUID.randomUUID().toString().substring(0, 13));
+        couponRepository.save(coupon);
     }
 }

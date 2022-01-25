@@ -1,14 +1,19 @@
 package konkuk.shop.controller;
 
+import konkuk.shop.dto.CartItemDto;
 import konkuk.shop.form.requestForm.cart.RequestAddItemInCartForm;
+import konkuk.shop.form.requestForm.cart.RequestChangeCountForm;
 import konkuk.shop.form.requestForm.cart.RequestDeleteItemInCartForm;
 import konkuk.shop.service.CartService;
-import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -31,10 +36,15 @@ public class CartController {
     }
 
     @GetMapping
-    public void findByAllInCart(@AuthenticationPrincipal Long userId) {
-        /**
-         * 화이팅!
-         */
+    public ResponseEntity<List<CartItemDto>> findAllByUserIdInCart(@AuthenticationPrincipal Long userId) {
+        List<CartItemDto> result = cartService.findAllByUserId(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PutMapping("/count")
+    public void changeCount(@AuthenticationPrincipal Long userId, @RequestBody RequestChangeCountForm form) {
+        cartService.changeCount(userId, form.getCartItemId(), form.getCount());
     }
 
 }

@@ -24,7 +24,13 @@ public enum ExceptionEnum {
 
     NO_FIND_COUPON(HttpStatus.BAD_REQUEST, "C001", "존재하지 않는 쿠폰입니다."),
 
-    NO_FIND_CATEGORY(HttpStatus.BAD_REQUEST, "CT01", "존재하지 않는 카테고리입니다.")
+    NO_FIND_CATEGORY(HttpStatus.BAD_REQUEST, "CT01", "존재하지 않는 카테고리입니다."),
+
+    NO_FIND_CART_ITEM(HttpStatus.BAD_REQUEST, "CR01", "존재하지 않는 장바구니 아이템입니다."),
+    NOT_AUTHORITY_CART_EDIT(HttpStatus.BAD_REQUEST, "CR02", "해당 장바구니를 수정할 권한이 없습니다."),
+
+    NO_FIND_PREFERENCE(HttpStatus.BAD_REQUEST, "P001", "해당 찜하기를 찾을 수 없습니다."),
+    NOT_AUTHORITY_PREFERENCE_EDIT(HttpStatus.BAD_REQUEST, "P002", "해당 찜하기를 수정할 권한이 없습니다."),
 
     ;
     private final HttpStatus status;

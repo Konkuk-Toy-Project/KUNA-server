@@ -21,4 +21,9 @@ public class PreferenceItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
+
+    public PreferenceItem(Member member, Item item) {
+        this.member = member;
+        this.item = item;
+    }
 }

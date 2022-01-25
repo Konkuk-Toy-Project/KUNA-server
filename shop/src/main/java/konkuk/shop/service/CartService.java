@@ -1,5 +1,6 @@
 package konkuk.shop.service;
 
+import konkuk.shop.dto.CartItemDto;
 import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
@@ -8,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -47,5 +49,39 @@ public class CartService {
 
     public void deleteItem(Long cartItemId) {
         cartRepository.deleteById(cartItemId);
+    }
+
+    public List<CartItemDto> findAllByUserId(Long userId) {
+        List<CartItem> cartItems = cartRepository.findByMemberId(userId);
+
+        List<CartItemDto> result = new ArrayList<>();
+
+        for (CartItem cartItem : cartItems) {
+            Item item = cartItem.getItem();
+            if (cartItem.getItemVersion() != item.getVersion()) cartRepository.delete(cartItem);
+
+            CartItemDto cartItemDto = CartItemDto.builder()
+                    .thumbnailUrl(item.getThumbnail().getStore_name())
+                    .option1(cartItem.getOption1().getName())
+                    .option2(cartItem.getOption2().getName())
+                    .count(cartItem.getCount())
+                    .price(item.getPrice())
+                    .sale(item.getSale())
+                    .cartItemId(cartItem.getId())
+                    .build();
+
+            result.add(cartItemDto);
+        }
+
+        return result;
+    }
+
+    public void changeCount(Long userId, Long cartItemId, Integer count) {
+        CartItem cartItem = cartRepository.findById(cartItemId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM));
+        if(cartItem.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NOT_AUTHORITY_CART_EDIT);
+
+        cartItem.setCount(count);
+        cartRepository.save(cartItem);
     }
 }

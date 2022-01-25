@@ -37,4 +37,7 @@ public class CartItem {
     @JoinColumn(name="item_id")
     private Item item;
 
+    public void setCount(Integer count) {
+        this.count = count;
+    }
 }
