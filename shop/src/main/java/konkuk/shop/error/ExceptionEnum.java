@@ -32,6 +32,9 @@ public enum ExceptionEnum {
     NO_FIND_PREFERENCE(HttpStatus.BAD_REQUEST, "P001", "해당 찜하기를 찾을 수 없습니다."),
     NOT_AUTHORITY_PREFERENCE_EDIT(HttpStatus.BAD_REQUEST, "P002", "해당 찜하기를 수정할 권한이 없습니다."),
 
+    NO_FIND_ORDER(HttpStatus.BAD_REQUEST, "O001", "해당 주문을 찾을 수 없습니다."),
+    INCORRECT_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "O002", "옯바르지 않는 결제 방식입니다."),
+
     ;
     private final HttpStatus status;
     private final String code;

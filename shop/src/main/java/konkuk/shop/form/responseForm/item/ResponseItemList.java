@@ -12,4 +12,5 @@ public class ResponseItemList {
     Integer price;
     Integer preferenceCount;
     Integer sale;
+    Long itemId;
 }

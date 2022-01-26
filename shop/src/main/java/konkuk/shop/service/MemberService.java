@@ -111,4 +111,9 @@ public class MemberService {
         return adminMemberRepository.findByMember(member)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NOT_ADMIN_MEMBER));
     }
+
+    public Member findMemberById(Long userId){
+        return memberRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+    }
 }

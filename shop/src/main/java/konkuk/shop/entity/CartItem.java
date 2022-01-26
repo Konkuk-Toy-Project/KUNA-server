@@ -18,7 +18,9 @@ public class CartItem {
     @Column(name = "cart_item_id")
     private Long id;
 
+    @Column(name = "item_version")
     private Integer itemVersion;
+
     private Integer count;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -79,6 +79,7 @@ public class ItemController {
                     .sale(e.getSale())
                     .thumbnailUrl(e.getThumbnail().getStore_name())
                     .preferenceCount(e.getPreferenceCount())
+                    .itemId(e.getId())
                     .build();
             result.add(item);
         });

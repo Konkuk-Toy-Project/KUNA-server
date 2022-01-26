@@ -132,4 +132,9 @@ public class ItemService {
             item.getOption1s().add(saveOption1);
         }
     }
+
+    public Item findItemById(Long itemId){
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+    }
 }

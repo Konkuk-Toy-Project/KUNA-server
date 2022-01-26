@@ -21,4 +21,15 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     @Column(name="delivery_state")
     private DeliveryState deliveryState;
+
+    public Delivery(String address, String phone, String recipient, DeliveryState deliveryState) {
+        this.address = address;
+        this.phone = phone;
+        this.recipient = recipient;
+        this.deliveryState = deliveryState;
+    }
+
+    public void setDeliveryState(DeliveryState deliveryState) {
+        this.deliveryState = deliveryState;
+    }
 }
