@@ -28,4 +28,8 @@ public class Option2 {
         this.name = name;
         this.option1 = option1;
     }
+
+    public void minusStock(Integer count){
+        this.stock-=count;
+    }
 }

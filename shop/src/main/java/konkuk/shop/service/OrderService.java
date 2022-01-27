@@ -1,6 +1,9 @@
 package konkuk.shop.service;
 
 
+import konkuk.shop.dto.AddOrderDto;
+import konkuk.shop.dto.FindOrderDto;
+import konkuk.shop.dto.FindOrderItemDto;
 import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
@@ -11,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,21 +33,21 @@ public class OrderService {
     private final DeliveryRepository deliveryRepository;
     private final OrderItemRepository orderItemRepository;
 
-    public void addOrder(Long memberId, RequestAddOrderForm form) {
+    @Transactional
+    public AddOrderDto addOrder(Long memberId, RequestAddOrderForm form) {
         /**
          * 쿠폰 사용 조건
          * 주문 토탈 금액 확인
          * 배송 요금 확인
+         * 재고 수량 확인
          * 등등 많은 검증이 필요함. 화이팅!
          */
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
-        Coupon coupon = couponRepository.findById(form.getCouponId())
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_COUPON));
-        coupon.setUsed(true);
-        couponRepository.save(coupon);
+        Coupon coupon = useCoupon(form.getCouponId());
 
-        Delivery delivery = deliveryRepository.save(new Delivery(form.getAddress(), form.getPhone(), form.getRecipient(), DeliveryState.PREPARING));
+        Delivery delivery = deliveryRepository.save(
+                new Delivery(form.getAddress(), form.getPhone(), form.getRecipient(), DeliveryState.PREPARING));
 
         Order order = Order.builder()
                 .delivery(delivery)
@@ -55,7 +59,9 @@ public class OrderService {
                 .payMethod(convertPayMethod(form.getPayMethod()))
                 .shippingCharge(form.getShippingCharge())
                 .orderState(OrderState.NORMALITY)
+                .orderItems(new ArrayList<>())
                 .build();
+
         Order saveOrder = orderRepository.save(order);
 
         List<OrderItemForm> orderItems = form.getOrderItems();
@@ -67,8 +73,12 @@ public class OrderService {
             Option2 option2 = option2Repository.findById(orderItemform.getOption2Id())
                     .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION2_BY_ID));
 
+            /**
+             * 옵션2가 없는 경우에 예외 처리 해줘야함.
+             */
+            option2.minusStock(orderItemform.getCount());
+
             OrderItem orderItem = OrderItem.builder()
-                    .item(item)
                     .order(saveOrder)
                     .itemPrice(item.getPrice())
                     .itemName(item.getName())
@@ -78,15 +88,65 @@ public class OrderService {
                     .count(orderItemform.getCount())
                     .thumbnailUrl(item.getThumbnail().getStore_name())
                     .isReviewed(false)
+                    .item(item)
                     .build();
 
             saveOrder.getOrderItems().add(orderItemRepository.save(orderItem));
         }
+
+
+        return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(), saveOrder.getOrderDate());
     }
 
-    private PayMethod convertPayMethod(String payMethod){
-        if(payMethod.equals("card")) return PayMethod.CARD;
-        else if(payMethod.equals("bankbook")) return PayMethod.BANKBOOK;
+    private PayMethod convertPayMethod(String payMethod) {
+        if (payMethod.equals("card")) return PayMethod.CARD;
+        else if (payMethod.equals("bankbook")) return PayMethod.BANKBOOK;
         else throw new ApiException(ExceptionEnum.INCORRECT_PAYMENT_METHOD);
+    }
+
+    private Coupon useCoupon(Long couponId) {
+        Optional<Coupon> couponOptional = couponRepository.findById(couponId);
+        if (!couponOptional.isPresent()) return null;
+        Coupon coupon = couponOptional.get();
+        coupon.setUsed(true);
+        return couponRepository.save(coupon);
+    }
+
+    public FindOrderDto findOrderDetailList(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER));
+
+        List<FindOrderItemDto> itemDtos = new ArrayList<>();
+        List<OrderItem> orderItems = order.getOrderItems();
+        for (OrderItem orderItem : orderItems) {
+            FindOrderItemDto itemDto = FindOrderItemDto.builder()
+                    .isReviewed(orderItem.isReviewed())
+                    .itemId(orderItem.getItem().getId()) //이렇게 하면 item을 조회할텐데.. id만 따로 저장하면 안되나? 쿼리 낭비같은데
+                    .name(orderItem.getItemName())
+                    .option1(orderItem.getOption1())
+                    .option2(orderItem.getOption2())
+                    .thumbnailIrl(orderItem.getThumbnailUrl())
+                    .price(orderItem.getItemPrice())
+                    .count(orderItem.getCount())
+                    .build();
+            itemDtos.add(itemDto);
+        }
+
+        Delivery delivery = order.getDelivery();
+
+        return FindOrderDto.builder()
+                .orderId(order.getId())
+                .address(delivery.getAddress())
+                .phone(delivery.getPhone())
+                .recipient(delivery.getRecipient())
+                .deliveryState(delivery.getDeliveryState().toString())
+                .orderItemList(itemDtos)
+                .orderState(order.getOrderState().toString())
+                .orderDate(order.getOrderDate())
+                .usedPoint(order.getUsedPoint())
+                .totalPrice(order.getTotalPrice())
+                .payMethod(order.getPayMethod().toString())
+                .shippingCharge(order.getShippingCharge())
+                .build();
     }
 }
