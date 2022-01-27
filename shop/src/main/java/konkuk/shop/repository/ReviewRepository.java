@@ -1,12 +1,12 @@
 package konkuk.shop.repository;
 
-import konkuk.shop.entity.Order;
+import konkuk.shop.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByMemberId(Long userId);
+public interface ReviewRepository extends JpaRepository<Review, Long> {
+    List<Review> findAllByItemId(Long itemId);
 }

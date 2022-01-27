@@ -20,4 +20,10 @@ public class ReviewImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="review_id")
     private Review review;
+
+    public ReviewImage(String upload_name, String store_name, Review review) {
+        this.upload_name = upload_name;
+        this.store_name = store_name;
+        this.review = review;
+    }
 }

@@ -2,6 +2,8 @@ package konkuk.shop;
 
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.*;
+import konkuk.shop.error.ApiException;
+import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.repository.*;
 import konkuk.shop.service.CartService;
 import konkuk.shop.service.CategoryService;
@@ -13,9 +15,13 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -33,24 +39,31 @@ public class InitDB {
     private final Option2Repository option2Repository;
     private final CartService cartService;
     private final CouponRepository couponRepository;
+    private final MemberRepository memberRepository;
+    private final ReviewRepository reviewRepository;
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initDB() {
         log.info("initialize database");
-        AdminMember adminMember = initMember();
+        AdminMember adminMember = initAdminMember();
+        Member member = initMember();
         Category category = initCategory();
         Item item = initItem(adminMember, category);
         initCart(adminMember.getMember().getId(), item);
         initCoupon();
+        initReview(member, item);
     }
 
-    public AdminMember initMember() {
+    public AdminMember initAdminMember() {
         SignupDto dto1 = new SignupDto("asdf@asdf.com", "asdfasdf@", "testMember1", "01012345678", "20000327");
-        SignupDto dto2 = new SignupDto("asdf2@asdf.com", "asdfasdf@", "testMember2", "01087654321", "19991003");
         Long saveMemberId = memberService.signup(dto1);
-        memberService.signup(dto2);
         return memberService.addAdminMember(saveMemberId);
+    }
+    public Member initMember(){
+        SignupDto dto2 = new SignupDto("asdf2@asdf.com", "asdfasdf@", "testMember2", "01087654321", "19991003");
+        Long member = memberService.signup(dto2);
+        return memberRepository.findById(member).get();
     }
 
     public Category initCategory() {
@@ -116,5 +129,21 @@ public class InitDB {
         coupon.setUsed(false);
         coupon.setSerialNumber(UUID.randomUUID().toString().substring(0, 13));
         couponRepository.save(coupon);
+    }
+
+    public void initReview(Member member, Item item) {
+        Review review = Review.builder()
+                .item(item)
+                .option("임시 옵션 데이터1/옵션 데이터2")
+                .member(member)
+                .description("생각보다 사이즈가 크긴 한데, 입었을 때 진짜 편하네요. 운동복으로 딱 좋아요!")
+                .rate(4)
+                .registryDate(LocalDateTime.now())
+                .reviewImages(new ArrayList<>())
+                .build();
+        Review saveReview = reviewRepository.save(review);
+
+        saveReview.getReviewImages().add(new ReviewImage("reviewImage1", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/reviewImage/reviewImage1.png", saveReview));
+        saveReview.getReviewImages().add(new ReviewImage("reviewImage2", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/reviewImage/reviewImage2.png", saveReview));
     }
 }

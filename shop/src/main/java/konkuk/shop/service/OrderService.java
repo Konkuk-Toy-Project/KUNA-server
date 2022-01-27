@@ -4,6 +4,7 @@ package konkuk.shop.service;
 import konkuk.shop.dto.AddOrderDto;
 import konkuk.shop.dto.FindOrderDto;
 import konkuk.shop.dto.FindOrderItemDto;
+import konkuk.shop.dto.FindOrderListDto;
 import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
@@ -148,5 +149,16 @@ public class OrderService {
                 .payMethod(order.getPayMethod().toString())
                 .shippingCharge(order.getShippingCharge())
                 .build();
+    }
+
+    public List<FindOrderListDto> findOrderList(Long userId) {
+        List<Order> findOrder = orderRepository.findByMemberId(userId);
+
+        List<FindOrderListDto> result = new ArrayList<>();
+        for (Order order : findOrder) {
+            result.add(new FindOrderListDto(order.getOrderDate(), order.getTotalPrice(), order.getId(),
+                    order.getOrderState().toString(), order.getDelivery().getDeliveryState().toString()));
+        }
+        return result;
     }
 }
