@@ -37,6 +37,9 @@ public enum ExceptionEnum {
 
     NO_FIND_ADMIN_MEMBER(HttpStatus.BAD_REQUEST, "A001", "해당 관리자를 찾을 수 없습니다."),
 
+    NO_FIND_QNA(HttpStatus.BAD_REQUEST, "Q001", "해당 Qna를 찾을 수 없습니다."),
+    NO_AUTHORITY_ANSWER_QNA(HttpStatus.BAD_REQUEST, "Q001", "해당 Qna에 답변할 권한이 없습니다."),
+
     ;
     private final HttpStatus status;
     private final String code;

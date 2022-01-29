@@ -2,12 +2,15 @@ package konkuk.shop.service;
 
 
 import konkuk.shop.dto.FindQnaDto;
+import konkuk.shop.entity.AdminMember;
 import konkuk.shop.entity.Item;
 import konkuk.shop.entity.Member;
 import konkuk.shop.entity.Qna;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.form.requestForm.qna.RequestAddQnaForm;
+import konkuk.shop.form.responseForm.admin.ResponseQnaList;
+import konkuk.shop.repository.AdminMemberRepository;
 import konkuk.shop.repository.ItemRepository;
 import konkuk.shop.repository.MemberRepository;
 import konkuk.shop.repository.QnaRepository;
@@ -25,6 +28,7 @@ public class QnaService {
     private final QnaRepository qnaRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final AdminMemberRepository adminMemberRepository;
 
 
     public Long saveQna(Long userId, RequestAddQnaForm form) {
@@ -64,6 +68,48 @@ public class QnaService {
             }
         }
         return result;
+    }
+
+    public List<ResponseQnaList> findQnaByAdminMember(Long userId, boolean isAnswered) {
+        AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+        List<Qna> qnaList = qnaRepository.findAllByAdminMember(adminMember);
+        List<ResponseQnaList> result = new ArrayList<>();
+
+        for (Qna qna : qnaList) {
+            if (qna.isAnswered() == isAnswered) {
+
+                result.add(ResponseQnaList.builder()
+                        .memberName(qna.getMember().getName())
+                        .isAnswered(isAnswered)
+                        .isSecret(qna.isSecret())
+                        .qnaId(qna.getId())
+                        .itemName(qna.getItem().getName())
+                        .question(qna.getQuestion())
+                        .registryDate(qna.getRegistryDate())
+                        .itemId(qna.getItem().getId())
+                        .answer(checkNull(qna.getAnswer()))
+                        .build());
+            }
+        }
+
+        return result;
+    }
+
+    public void saveAnswer(Long userId, Long qnaId, String answer) {
+        Qna qna = qnaRepository.findById(qnaId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_QNA));
+
+        if (qna.getAdminMember().getMember().getId() != userId)
+            throw new ApiException(ExceptionEnum.NO_AUTHORITY_ANSWER_QNA);
+
+
+        qna.registryAnswer(answer);
+        qnaRepository.save(qna);
+    }
+
+    private String checkNull(String str) {
+        return (str == null) ? "" : str;
     }
 }
 

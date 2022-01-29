@@ -1,6 +1,8 @@
 package konkuk.shop.controller;
 
 
+import konkuk.shop.form.requestForm.admin.RequestAnswerQnaForm;
+import konkuk.shop.form.responseForm.admin.ResponseQnaList;
 import konkuk.shop.form.responseForm.item.ResponseItemList;
 import konkuk.shop.service.ItemService;
 import konkuk.shop.service.QnaService;
@@ -9,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +31,22 @@ public class AdminController {
         List<ResponseItemList> result = itemService.findItemByAdminMember(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/qna/{isAnswered}")
+    public ResponseEntity<List<ResponseQnaList>> findQna(@AuthenticationPrincipal Long userId,
+                                                                @PathVariable Boolean isAnswered) {
+        List<ResponseQnaList> result = qnaService.findQnaByAdminMember(userId, isAnswered);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PostMapping("/qna/{qnaId}")
+    public ResponseEntity<?> saveAnswer(@AuthenticationPrincipal Long userId,
+                                                                @PathVariable Long qnaId, @RequestBody RequestAnswerQnaForm form) {
+        qnaService.saveAnswer(userId, qnaId, form.getAnswer());
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

@@ -7,7 +7,6 @@ import konkuk.shop.form.requestForm.cart.RequestDeleteItemInCartForm;
 import konkuk.shop.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

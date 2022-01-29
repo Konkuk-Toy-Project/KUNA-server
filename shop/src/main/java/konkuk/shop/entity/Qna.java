@@ -35,6 +35,9 @@ public class Qna {
     @Column(name="registry_date")
     private LocalDateTime registryDate;
 
+    @Column(name="answer_date")
+    private LocalDateTime answerDate;
+
 
     public Qna(Item item, Member member, AdminMember adminMember, String question, boolean isSecret) {
         this.isSecret = isSecret;
@@ -43,5 +46,11 @@ public class Qna {
         this.member = member;
         this.adminMember = adminMember;
         this.registryDate = LocalDateTime.now();
+    }
+
+    public void registryAnswer(String answer) {
+        this.answer = answer;
+        this.isAnswered = true;
+        this.answerDate = LocalDateTime.now();
     }
 }
