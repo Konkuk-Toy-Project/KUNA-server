@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                   .antMatchers("/member/signup", "/member/duplication/email", "/member/login", "/member/find/**",
-                          "/coupon", "/h2-console/**", "/review/**").permitAll()
+                          "/coupon", "/h2-console/**", "/review/**", "/qna/**", "/item/**").permitAll()
                 .anyRequest().authenticated(); //이외의 모든 경로는 인증 해야 함
 
         // filter 등록

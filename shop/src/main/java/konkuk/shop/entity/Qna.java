@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -30,4 +31,17 @@ public class Qna {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="admin_member_id")
     private AdminMember adminMember;
+
+    @Column(name="registry_date")
+    private LocalDateTime registryDate;
+
+
+    public Qna(Item item, Member member, AdminMember adminMember, String question, boolean isSecret) {
+        this.isSecret = isSecret;
+        this.question = question;
+        this.item = item;
+        this.member = member;
+        this.adminMember = adminMember;
+        this.registryDate = LocalDateTime.now();
+    }
 }

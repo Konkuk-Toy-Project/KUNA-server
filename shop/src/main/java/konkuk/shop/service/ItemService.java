@@ -4,8 +4,9 @@ import konkuk.shop.dto.AddItemDto;
 import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
-import konkuk.shop.form.requestForm.item.OptionOneForm;
-import konkuk.shop.form.requestForm.item.OptionTwoForm;
+import konkuk.shop.form.requestForm.item.*;
+import konkuk.shop.form.requestForm.qna.RequestAddQnaForm;
+import konkuk.shop.form.responseForm.item.ResponseItemList;
 import konkuk.shop.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,9 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -105,13 +108,30 @@ public class ItemService {
     }
 
 
-    public List<Item> findItemListByCategory(String categoryName) {
-        if (categoryName.equals("all")) return itemRepository.findAll();
+    public List<ResponseItemList> findItemListByCategory(String categoryName) {
+        List<Item> items = new ArrayList<>();
 
-        Category category = categoryRepository.findByName(categoryName)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
+        if (categoryName.equals("all")) items = itemRepository.findAll();
+        else {
+            Category category = categoryRepository.findByName(categoryName)
+                    .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
+            items = itemRepository.findByCategory(category);
+        }
 
-        return itemRepository.findByCategory(category);
+        List<ResponseItemList> result = new ArrayList<>();
+        items.forEach(e -> {
+            ResponseItemList item = ResponseItemList.builder()
+                    .itemState(e.getItemState().toString())
+                    .name(e.getName())
+                    .price(e.getPrice())
+                    .sale(e.getSale())
+                    .thumbnailUrl(e.getThumbnail().getStore_name())
+                    .preferenceCount(e.getPreferenceCount())
+                    .itemId(e.getId())
+                    .build();
+            result.add(item);
+        });
+        return result;
     }
 
     @Transactional
@@ -133,8 +153,70 @@ public class ItemService {
         }
     }
 
-    public Item findItemById(Long itemId){
-        return itemRepository.findById(itemId)
+    public ResponseItemDetail findItemById(Long itemId){
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+
+        List<String> itemImages = item.getItemImages().stream()
+                .map(e -> e.getStore_name())
+                .collect(Collectors.toList());
+
+        List<String> detailImages = item.getDetailImages().stream()
+                .map(e -> e.getStore_name())
+                .collect(Collectors.toList());
+
+        List<Option1Dto> option1Dto = new ArrayList<>();
+
+        List<Option1> option1s = item.getOption1s();
+        for (Option1 option1 : option1s) {
+            List<Option2Dto> option2Dto = new ArrayList<>();
+
+            List<Option2> option2s = option1.getOption2s();
+            for (Option2 option2 : option2s) {
+                option2Dto.add(new Option2Dto(option2.getName(), option2.getStock(), option2.getId()));
+            }
+            option1Dto.add(new Option1Dto(option1.getName(), option1.getStock(), option1.getId(), option2Dto));
+        }
+
+
+        return ResponseItemDetail.builder()
+                .itemId(itemId)
+                .itemImageUrl(itemImages)
+                .itemState(item.getItemState().toString())
+                .category(item.getCategory().getName())
+                .DetailImageUrl(detailImages)
+                .name(item.getName())
+                .sale(item.getSale())
+                .preferenceCount(item.getPreferenceCount())
+                .price(item.getPrice())
+                .registryDate(item.getRegistryDate())
+                .option1(option1Dto)
+                .build();
+    }
+
+    public List<ResponseItemList> findItemBySearchWord(String searchWord) {
+        /**
+         * 검색 쿼리에 대한 정확성 및 정책 강화 필요
+         */
+        List<Item> items = itemRepository.findAll();
+
+        List<ResponseItemList> result = new ArrayList<>();
+
+        items.forEach(e -> {
+            String itemName = e.getName();
+            if(itemName.toLowerCase().contains(searchWord)){
+                ResponseItemList item = ResponseItemList.builder()
+                        .itemState(e.getItemState().toString())
+                        .name(e.getName())
+                        .price(e.getPrice())
+                        .sale(e.getSale())
+                        .thumbnailUrl(e.getThumbnail().getStore_name())
+                        .preferenceCount(e.getPreferenceCount())
+                        .itemId(e.getId())
+                        .build();
+                result.add(item);
+            }
+        });
+        return result;
     }
 }

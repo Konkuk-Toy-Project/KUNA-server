@@ -8,6 +8,7 @@ import konkuk.shop.entity.Item;
 import konkuk.shop.entity.Option1;
 import konkuk.shop.form.requestForm.item.RequestAddItem;
 import konkuk.shop.form.requestForm.item.RequestAddOptionForm;
+import konkuk.shop.form.requestForm.item.ResponseItemDetail;
 import konkuk.shop.form.responseForm.item.ResponseItemList;
 import konkuk.shop.service.CategoryService;
 import konkuk.shop.service.ItemService;
@@ -66,23 +67,23 @@ public class ItemController {
        itemService.saveOption(form.getOption1s(), itemId);
     }
 
-    @GetMapping("/{category}")
+    @GetMapping("/category/{category}")
     public ResponseEntity<List<ResponseItemList>> findItemListByCategory(@PathVariable String category) {
-        List<Item> items = itemService.findItemListByCategory(category);
-        List<ResponseItemList> result = new ArrayList<>();
+        List<ResponseItemList> result = itemService.findItemListByCategory(category);
 
-        items.forEach(e -> {
-            ResponseItemList item = ResponseItemList.builder()
-                    .itemState(e.getItemState().toString())
-                    .name(e.getName())
-                    .price(e.getPrice())
-                    .sale(e.getSale())
-                    .thumbnailUrl(e.getThumbnail().getStore_name())
-                    .preferenceCount(e.getPreferenceCount())
-                    .itemId(e.getId())
-                    .build();
-            result.add(item);
-        });
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ResponseItemDetail> findItemByItemId(@PathVariable Long itemId) {
+        ResponseItemDetail result = itemService.findItemById(itemId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/search/{searchWord}")
+    public ResponseEntity<List<ResponseItemList>> findItemBySearchWord(@PathVariable String searchWord) {
+        List<ResponseItemList> result = itemService.findItemBySearchWord(searchWord.toLowerCase());
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
