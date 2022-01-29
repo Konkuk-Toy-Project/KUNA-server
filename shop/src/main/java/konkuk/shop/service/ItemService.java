@@ -5,7 +5,6 @@ import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.form.requestForm.item.*;
-import konkuk.shop.form.requestForm.qna.RequestAddQnaForm;
 import konkuk.shop.form.responseForm.item.ResponseItemList;
 import konkuk.shop.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -153,7 +151,7 @@ public class ItemService {
         }
     }
 
-    public ResponseItemDetail findItemById(Long itemId){
+    public ResponseItemDetail findItemById(Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
 
@@ -204,7 +202,7 @@ public class ItemService {
 
         items.forEach(e -> {
             String itemName = e.getName();
-            if(itemName.toLowerCase().contains(searchWord)){
+            if (itemName.toLowerCase().contains(searchWord)) {
                 ResponseItemList item = ResponseItemList.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
@@ -216,6 +214,28 @@ public class ItemService {
                         .build();
                 result.add(item);
             }
+        });
+        return result;
+    }
+
+    public List<ResponseItemList> findItemByAdminMember(Long userId) {
+        AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+        List<Item> items = itemRepository.findByAdminMember(adminMember);
+
+        List<ResponseItemList> result = new ArrayList<>();
+
+        items.forEach(e -> {
+            ResponseItemList item = ResponseItemList.builder()
+                    .itemState(e.getItemState().toString())
+                    .name(e.getName())
+                    .price(e.getPrice())
+                    .sale(e.getSale())
+                    .thumbnailUrl(e.getThumbnail().getStore_name())
+                    .preferenceCount(e.getPreferenceCount())
+                    .itemId(e.getId())
+                    .build();
+            result.add(item);
         });
         return result;
     }

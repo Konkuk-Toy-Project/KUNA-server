@@ -5,7 +5,6 @@ import konkuk.shop.dto.AddItemDto;
 import konkuk.shop.entity.AdminMember;
 import konkuk.shop.entity.Category;
 import konkuk.shop.entity.Item;
-import konkuk.shop.entity.Option1;
 import konkuk.shop.form.requestForm.item.RequestAddItem;
 import konkuk.shop.form.requestForm.item.RequestAddOptionForm;
 import konkuk.shop.form.requestForm.item.ResponseItemDetail;
@@ -19,9 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,7 +31,7 @@ public class ItemController {
     private final MemberService memberService;
     private final CategoryService categoryService;
 
-    @PostMapping()
+    @PostMapping
     public HashMap<String, Object> registryItem(@AuthenticationPrincipal Long userId,
                                                 RequestAddItem form) {
         log.info("name={}, price={}, sale={}, categoryId={}", form.getName(), form.getPrice(), form.getSale(), form.getCategoryId());
@@ -64,7 +61,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/option")
     public void registryOption(@RequestBody RequestAddOptionForm form, @PathVariable Long itemId) {
-       itemService.saveOption(form.getOption1s(), itemId);
+        itemService.saveOption(form.getOption1s(), itemId);
     }
 
     @GetMapping("/category/{category}")

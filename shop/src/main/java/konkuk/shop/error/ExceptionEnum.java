@@ -35,6 +35,8 @@ public enum ExceptionEnum {
     NO_FIND_ORDER(HttpStatus.BAD_REQUEST, "O001", "해당 주문을 찾을 수 없습니다."),
     INCORRECT_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "O002", "옯바르지 않는 결제 방식입니다."),
 
+    NO_FIND_ADMIN_MEMBER(HttpStatus.BAD_REQUEST, "A001", "해당 관리자를 찾을 수 없습니다."),
+
     ;
     private final HttpStatus status;
     private final String code;
