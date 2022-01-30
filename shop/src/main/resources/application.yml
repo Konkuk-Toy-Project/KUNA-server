@@ -43,6 +43,10 @@ image:
   item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/itemImage/
   detail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/detailImage/
   thumbnail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/thumbnail/
+  #review: /image/review/
+  #item: /image/item/
+  #detail: /image/detail/
+  #thumbnail: /image/thumbnail/
 
 token:
   expiration_time: 600000

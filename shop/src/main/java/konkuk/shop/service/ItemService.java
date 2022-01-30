@@ -66,23 +66,29 @@ public class ItemService {
         List<MultipartFile> itemImages = dto.getItemImage();
         List<MultipartFile> detailImages = dto.getDetailImage();
         try {
-            String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
-            thumbnail.transferTo(new File(thumbnailPath + thumbnailFullName));
-            Thumbnail saveThumbnail = thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName, item));
-            item.setThumbnail(saveThumbnail);
+            if(thumbnail.getSize()!=0) {
+                String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
+                thumbnail.transferTo(new File(thumbnailPath + thumbnailFullName));
+                Thumbnail saveThumbnail = thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName, item));
+                item.setThumbnail(saveThumbnail);
+            }
 
             for (MultipartFile itemImage : itemImages) {
-                String itemImageFullName = createStoreFileName(itemImage.getOriginalFilename());
-                itemImage.transferTo(new File(itemPath + itemImageFullName));
-                ItemImage saveItemImage = itemImageRepository.save(new ItemImage(itemImage.getOriginalFilename(), itemImageFullName, item));
-                item.getItemImages().add(saveItemImage);
+                if(itemImage.getSize()!=0) {
+                    String itemImageFullName = createStoreFileName(itemImage.getOriginalFilename());
+                    itemImage.transferTo(new File(itemPath + itemImageFullName));
+                    ItemImage saveItemImage = itemImageRepository.save(new ItemImage(itemImage.getOriginalFilename(), itemImageFullName, item));
+                    item.getItemImages().add(saveItemImage);
+                }
             }
 
             for (MultipartFile detailImage : detailImages) {
-                String detailImageFullName = createStoreFileName(detailImage.getOriginalFilename());
-                detailImage.transferTo(new File(detailPath + detailImageFullName));
-                DetailImage saveDetailImage = detailImageRepository.save(new DetailImage(detailImage.getOriginalFilename(), detailImageFullName, item));
-                item.getDetailImages().add(saveDetailImage);
+                if(detailImage.getSize()!=0) {
+                    String detailImageFullName = createStoreFileName(detailImage.getOriginalFilename());
+                    detailImage.transferTo(new File(detailPath + detailImageFullName));
+                    DetailImage saveDetailImage = detailImageRepository.save(new DetailImage(detailImage.getOriginalFilename(), detailImageFullName, item));
+                    item.getDetailImages().add(saveDetailImage);
+                }
             }
 
             item = itemRepository.save(item);

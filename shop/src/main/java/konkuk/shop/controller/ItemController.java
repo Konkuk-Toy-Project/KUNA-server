@@ -35,7 +35,7 @@ public class ItemController {
     public HashMap<String, Object> registryItem(@AuthenticationPrincipal Long userId,
                                                 RequestAddItem form) {
         log.info("name={}, price={}, sale={}, categoryId={}", form.getName(), form.getPrice(), form.getSale(), form.getCategoryId());
-        log.info("detailImages size={}, itemImage size={}", form.getDetailImages().size(), form.getItemImages().size());
+        //log.info("detailImages size={}, itemImage size={}", form.getDetailImages().size(), form.getItemImages().size());
         AdminMember adminMember = memberService.findAdminById(userId);
         Category category = categoryService.findCategoryById(form.getCategoryId());
 
