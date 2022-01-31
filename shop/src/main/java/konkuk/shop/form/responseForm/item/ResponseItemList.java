@@ -13,4 +13,6 @@ public class ResponseItemList {
     Integer preferenceCount;
     Integer sale;
     Long itemId;
+    Long categoryId;
+    String categoryName;
 }

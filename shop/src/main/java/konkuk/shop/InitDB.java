@@ -11,6 +11,7 @@ import konkuk.shop.service.ItemService;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,19 @@ public class InitDB {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
+
+    @Value("${image.thumbnail}")
+    private String thumbnailPath;
+
+    @Value("${image.item}")
+    private String itemPath;
+
+    @Value("${image.detail}")
+    private String detailPath;
+
+    @Value("${image.review}")
+    private String reviewPath;
+
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
@@ -89,15 +103,15 @@ public class InitDB {
                 .option1s(new ArrayList<>())
                 .build();
 
-        item.setThumbnail(thumbnailRepository.save(new Thumbnail("thumbnail.webp", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/thumbnail/thumbnail.webp", item)));
+        item.setThumbnail(thumbnailRepository.save(new Thumbnail("thumbnail.webp", "thumbnail.webp", item)));
 
-        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage1", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/itemImage/itemImage1.jpeg", item)));
-        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage2", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/itemImage/itemImage2.jpeg", item)));
-        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage3", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/itemImage/itemImage3.jpeg", item)));
+        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage1", "itemImage1.jpeg", item)));
+        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage2", "itemImage2.jpeg", item)));
+        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage3", "itemImage3.jpeg", item)));
 
-        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/detailImage/detailImage1.jpeg", item)));
-        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage2", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/detailImage/detailImage2.jpeg", item)));
-        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage3", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/detailImage/detailImage3.jpeg", item)));
+        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1", "detailImage1.jpeg", item)));
+        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage2", "detailImage2.jpeg", item)));
+        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage3", "detailImage3.jpeg", item)));
 
         item = itemRepository.save(item);
 
@@ -143,7 +157,7 @@ public class InitDB {
                 .build();
         Review saveReview = reviewRepository.save(review);
 
-        saveReview.getReviewImages().add(new ReviewImage("reviewImage1", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/reviewImage/reviewImage1.png", saveReview));
-        saveReview.getReviewImages().add(new ReviewImage("reviewImage2", "/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/reviewImage/reviewImage2.png", saveReview));
+        saveReview.getReviewImages().add(new ReviewImage("reviewImage1", "reviewImage1.png", saveReview));
+        saveReview.getReviewImages().add(new ReviewImage("reviewImage2", "reviewImage2.png", saveReview));
     }
 }

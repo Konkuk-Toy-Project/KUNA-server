@@ -1,6 +1,7 @@
 package konkuk.shop.service;
 
 
+import konkuk.shop.dto.FindAllCategoryDto;
 import konkuk.shop.entity.Category;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
@@ -8,6 +9,9 @@ import konkuk.shop.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,4 +29,13 @@ public class CategoryService {
         return categoryRepository.save(new Category(name));
     }
 
+    public List<FindAllCategoryDto> findAll() {
+        List<Category> categories = categoryRepository.findAll();
+
+        List<FindAllCategoryDto> result = new ArrayList<>();
+        for (Category category : categories) {
+            result.add(new FindAllCategoryDto(category.getId(), category.getName()));
+        }
+        return result;
+    }
 }

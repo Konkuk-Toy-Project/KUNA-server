@@ -64,9 +64,9 @@ public class ItemController {
         itemService.saveOption(form.getOption1s(), itemId);
     }
 
-    @GetMapping("/category/{category}")
-    public ResponseEntity<List<ResponseItemList>> findItemListByCategory(@PathVariable String category) {
-        List<ResponseItemList> result = itemService.findItemListByCategory(category);
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ResponseItemList>> findItemListByCategory(@PathVariable Long categoryId) {
+        List<ResponseItemList> result = itemService.findItemListByCategory(categoryId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -74,6 +74,13 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ResponseEntity<ResponseItemDetail> findItemByItemId(@PathVariable Long itemId) {
         ResponseItemDetail result = itemService.findItemById(itemId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ResponseItemList>> findAllItem() {
+        List<ResponseItemList> result = itemService.findAllItem();
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }

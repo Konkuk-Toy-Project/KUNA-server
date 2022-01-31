@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findByCategory(Category category);
-
     List<Item> findByAdminMember(AdminMember adminMember);
+
+    List<Item> findByCategoryId(Long categoryId);
 }

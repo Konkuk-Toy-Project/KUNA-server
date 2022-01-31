@@ -66,7 +66,7 @@ public class ItemService {
         List<MultipartFile> itemImages = dto.getItemImage();
         List<MultipartFile> detailImages = dto.getDetailImage();
         try {
-            if(thumbnail.getSize()!=0) {
+            if (thumbnail.getSize() != 0) {
                 String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
                 thumbnail.transferTo(new File(thumbnailPath + thumbnailFullName));
                 Thumbnail saveThumbnail = thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName, item));
@@ -74,7 +74,7 @@ public class ItemService {
             }
 
             for (MultipartFile itemImage : itemImages) {
-                if(itemImage.getSize()!=0) {
+                if (itemImage.getSize() != 0) {
                     String itemImageFullName = createStoreFileName(itemImage.getOriginalFilename());
                     itemImage.transferTo(new File(itemPath + itemImageFullName));
                     ItemImage saveItemImage = itemImageRepository.save(new ItemImage(itemImage.getOriginalFilename(), itemImageFullName, item));
@@ -83,7 +83,7 @@ public class ItemService {
             }
 
             for (MultipartFile detailImage : detailImages) {
-                if(detailImage.getSize()!=0) {
+                if (detailImage.getSize() != 0) {
                     String detailImageFullName = createStoreFileName(detailImage.getOriginalFilename());
                     detailImage.transferTo(new File(detailPath + detailImageFullName));
                     DetailImage saveDetailImage = detailImageRepository.save(new DetailImage(detailImage.getOriginalFilename(), detailImageFullName, item));
@@ -112,15 +112,8 @@ public class ItemService {
     }
 
 
-    public List<ResponseItemList> findItemListByCategory(String categoryName) {
-        List<Item> items = new ArrayList<>();
-
-        if (categoryName.equals("all")) items = itemRepository.findAll();
-        else {
-            Category category = categoryRepository.findByName(categoryName)
-                    .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
-            items = itemRepository.findByCategory(category);
-        }
+    public List<ResponseItemList> findItemListByCategory(Long categoryId) {
+        List<Item> items = itemRepository.findByCategoryId(categoryId);
 
         List<ResponseItemList> result = new ArrayList<>();
         items.forEach(e -> {
@@ -132,6 +125,8 @@ public class ItemService {
                     .thumbnailUrl(e.getThumbnail().getStore_name())
                     .preferenceCount(e.getPreferenceCount())
                     .itemId(e.getId())
+                    .categoryId(e.getCategory().getId())
+                    .categoryName(e.getCategory().getName())
                     .build();
             result.add(item);
         });
@@ -217,6 +212,8 @@ public class ItemService {
                         .thumbnailUrl(e.getThumbnail().getStore_name())
                         .preferenceCount(e.getPreferenceCount())
                         .itemId(e.getId())
+                        .categoryId(e.getCategory().getId())
+                        .categoryName(e.getCategory().getName())
                         .build();
                 result.add(item);
             }
@@ -240,6 +237,29 @@ public class ItemService {
                     .thumbnailUrl(e.getThumbnail().getStore_name())
                     .preferenceCount(e.getPreferenceCount())
                     .itemId(e.getId())
+                    .categoryId(e.getCategory().getId())
+                    .categoryName(e.getCategory().getName())
+                    .build();
+            result.add(item);
+        });
+        return result;
+    }
+
+    public List<ResponseItemList> findAllItem() {
+        List<Item> items = itemRepository.findAll();
+
+        List<ResponseItemList> result = new ArrayList<>();
+        items.forEach(e -> {
+            ResponseItemList item = ResponseItemList.builder()
+                    .itemState(e.getItemState().toString())
+                    .name(e.getName())
+                    .price(e.getPrice())
+                    .sale(e.getSale())
+                    .thumbnailUrl(e.getThumbnail().getStore_name())
+                    .preferenceCount(e.getPreferenceCount())
+                    .itemId(e.getId())
+                    .categoryId(e.getCategory().getId())
+                    .categoryName(e.getCategory().getName())
                     .build();
             result.add(item);
         });

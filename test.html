@@ -1,10 +1,47 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
-    <title>board</title>
+    <title>imageTest</title>
 </head>
 
 <body>
-  <img src="http://localhost:8080/image/detail/5dd80b08-354e-4458-924c-e6ee963a9ebc.jpeg" width="100">
+  1. Thumbnail
+  <input type="text" placeholder="Thumbnil Stored Url" id="thumbnail">
+  <button onclick="chImg(thumbnail)">변경하기</button>
+  <br>
+  <img src="http://" width="300" id="thumbnailImg">
+
+  <br><br>
+
+  2. ItemImage
+  <input type="text" placeholder="Item Stored Url" id="item">
+  <button onclick="chImg(item)">변경하기</button>
+  <br>
+  <img src="http://" width="300" id="itemImg">
+
+  <br><br>
+
+  3. DetailImage
+  <input type="text" placeholder="Detail Stored Url" id="detail">
+  <button onclick="chImg(detail)">변경하기</button>
+  <br>
+  <img src="http://" width="300" id="detailImg">
+
+  <br><br>
+
+  4. reviewImage
+  <input type="text" placeholder="Review Stored Url" id="review">
+  <button onclick="chImg(review)">변경하기</button>
+  <br>
+  <img src="http://" width="300" id="reviewImg">
+  
+
+<script type="text/javascript">
+  function chImg(tg) {
+    const target = tg.id;
+    const name = tg.value;
+    document.getElementById(target+"Img").src = "http://localhost:8080/image/"+target+"/"+name;
+  }
+</script>
 </body>
 </html>
