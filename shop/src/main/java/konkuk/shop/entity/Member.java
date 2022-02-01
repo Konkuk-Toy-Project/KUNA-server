@@ -60,7 +60,6 @@ public class Member {
         this.birth = birth;
         this.point = 0;
         this.chance = 0;
-        this.memberRole = MemberRole.BRONZE;
     }
 
     public void setPassword(String password) {

@@ -6,6 +6,7 @@ import konkuk.shop.entity.Member;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.form.requestForm.coupon.RequestAddCouponForm;
+import konkuk.shop.form.responseForm.coupon.ResponseGetCoupon;
 import konkuk.shop.repository.CouponRepository;
 import konkuk.shop.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -46,11 +48,15 @@ public class CouponService {
         return LocalDateTime.parse(expiredDate, formatter);
     }
 
-    public List<Coupon> getCoupon(Long userId) {
+    public List<ResponseGetCoupon> getCoupon(Long userId) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
-        List<Coupon> coupons = member.getCoupons();
-        return coupons;
+
+        List<ResponseGetCoupon> result = member.getCoupons().stream()
+                .map(e -> new ResponseGetCoupon(e.getCouponKind().toString(), e.getRate(),
+                        e.getExpiredDate(), e.getCouponCondition(), e.getName(), e.isUsed(), e.getId()))
+                .collect(Collectors.toList());
+        return result;
     }
 
     public void registryCoupon(Long userId, String serialNumber) {
@@ -58,6 +64,8 @@ public class CouponService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         Coupon coupon = couponRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_COUPON));
+
+        if(coupon.getMember()!=null) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_COUPON);
 
         coupon.setMember(member);
         member.getCoupons().add(coupon);

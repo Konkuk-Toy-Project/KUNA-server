@@ -2,8 +2,6 @@ package konkuk.shop.controller;
 
 
 import konkuk.shop.dto.PreferenceDto;
-import konkuk.shop.entity.PreferenceItem;
-import konkuk.shop.form.responseForm.member.ResponseSignupForm;
 import konkuk.shop.service.PreferenceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +40,9 @@ public class PreferenceController {
         return ResponseEntity.status(HttpStatus.OK).body(preferenceDtoList);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{preferenceId}")
     public ResponseEntity<?> deletePreferenceItem(@AuthenticationPrincipal Long userId,
-                                                                    @RequestBody HashMap<String, String> map) {
-        Long preferenceId = Long.parseLong(map.get("preferenceId"));
+                                                  @PathVariable Long preferenceId) {
         preferenceService.deletePreference(userId, preferenceId);
 
         return ResponseEntity.ok().build();

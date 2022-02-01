@@ -3,7 +3,6 @@ package konkuk.shop.controller;
 import konkuk.shop.dto.CartItemDto;
 import konkuk.shop.form.requestForm.cart.RequestAddItemInCartForm;
 import konkuk.shop.form.requestForm.cart.RequestChangeCountForm;
-import konkuk.shop.form.requestForm.cart.RequestDeleteItemInCartForm;
 import konkuk.shop.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -21,16 +21,18 @@ import java.util.List;
 public class CartController {
     private final CartService cartService;
 
-
     @PostMapping
-    public void addItemInCart(@AuthenticationPrincipal Long userId,
-                              @RequestBody RequestAddItemInCartForm form) {
-        cartService.addItem(userId, form.getItemId(), form.getOption1Id(), form.getOption2Id(), form.getCount());
+    public HashMap<String, Object> addItemInCart(@AuthenticationPrincipal Long userId,
+                                 @RequestBody RequestAddItemInCartForm form) {
+        Long cartItemId = cartService.addItem(userId, form.getItemId(), form.getOption1Id(), form.getOption2Id(), form.getCount());
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("cartItemId", cartItemId);
+        return result;
     }
 
-    @DeleteMapping
-    public void deleteItemInCart(@RequestBody RequestDeleteItemInCartForm form) {
-        cartService.deleteItem(form.getCartItemId());
+    @DeleteMapping("/{cartItemId}")
+    public void deleteItemInCart(@PathVariable Long cartItemId) {
+        cartService.deleteItem(cartItemId);
     }
 
     @GetMapping
@@ -40,9 +42,10 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PutMapping("/count")
-    public void changeCount(@AuthenticationPrincipal Long userId, @RequestBody RequestChangeCountForm form) {
-        cartService.changeCount(userId, form.getCartItemId(), form.getCount());
+    @PutMapping("/{cartItemId}")
+    public void changeCount(@AuthenticationPrincipal Long userId, @RequestBody RequestChangeCountForm form,
+                            @PathVariable Long cartItemId) {
+        cartService.changeCount(userId, cartItemId, form.getCount());
     }
 
 }

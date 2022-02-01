@@ -14,7 +14,6 @@ public class RequestAddItem {
     MultipartFile thumbnail;
     List<MultipartFile> detailImages;
     List<MultipartFile> itemImages;
-
 }
 
 

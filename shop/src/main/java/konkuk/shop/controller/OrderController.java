@@ -3,11 +3,7 @@ package konkuk.shop.controller;
 import konkuk.shop.dto.AddOrderDto;
 import konkuk.shop.dto.FindOrderDto;
 import konkuk.shop.dto.FindOrderListDto;
-import konkuk.shop.entity.Member;
 import konkuk.shop.form.requestForm.order.RequestAddOrderForm;
-import konkuk.shop.form.responseForm.member.ResponseSignupForm;
-import konkuk.shop.service.ItemService;
-import konkuk.shop.service.MemberService;
 import konkuk.shop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +20,10 @@ import java.util.List;
 @RequestMapping("/order")
 public class OrderController {
     private final OrderService orderService;
-    private final MemberService memberService;
-    private final ItemService itemService;
 
     @PostMapping
     public ResponseEntity<AddOrderDto> addOrder(@AuthenticationPrincipal Long userId,
-                                                       @RequestBody RequestAddOrderForm form) {
+                                                @RequestBody RequestAddOrderForm form) {
         AddOrderDto result = orderService.addOrder(userId, form);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(result);

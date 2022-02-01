@@ -36,14 +36,14 @@ public class ItemController {
                                                 RequestAddItem form) {
         log.info("name={}, price={}, sale={}, categoryId={}", form.getName(), form.getPrice(), form.getSale(), form.getCategoryId());
         //log.info("detailImages size={}, itemImage size={}", form.getDetailImages().size(), form.getItemImages().size());
-        AdminMember adminMember = memberService.findAdminById(userId);
+        AdminMember adminMember = memberService.findAdminByMemberId(userId);
         Category category = categoryService.findCategoryById(form.getCategoryId());
-
 
         AddItemDto addItemDto = AddItemDto.builder()
                 .itemName(form.getName())
                 .price(form.getPrice())
-                .sale(form.getSale()).adminMember(adminMember)
+                .sale(form.getSale())
+                .adminMember(adminMember)
                 .category(category)
                 .thumbnail(form.getThumbnail())
                 .detailImage(form.getDetailImages())

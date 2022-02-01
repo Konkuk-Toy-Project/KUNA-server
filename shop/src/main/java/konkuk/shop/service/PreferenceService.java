@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,15 +37,14 @@ public class PreferenceService {
     public List<PreferenceDto> findPreferenceByMemberId(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
-        List<PreferenceItem> preferenceItems = member.getPreferenceItems();
-        List<PreferenceDto> result = new ArrayList<>();
 
-        for (PreferenceItem preferenceItem : preferenceItems) {
-            Item item = preferenceItem.getItem();
-            result.add(new PreferenceDto(item.getThumbnail().getStore_name(),
-                    item.getName(), item.getPrice(), item.getSale(), preferenceItem.getId()));
-        }
-
+        List<PreferenceDto> result = member.getPreferenceItems()
+                .stream().map(e -> {
+                    Item item = e.getItem();
+                    return new PreferenceDto(item.getThumbnail().getStore_name(),
+                            item.getName(), item.getPrice(), item.getSale(), e.getId());
+                })
+                .collect(Collectors.toList());
         return result;
     }
 
@@ -53,7 +52,8 @@ public class PreferenceService {
         PreferenceItem preferenceItem = preferenceRepository.findById(preferenceId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_PREFERENCE));
 
-        if(preferenceItem.getMember().getId() != memberId) throw new ApiException(ExceptionEnum.NOT_AUTHORITY_PREFERENCE_EDIT);
-        preferenceRepository.deleteById(preferenceId);
+        if (preferenceItem.getMember().getId() != memberId)
+            throw new ApiException(ExceptionEnum.NOT_AUTHORITY_PREFERENCE_EDIT);
+        preferenceRepository.delete(preferenceItem);
     }
 }

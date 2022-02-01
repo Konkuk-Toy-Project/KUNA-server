@@ -1,6 +1,5 @@
 package konkuk.shop.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +20,7 @@ public class Option1 {
     private Integer stock;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="item_id")
+    @JoinColumn(name = "item_id")
     private Item item;
 
     @OneToMany(mappedBy = "option1", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -34,5 +33,9 @@ public class Option1 {
 
     public void setItem(Item item) {
         this.item = item;
+    }
+
+    public void minusStock(Integer count) {
+        this.stock -= count;
     }
 }

@@ -1,8 +1,5 @@
 package konkuk.shop.service;
 
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.AdminMember;
 import konkuk.shop.entity.Member;
@@ -17,8 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Optional;
+import javax.transaction.Transactional;
 
 @Slf4j
 @Service
@@ -34,12 +30,27 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
-    public Long signup(SignupDto dto) {
-        if (isDuplicateEmail(dto.getEmail())) throw new ApiException(ExceptionEnum.DUPLICATION_MEMBER_EMAIL);
+    public boolean isDuplicatePhone(String phone) {
+        return memberRepository.existsByPhone(phone);
+    }
 
+    @Transactional
+    public Long signup(SignupDto dto) {
+        if (!dto.getRole().equals("user") && !dto.getRole().equals("admin"))
+            throw new ApiException(ExceptionEnum.NOT_FIND_ROLE);
+        if (isDuplicateEmail(dto.getEmail())) throw new ApiException(ExceptionEnum.DUPLICATION_MEMBER_EMAIL);
+        if (isDuplicatePhone(dto.getPhone())) throw new ApiException(ExceptionEnum.DUPLICATION_MEMBER_PHONE);
         String encryptedPwd = passwordEncoder.encode(dto.getPassword());
         Member member = new Member(dto.getEmail(), encryptedPwd, dto.getName(), dto.getPhone(), dto.getBirth());
-        return memberRepository.save(member).getId();
+        Member saveMember = memberRepository.save(member);
+
+        if (dto.getRole().equals("user")) saveMember.setMemberRole(MemberRole.BRONZE);
+        else if (dto.getRole().equals("admin")) {
+            saveMember.setMemberRole(MemberRole.ADMIN);
+            AdminMember adminMember = new AdminMember(saveMember);
+            adminMemberRepository.save(adminMember);
+        }
+        return saveMember.getId();
     }
 
     public Member login(String email, String password) {
@@ -76,15 +87,15 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public AdminMember addAdminMember(Long userId) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
-        member.setMemberRole(MemberRole.ADMIN);
-
-        AdminMember adminMember = new AdminMember(member);
-        memberRepository.save(member);
-        return adminMemberRepository.save(adminMember);
-    }
+//    public AdminMember addAdminMember(Long userId) {
+//        Member member = memberRepository.findById(userId)
+//                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+//        member.setMemberRole(MemberRole.ADMIN);
+//
+//        AdminMember adminMember = new AdminMember(member);
+//        memberRepository.save(member);
+//        return adminMemberRepository.save(adminMember);
+//    }
 
     private String randomPw() {
         char pwCollectionSpCha[] = new char[]{'!', '@', '#', '$', '%', '^', '&', '*', '(', ')'};
@@ -105,15 +116,10 @@ public class MemberService {
         return ranPw;
     }
 
-    public AdminMember findAdminById(Long userId) {
+    public AdminMember findAdminByMemberId(Long userId) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         return adminMemberRepository.findByMember(member)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NOT_ADMIN_MEMBER));
-    }
-
-    public Member findMemberById(Long userId){
-        return memberRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
     }
 }

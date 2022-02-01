@@ -39,7 +39,7 @@ public class MemberController {
     public ResponseEntity<ResponseSignupForm> memberSignup(@RequestBody RequestSignupForm form) {
         ModelMapper mapper = new ModelMapper();
         Long saveMemberId = memberService.signup(mapper.map(form, SignupDto.class));
-        ResponseSignupForm result = new ResponseSignupForm(true, saveMemberId);
+        ResponseSignupForm result = new ResponseSignupForm(form.getRole(), saveMemberId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
@@ -86,10 +86,8 @@ public class MemberController {
         memberService.changePassword(userId, form.getNewPassword());
     }
 
-    @PutMapping("/admin")
-    public void registryAdmin(@AuthenticationPrincipal Long userId) {
-        memberService.addAdminMember(userId);
-    }
-
-
+//    @PutMapping("/admin")
+//    public void registryAdmin(@AuthenticationPrincipal Long userId) {
+//        memberService.addAdminMember(userId);
+//    }
 }

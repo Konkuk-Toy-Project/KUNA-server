@@ -13,4 +13,6 @@ public class ResponseGetCoupon {
     LocalDateTime expiredDate;
     String couponCondition;
     String name;
+    Boolean isUsed;
+    Long couponId;
 }

@@ -13,4 +13,5 @@ public class SignupDto {
     String name;
     String phone;
     String birth;
+    String role;
 }

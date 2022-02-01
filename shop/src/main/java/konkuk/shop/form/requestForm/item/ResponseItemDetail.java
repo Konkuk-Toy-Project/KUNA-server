@@ -16,11 +16,12 @@ public class ResponseItemDetail {
     List<String> itemImageUrl;
     String name;
     Integer price;
-    Integer preferenceCount;
+    Integer preference;
     LocalDateTime registryDate;
     Integer sale;
     List<String> DetailImageUrl;
     Long itemId;
-    String category;
+    String categoryName;
+    Long categoryId;
     List<Option1Dto> option1=new ArrayList<>();
 }

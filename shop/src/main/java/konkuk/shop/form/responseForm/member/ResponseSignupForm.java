@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ResponseSignupForm {
-    boolean result;
+    String role;
     Long memberId;
 }

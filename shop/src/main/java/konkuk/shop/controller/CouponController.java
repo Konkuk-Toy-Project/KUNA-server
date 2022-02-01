@@ -41,13 +41,7 @@ public class CouponController {
 
     @GetMapping // 로그인 회원이 자신의 쿠폰 확인
     public ResponseEntity<List<ResponseGetCoupon>> getCoupon(@AuthenticationPrincipal Long userId) {
-        List<Coupon> coupons = couponService.getCoupon(userId);
-        List<ResponseGetCoupon> result = new ArrayList<>();
-
-        for (Coupon coupon : coupons) {
-            result.add(new ResponseGetCoupon(coupon.getCouponKind().toString(), coupon.getRate(),
-                    coupon.getExpiredDate(), coupon.getCouponCondition(), coupon.getName()));
-        }
+        List<ResponseGetCoupon> result = couponService.getCoupon(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }

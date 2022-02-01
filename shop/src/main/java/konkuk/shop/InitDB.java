@@ -2,8 +2,6 @@ package konkuk.shop;
 
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.*;
-import konkuk.shop.error.ApiException;
-import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.repository.*;
 import konkuk.shop.service.CartService;
 import konkuk.shop.service.CategoryService;
@@ -16,13 +14,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -70,12 +64,12 @@ public class InitDB {
     }
 
     public AdminMember initAdminMember() {
-        SignupDto dto1 = new SignupDto("asdf@asdf.com", "asdfasdf@", "testMember1", "01012345678", "20000327");
+        SignupDto dto1 = new SignupDto("asdf@asdf.com", "asdfasdf@", "testMember1", "01012345678", "20000327", "admin");
         Long saveMemberId = memberService.signup(dto1);
-        return memberService.addAdminMember(saveMemberId);
+        return memberService.findAdminByMemberId(saveMemberId);
     }
     public Member initMember(){
-        SignupDto dto2 = new SignupDto("asdf2@asdf.com", "asdfasdf@", "testMember2", "01087654321", "19991003");
+        SignupDto dto2 = new SignupDto("asdf2@asdf.com", "asdfasdf@", "testMember2", "01087654321", "19991003", "user");
         Long member = memberService.signup(dto2);
         return memberRepository.findById(member).get();
     }

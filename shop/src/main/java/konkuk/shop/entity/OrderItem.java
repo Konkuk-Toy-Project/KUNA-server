@@ -40,4 +40,12 @@ public class OrderItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="item_id")
     private Item item;
+
+    public void setOption2(String option2) {
+        this.option2 = option2;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

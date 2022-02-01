@@ -113,23 +113,19 @@ public class ItemService {
 
 
     public List<ResponseItemList> findItemListByCategory(Long categoryId) {
-        List<Item> items = itemRepository.findByCategoryId(categoryId);
-
-        List<ResponseItemList> result = new ArrayList<>();
-        items.forEach(e -> {
-            ResponseItemList item = ResponseItemList.builder()
-                    .itemState(e.getItemState().toString())
-                    .name(e.getName())
-                    .price(e.getPrice())
-                    .sale(e.getSale())
-                    .thumbnailUrl(e.getThumbnail().getStore_name())
-                    .preferenceCount(e.getPreferenceCount())
-                    .itemId(e.getId())
-                    .categoryId(e.getCategory().getId())
-                    .categoryName(e.getCategory().getName())
-                    .build();
-            result.add(item);
-        });
+        List<ResponseItemList> result = itemRepository.findByCategoryId(categoryId)
+                .stream().map(e -> ResponseItemList.builder()
+                        .itemState(e.getItemState().toString())
+                        .name(e.getName())
+                        .price(e.getPrice())
+                        .sale(e.getSale())
+                        .thumbnailUrl(e.getThumbnail().getStore_name())
+                        .preference(e.getPreferenceCount())
+                        .itemId(e.getId())
+                        .categoryId(e.getCategory().getId())
+                        .categoryName(e.getCategory().getName())
+                        .build())
+                .collect(Collectors.toList());
         return result;
     }
 
@@ -182,14 +178,15 @@ public class ItemService {
                 .itemId(itemId)
                 .itemImageUrl(itemImages)
                 .itemState(item.getItemState().toString())
-                .category(item.getCategory().getName())
+                .categoryName(item.getCategory().getName())
                 .DetailImageUrl(detailImages)
                 .name(item.getName())
                 .sale(item.getSale())
-                .preferenceCount(item.getPreferenceCount())
+                .preference(item.getPreferenceCount())
                 .price(item.getPrice())
                 .registryDate(item.getRegistryDate())
                 .option1(option1Dto)
+                .categoryId(item.getCategory().getId())
                 .build();
     }
 
@@ -210,7 +207,7 @@ public class ItemService {
                         .price(e.getPrice())
                         .sale(e.getSale())
                         .thumbnailUrl(e.getThumbnail().getStore_name())
-                        .preferenceCount(e.getPreferenceCount())
+                        .preference(e.getPreferenceCount())
                         .itemId(e.getId())
                         .categoryId(e.getCategory().getId())
                         .categoryName(e.getCategory().getName())
@@ -224,45 +221,37 @@ public class ItemService {
     public List<ResponseItemList> findItemByAdminMember(Long userId) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
-        List<Item> items = itemRepository.findByAdminMember(adminMember);
 
-        List<ResponseItemList> result = new ArrayList<>();
-
-        items.forEach(e -> {
-            ResponseItemList item = ResponseItemList.builder()
-                    .itemState(e.getItemState().toString())
-                    .name(e.getName())
-                    .price(e.getPrice())
-                    .sale(e.getSale())
-                    .thumbnailUrl(e.getThumbnail().getStore_name())
-                    .preferenceCount(e.getPreferenceCount())
-                    .itemId(e.getId())
-                    .categoryId(e.getCategory().getId())
-                    .categoryName(e.getCategory().getName())
-                    .build();
-            result.add(item);
-        });
+        List<ResponseItemList> result = itemRepository.findByAdminMember(adminMember)
+                .stream().map(e -> ResponseItemList.builder()
+                        .itemState(e.getItemState().toString())
+                        .name(e.getName())
+                        .price(e.getPrice())
+                        .sale(e.getSale())
+                        .thumbnailUrl(e.getThumbnail().getStore_name())
+                        .preference(e.getPreferenceCount())
+                        .itemId(e.getId())
+                        .categoryId(e.getCategory().getId())
+                        .categoryName(e.getCategory().getName())
+                        .build())
+                .collect(Collectors.toList());
         return result;
     }
 
     public List<ResponseItemList> findAllItem() {
-        List<Item> items = itemRepository.findAll();
-
-        List<ResponseItemList> result = new ArrayList<>();
-        items.forEach(e -> {
-            ResponseItemList item = ResponseItemList.builder()
-                    .itemState(e.getItemState().toString())
-                    .name(e.getName())
-                    .price(e.getPrice())
-                    .sale(e.getSale())
-                    .thumbnailUrl(e.getThumbnail().getStore_name())
-                    .preferenceCount(e.getPreferenceCount())
-                    .itemId(e.getId())
-                    .categoryId(e.getCategory().getId())
-                    .categoryName(e.getCategory().getName())
-                    .build();
-            result.add(item);
-        });
+        List<ResponseItemList> result = itemRepository.findAll()
+                .stream().map(e -> ResponseItemList.builder()
+                        .itemState(e.getItemState().toString())
+                        .name(e.getName())
+                        .price(e.getPrice())
+                        .sale(e.getSale())
+                        .thumbnailUrl(e.getThumbnail().getStore_name())
+                        .preference(e.getPreferenceCount())
+                        .itemId(e.getId())
+                        .categoryId(e.getCategory().getId())
+                        .categoryName(e.getCategory().getName())
+                        .build())
+                .collect(Collectors.toList());
         return result;
     }
 }

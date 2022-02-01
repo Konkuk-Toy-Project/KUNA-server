@@ -22,20 +22,34 @@ public class CartService {
     private final Option1Repository option1Repository;
     private final Option2Repository option2Repository;
 
-    public void addItem(Long userId, Long itemId, Long option1Id, Long option2Id, int count) {
+    public Long addItem(Long userId, Long itemId, Long option1Id, Long option2Id, int count) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
         Option1 option1 = option1Repository.findById(option1Id)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION1_BY_ID));
-        Option2 option2 = option2Repository.findById(option2Id)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION2_BY_ID));
-        Integer itemVersion = item.getVersion();
+        Option2 option2 = null;
+
+        // 1. option2가 있어야 하는데 없는 경우
+        if (option2Repository.existsByOption1(option1) && option2Id == null) {
+            throw new ApiException(ExceptionEnum.NECESSARY_OPTION2);
+        }
+
+        // 2. option2가 없어야 하는데 있는 경우 또는 잘못된 id인 경우
+        if (option2Id != null) {
+            option2 = option2Repository.findById(option2Id)
+                    .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION2_BY_ID));
+            if (option2.getOption1().getId() != option1.getId())
+                throw new ApiException(ExceptionEnum.NO_MATCH_OPTION2_WITH_OPTION1);
+        }
+
+        if (option1.getItem().getId() != item.getId())
+            throw new ApiException(ExceptionEnum.NO_MATCH_OPTION1_WITH_ITEM);
 
         CartItem cartItem = CartItem.builder()
                 .item(item)
-                .itemVersion(itemVersion)
+                .itemVersion(item.getVersion())
                 .member(member)
                 .option1(option1)
                 .option2(option2)
@@ -45,32 +59,39 @@ public class CartService {
         CartItem saveCartItem = cartRepository.save(cartItem);
         member.getCartItems().add(saveCartItem);
         memberRepository.save(member);
+        return saveCartItem.getId();
     }
 
     public void deleteItem(Long cartItemId) {
-        cartRepository.deleteById(cartItemId);
+        cartRepository.delete(
+                cartRepository.findById(cartItemId)
+                        .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM))
+        );
     }
 
     public List<CartItemDto> findAllByUserId(Long userId) {
         List<CartItem> cartItems = cartRepository.findByMemberId(userId);
 
         List<CartItemDto> result = new ArrayList<>();
-
         for (CartItem cartItem : cartItems) {
             Item item = cartItem.getItem();
-            if (cartItem.getItemVersion() != item.getVersion()) cartRepository.delete(cartItem);
+            // 아이템 버전이 다르거나(수정), 삭제된 아이템은 조회시 장바구니에서 자동 삭제
+            if (!itemRepository.existsById(item.getId())) cartRepository.delete(cartItem);
+            else if (cartItem.getItemVersion() != item.getVersion()) cartRepository.delete(cartItem);
+            else {
+                CartItemDto cartItemDto = CartItemDto.builder()
+                        .thumbnailUrl(item.getThumbnail().getStore_name())
+                        .option1(cartItem.getOption1().getName())
+                        //.option2(cartItem.getOption2().getName())
+                        .count(cartItem.getCount())
+                        .price(item.getPrice())
+                        .sale(item.getSale())
+                        .cartItemId(cartItem.getId())
+                        .build();
+                if (cartItem.getOption2() != null) cartItemDto.setOption2(cartItem.getOption2().getName());
 
-            CartItemDto cartItemDto = CartItemDto.builder()
-                    .thumbnailUrl(item.getThumbnail().getStore_name())
-                    .option1(cartItem.getOption1().getName())
-                    .option2(cartItem.getOption2().getName())
-                    .count(cartItem.getCount())
-                    .price(item.getPrice())
-                    .sale(item.getSale())
-                    .cartItemId(cartItem.getId())
-                    .build();
-
-            result.add(cartItemDto);
+                result.add(cartItemDto);
+            }
         }
 
         return result;
@@ -79,7 +100,7 @@ public class CartService {
     public void changeCount(Long userId, Long cartItemId, Integer count) {
         CartItem cartItem = cartRepository.findById(cartItemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM));
-        if(cartItem.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NOT_AUTHORITY_CART_EDIT);
+        if (cartItem.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NOT_AUTHORITY_CART_EDIT);
 
         cartItem.setCount(count);
         cartRepository.save(cartItem);

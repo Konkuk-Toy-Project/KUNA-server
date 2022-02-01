@@ -10,7 +10,7 @@ public class ResponseItemList {
     String thumbnailUrl;
     String name;
     Integer price;
-    Integer preferenceCount;
+    Integer preference;
     Integer sale;
     Long itemId;
     Long categoryId;

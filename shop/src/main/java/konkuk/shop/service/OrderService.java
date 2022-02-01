@@ -43,12 +43,15 @@ public class OrderService {
          * 재고 수량 확인
          * 등등 많은 검증이 필요함. 화이팅!
          */
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         Coupon coupon = useCoupon(form.getCouponId());
 
         Delivery delivery = deliveryRepository.save(
                 new Delivery(form.getAddress(), form.getPhone(), form.getRecipient(), DeliveryState.PREPARING));
+
+        List<OrderItem> orderItems = makeOrderItem(form.getOrderItems());
 
         Order order = Order.builder()
                 .delivery(delivery)
@@ -61,42 +64,49 @@ public class OrderService {
                 .shippingCharge(form.getShippingCharge())
                 .orderState(OrderState.NORMALITY)
                 .orderItems(new ArrayList<>())
+                .orderItems(orderItems)
                 .build();
 
         Order saveOrder = orderRepository.save(order);
 
-        List<OrderItemForm> orderItems = form.getOrderItems();
+        for (OrderItem orderItem : orderItems) {
+            orderItem.setOrder(saveOrder);
+            orderItemRepository.save(orderItem);
+        }
+
+        return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(), saveOrder.getOrderDate());
+    }
+
+    private List<OrderItem> makeOrderItem(List<OrderItemForm> orderItems) {
+        List<OrderItem> result = new ArrayList<>();
+
         for (OrderItemForm orderItemform : orderItems) {
             Item item = itemRepository.findById(orderItemform.getItemId())
                     .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
             Option1 option1 = option1Repository.findById(orderItemform.getOption1Id())
                     .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION1_BY_ID));
-            Option2 option2 = option2Repository.findById(orderItemform.getOption2Id())
-                    .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION2_BY_ID));
-
-            /**
-             * 옵션2가 없는 경우에 예외 처리 해줘야함.
-             */
-            option2.minusStock(orderItemform.getCount());
 
             OrderItem orderItem = OrderItem.builder()
-                    .order(saveOrder)
                     .itemPrice(item.getPrice())
                     .itemName(item.getName())
                     .itemVersion(item.getVersion())
                     .option1(option1.getName())
-                    .option2(option2.getName())
                     .count(orderItemform.getCount())
                     .thumbnailUrl(item.getThumbnail().getStore_name())
                     .isReviewed(false)
                     .item(item)
                     .build();
 
-            saveOrder.getOrderItems().add(orderItemRepository.save(orderItem));
+            option1.minusStock(orderItemform.getCount());
+            if (orderItemform.getOption2Id() != null) {
+                Option2 option2 = option2Repository.findById(orderItemform.getOption2Id())
+                        .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION2_BY_ID));
+                option2.minusStock(orderItemform.getCount());
+                orderItem.setOption2(option2.getName());
+            }
+            result.add(orderItem);
         }
-
-
-        return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(), saveOrder.getOrderDate());
+        return result;
     }
 
     private PayMethod convertPayMethod(String payMethod) {

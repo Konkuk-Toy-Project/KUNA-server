@@ -9,4 +9,5 @@ public class RequestSignupForm {
     String name;
     String phone;
     String birth;
+    String role;
 }
