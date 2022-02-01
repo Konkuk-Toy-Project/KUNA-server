@@ -109,7 +109,7 @@ public class InitDB {
 
         item = itemRepository.save(item);
 
-        Option1 saveOption1 = option1Repository.save(new Option1("Size M", 16));
+        Option1 saveOption1 = option1Repository.save(new Option1("Size M", 26));
         Option2 saveOption2 = option2Repository.save(new Option2(13, "파란색", saveOption1));
         saveOption1.getOption2s().add(saveOption2);
         saveOption2 = option2Repository.save(new Option2(13, "노란색", saveOption1));
@@ -117,7 +117,7 @@ public class InitDB {
         saveOption1.setItem(item);
         item.getOption1s().add(saveOption1);
 
-        saveOption1 = option1Repository.save(new Option1("Size L", 3));
+        saveOption1 = option1Repository.save(new Option1("Size L", 6));
         saveOption2 = option2Repository.save(new Option2(3, "파란색", saveOption1));
         saveOption1.getOption2s().add(saveOption2);
         saveOption2 = option2Repository.save(new Option2(3, "노란색", saveOption1));

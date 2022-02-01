@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class FindReviewDto {
+    String memberName;
     String option;
     String description;
     Integer rate;

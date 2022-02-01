@@ -12,4 +12,5 @@ public class AddReviewForm {
     String description;
     Integer rate;
     List<MultipartFile> reviewImage;
+    Long orderItemId;
 }

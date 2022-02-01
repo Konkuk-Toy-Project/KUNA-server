@@ -17,6 +17,7 @@ public enum ExceptionEnum {
     DUPLICATION_MEMBER_PHONE(HttpStatus.BAD_REQUEST, "M009", "중복된 전화번호입니다."),
 
     NO_FIND_ITEM_BY_ID(HttpStatus.BAD_REQUEST, "I001", "존재하지 않는 아이템입니다."),
+    NO_STOCK_ITEM(HttpStatus.BAD_REQUEST, "I002", "해당 옵션의 재고가 부족합니다."),
 
     NO_FIND_OPTION1_BY_ID(HttpStatus.BAD_REQUEST, "P001", "존재하지 않는 옵션1입니다."),
     NO_FIND_OPTION2_BY_ID(HttpStatus.BAD_REQUEST, "P002", "존재하지 않는 옵션2입니다."),
@@ -30,6 +31,9 @@ public enum ExceptionEnum {
 
     NO_FIND_COUPON(HttpStatus.BAD_REQUEST, "C001", "존재하지 않는 쿠폰입니다."),
     ALREADY_REGISTRY_COUPON(HttpStatus.BAD_REQUEST, "C002", "이미 등록된 쿠폰입니다."),
+    NOT_SATISFY_USE_COUPON(HttpStatus.BAD_REQUEST, "C003", "쿠폰 사용 조건을 만족하지 못합니다."),
+    NOT_MATCH_COUPON_MEMBER(HttpStatus.BAD_REQUEST, "C004", "해당 쿠폰 소유자가 아닙니다."),
+    ALREADY_USED_COUPON(HttpStatus.BAD_REQUEST, "C005", "이미 사용한 쿠폰입니다."),
 
     NO_FIND_CATEGORY(HttpStatus.BAD_REQUEST, "CT01", "존재하지 않는 카테고리입니다."),
 
@@ -41,11 +45,18 @@ public enum ExceptionEnum {
 
     NO_FIND_ORDER(HttpStatus.BAD_REQUEST, "O001", "해당 주문을 찾을 수 없습니다."),
     INCORRECT_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "O002", "옯바르지 않는 결제 방식입니다."),
+    INCORRECT_SHIPPING_CHARGE(HttpStatus.BAD_REQUEST, "O003", "옯바르지 않는 배송금액입니다."),
+    INCORRECT_TOTAL_PRICE(HttpStatus.BAD_REQUEST, "O004", "합계 금액이 맞지 않습니다."),
+    NO_AUTHORITY_ACCESS_ORDER(HttpStatus.BAD_REQUEST, "O005", "해당 주문의 접근할 권한이 없습니다."),
+    NO_FIND_ORDER_ITEM(HttpStatus.BAD_REQUEST, "O006", "해당 주문 상품을 찾을 수 없습니다."),
 
     NO_FIND_ADMIN_MEMBER(HttpStatus.BAD_REQUEST, "A001", "해당 관리자를 찾을 수 없습니다."),
 
     NO_FIND_QNA(HttpStatus.BAD_REQUEST, "Q001", "해당 Qna를 찾을 수 없습니다."),
     NO_AUTHORITY_ANSWER_QNA(HttpStatus.BAD_REQUEST, "Q001", "해당 Qna에 답변할 권한이 없습니다."),
+
+    NO_FIND_REVIEW(HttpStatus.BAD_REQUEST, "R001", "해당 리뷰를 찾을 수 없습니다."),
+    ALREADY_REGISTRY_REVIEW(HttpStatus.BAD_REQUEST, "R002", "이미 리뷰를 작성했습니다."),
 
     ;
     private final HttpStatus status;

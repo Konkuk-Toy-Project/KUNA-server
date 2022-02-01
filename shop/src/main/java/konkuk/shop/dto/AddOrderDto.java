@@ -10,5 +10,6 @@ import java.time.LocalDateTime;
 public class AddOrderDto {
     Long orderId;
     Integer totalPrice;
+    Integer shippingCharge;
     LocalDateTime orderDate;
 }

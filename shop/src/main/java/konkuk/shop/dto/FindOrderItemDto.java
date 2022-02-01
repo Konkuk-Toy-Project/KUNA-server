@@ -12,8 +12,9 @@ public class FindOrderItemDto {
     String option1;
     String option2;
     Integer price;
-    String thumbnailIrl;
+    String thumbnailUrl;
     boolean isReviewed;
     Long itemId;
     Integer count;
+    Long orderItemId;
 }

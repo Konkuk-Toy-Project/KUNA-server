@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class FindOrderListDto {
     LocalDateTime orderDate;
     Integer totalPrice;
+    Integer shippingCharge;
     Long orderId;
     String orderState;
     String deliveryState;

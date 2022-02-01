@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,22 +37,23 @@ public class OrderService {
 
     @Transactional
     public AddOrderDto addOrder(Long memberId, RequestAddOrderForm form) {
-        /**
-         * 쿠폰 사용 조건
-         * 주문 토탈 금액 확인
-         * 배송 요금 확인
-         * 재고 수량 확인
-         * 등등 많은 검증이 필요함. 화이팅!
-         */
-
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
-        Coupon coupon = useCoupon(form.getCouponId());
+
+        // 1. 쿠폰 검증
+        Coupon coupon = validationCoupon(form.getCouponId(), form.getTotalPrice(), memberId);
+
+        // 2. 배송 요금 확인
+        if (form.getTotalPrice() >= 50000 && form.getShippingCharge() != 0)
+            throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
+        if (form.getTotalPrice() < 50000 && form.getShippingCharge() == 0)
+            throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
+
+        // 3. 재고 수량 확인 및 토탈 금액 검증
+        List<OrderItem> orderItems = makeOrderItem(form.getOrderItems(), form.getTotalPrice());
 
         Delivery delivery = deliveryRepository.save(
                 new Delivery(form.getAddress(), form.getPhone(), form.getRecipient(), DeliveryState.PREPARING));
-
-        List<OrderItem> orderItems = makeOrderItem(form.getOrderItems());
 
         Order order = Order.builder()
                 .delivery(delivery)
@@ -74,11 +76,14 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
-        return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(), saveOrder.getOrderDate());
+        if(coupon!=null) coupon.setUsed(true);
+
+        return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(), saveOrder.getShippingCharge(), saveOrder.getOrderDate());
     }
 
-    private List<OrderItem> makeOrderItem(List<OrderItemForm> orderItems) {
+    private List<OrderItem> makeOrderItem(List<OrderItemForm> orderItems, int totalPrice) {
         List<OrderItem> result = new ArrayList<>();
+        int priceSum = 0;
 
         for (OrderItemForm orderItemform : orderItems) {
             Item item = itemRepository.findById(orderItemform.getItemId())
@@ -97,15 +102,25 @@ public class OrderService {
                     .item(item)
                     .build();
 
+            if (option1.getStock() < orderItemform.getCount())
+                throw new ApiException(ExceptionEnum.NO_STOCK_ITEM);
             option1.minusStock(orderItemform.getCount());
+
             if (orderItemform.getOption2Id() != null) {
                 Option2 option2 = option2Repository.findById(orderItemform.getOption2Id())
                         .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION2_BY_ID));
+
+                if (option2.getStock() < orderItemform.getCount())
+                    throw new ApiException(ExceptionEnum.NO_STOCK_ITEM);
                 option2.minusStock(orderItemform.getCount());
+
                 orderItem.setOption2(option2.getName());
             }
+            priceSum += (item.getPrice() * orderItemform.getCount() * (100 - item.getSale()) * 0.01);
             result.add(orderItem);
         }
+
+        if (priceSum != totalPrice) throw new ApiException(ExceptionEnum.INCORRECT_TOTAL_PRICE);
         return result;
     }
 
@@ -115,17 +130,27 @@ public class OrderService {
         else throw new ApiException(ExceptionEnum.INCORRECT_PAYMENT_METHOD);
     }
 
-    private Coupon useCoupon(Long couponId) {
-        Optional<Coupon> couponOptional = couponRepository.findById(couponId);
-        if (!couponOptional.isPresent()) return null;
-        Coupon coupon = couponOptional.get();
-        coupon.setUsed(true);
-        return couponRepository.save(coupon);
+    private Coupon validationCoupon(Long couponId, int totalPrice, Long userId) {
+        if(couponId==null) return null;
+
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_COUPON));
+
+        if (coupon.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NOT_MATCH_COUPON_MEMBER);
+        if (coupon.isUsed()) throw new ApiException(ExceptionEnum.ALREADY_USED_COUPON);
+
+        String couponCondition = coupon.getCouponCondition();
+        String[] subStr = couponCondition.split("_");
+        int conditionPrice = Integer.parseInt(subStr[2]);
+        if (conditionPrice > totalPrice) throw new ApiException(ExceptionEnum.NOT_SATISFY_USE_COUPON);
+
+        return coupon;
     }
 
-    public FindOrderDto findOrderDetailList(Long orderId) {
+    public FindOrderDto findOrderDetailList(Long userId, Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER));
+        if(order.getMember().getId()!=userId) throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ORDER);
 
         List<FindOrderItemDto> itemDtos = new ArrayList<>();
         List<OrderItem> orderItems = order.getOrderItems();
@@ -136,9 +161,10 @@ public class OrderService {
                     .name(orderItem.getItemName())
                     .option1(orderItem.getOption1())
                     .option2(orderItem.getOption2())
-                    .thumbnailIrl(orderItem.getThumbnailUrl())
+                    .thumbnailUrl(orderItem.getThumbnailUrl())
                     .price(orderItem.getItemPrice())
                     .count(orderItem.getCount())
+                    .orderItemId(orderItem.getId())
                     .build();
             itemDtos.add(itemDto);
         }
@@ -151,7 +177,7 @@ public class OrderService {
                 .phone(delivery.getPhone())
                 .recipient(delivery.getRecipient())
                 .deliveryState(delivery.getDeliveryState().toString())
-                .orderItemList(itemDtos)
+                .orderItems(itemDtos)
                 .orderState(order.getOrderState().toString())
                 .orderDate(order.getOrderDate())
                 .usedPoint(order.getUsedPoint())
@@ -162,13 +188,10 @@ public class OrderService {
     }
 
     public List<FindOrderListDto> findOrderList(Long userId) {
-        List<Order> findOrder = orderRepository.findByMemberId(userId);
-
-        List<FindOrderListDto> result = new ArrayList<>();
-        for (Order order : findOrder) {
-            result.add(new FindOrderListDto(order.getOrderDate(), order.getTotalPrice(), order.getId(),
-                    order.getOrderState().toString(), order.getDelivery().getDeliveryState().toString()));
-        }
+        List<FindOrderListDto> result = orderRepository.findByMemberId(userId).stream()
+                .map(e -> new FindOrderListDto(e.getOrderDate(), e.getTotalPrice(), e.getShippingCharge(),
+                        e.getId(), e.getOrderState().toString(), e.getDelivery().getDeliveryState().toString()))
+                .collect(Collectors.toList());
         return result;
     }
 }

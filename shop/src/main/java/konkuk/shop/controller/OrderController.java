@@ -29,6 +29,14 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
+    @GetMapping("/{orderId}")
+    public ResponseEntity<FindOrderDto> getOrderDetail(@AuthenticationPrincipal Long userId,
+                                                       @PathVariable Long orderId) {
+        FindOrderDto result = orderService.findOrderDetailList(userId, orderId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
     @GetMapping
     public ResponseEntity<List<FindOrderListDto>> getOrderList(@AuthenticationPrincipal Long userId) {
         List<FindOrderListDto> result = orderService.findOrderList(userId);
@@ -36,13 +44,5 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/{orderId}")
-    public ResponseEntity<FindOrderDto> getOrderDetail(@PathVariable Long orderId) {
-        /**
-         * 로그인 본인이 주문한건지 확인하는 로직 필요
-         */
-        FindOrderDto result = orderService.findOrderDetailList(orderId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
 }

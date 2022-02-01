@@ -21,6 +21,6 @@ public class FindOrderDto {
     String payMethod;
     Integer shippingCharge;
     String orderState;
-    List<FindOrderItemDto> orderItemList;
+    List<FindOrderItemDto> orderItems;
     Long orderId;
 }
