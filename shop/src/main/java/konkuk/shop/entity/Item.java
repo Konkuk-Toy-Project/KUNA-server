@@ -69,4 +69,12 @@ public class Item {
     public void setThumbnail(Thumbnail thumbnail) {
         this.thumbnail = thumbnail;
     }
+
+    public void plusPreferenceCount(){
+        this.preferenceCount+=1;
+    }
+
+    public void minusPreferenceCount(){
+        this.preferenceCount-=1;
+    }
 }
