@@ -19,4 +19,5 @@ public class ResponseQnaList {
     LocalDateTime registryDate;
     String memberName;
     String answer;
+    String title;
 }

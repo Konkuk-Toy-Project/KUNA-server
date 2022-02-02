@@ -39,20 +39,20 @@ spring.servlet.multipart.maxFileSize: 10MB
 spring.servlet.multipart.maxRequestSize: 10MB
 
 image:
-  review: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/reviewImage/
-  item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/itemImage/
-  detail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/detailImage/
-  thumbnail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/thumbnail/
+  #review: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/reviewImage/
+  #item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/itemImage/
+  #detail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/detailImage/
+  #thumbnail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/thumbnail/
 
   #review: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\github\shop\src\main\resources\static\reviewImage\
   #item: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\github\shop\src\main\resources\static\itemImage\
   #detail: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\github\shop\src\main\resources\static\detailImage\
   #thumbnail: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\github\shop\src\main\resources\static\thumbnail\
 
-  #review: /image/review/
-  #item: /image/item/
-  #detail: /image/detail/
-  #thumbnail: /image/thumbnail/
+  review: /image/review/
+  item: /image/item/
+  detail: /image/detail/
+  thumbnail: /image/thumbnail/
 
 token:
   expiration_time: 600000

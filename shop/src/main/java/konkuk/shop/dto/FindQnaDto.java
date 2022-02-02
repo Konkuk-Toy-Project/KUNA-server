@@ -16,4 +16,5 @@ public class FindQnaDto {
     String answer;
     LocalDateTime registryDate;
     String memberName;
+    String title;
 }

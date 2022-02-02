@@ -1,6 +1,5 @@
 package konkuk.shop.service;
 
-
 import konkuk.shop.dto.FindQnaDto;
 import konkuk.shop.entity.AdminMember;
 import konkuk.shop.entity.Item;
@@ -38,7 +37,7 @@ public class QnaService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
 
         log.info("qna request. isSecret={}", form.isSecret());
-        Qna qna = new Qna(item, member, item.getAdminMember(), form.getQuestion(), form.isSecret());
+        Qna qna = new Qna(item, member, item.getAdminMember(), form.getQuestion(), form.isSecret(), form.getTitle());
         Qna saveQna = qnaRepository.save(qna);
 
         return saveQna.getId();
@@ -64,6 +63,7 @@ public class QnaService {
                         .memberName(qna.getMember().getName())
                         .question(qna.getQuestion())
                         .registryDate(qna.getRegistryDate())
+                        .title(qna.getTitle())
                         .build());
             }
         }
@@ -89,6 +89,7 @@ public class QnaService {
                         .registryDate(qna.getRegistryDate())
                         .itemId(qna.getItem().getId())
                         .answer(checkNull(qna.getAnswer()))
+                        .title(qna.getTitle())
                         .build());
             }
         }

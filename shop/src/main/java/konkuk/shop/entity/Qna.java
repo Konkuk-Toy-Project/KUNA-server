@@ -19,6 +19,7 @@ public class Qna {
     private boolean isAnswered;
     private String question;
     private String answer;
+    private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="item_id")
@@ -39,13 +40,14 @@ public class Qna {
     private LocalDateTime answerDate;
 
 
-    public Qna(Item item, Member member, AdminMember adminMember, String question, boolean isSecret) {
+    public Qna(Item item, Member member, AdminMember adminMember, String question, boolean isSecret, String title) {
         this.isSecret = isSecret;
         this.question = question;
         this.item = item;
         this.member = member;
         this.adminMember = adminMember;
         this.registryDate = LocalDateTime.now();
+        this.title = title;
     }
 
     public void registryAnswer(String answer) {
