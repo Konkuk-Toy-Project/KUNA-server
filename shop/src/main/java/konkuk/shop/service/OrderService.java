@@ -19,7 +19,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -76,7 +75,7 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
-        if(coupon!=null) coupon.setUsed(true);
+        if (coupon != null) coupon.setUsed(true);
 
         return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(), saveOrder.getShippingCharge(), saveOrder.getOrderDate());
     }
@@ -131,13 +130,15 @@ public class OrderService {
     }
 
     private Coupon validationCoupon(Long couponId, int totalPrice, Long userId) {
-        if(couponId==null) return null;
+        if (couponId == null) return null;
 
         Coupon coupon = couponRepository.findById(couponId)
-                .orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_COUPON));
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_COUPON));
 
         if (coupon.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NOT_MATCH_COUPON_MEMBER);
         if (coupon.isUsed()) throw new ApiException(ExceptionEnum.ALREADY_USED_COUPON);
+        if (coupon.getExpiredDate().isBefore(LocalDateTime.now()))
+            throw new ApiException(ExceptionEnum.EXPIRED_COUPON);
 
         String couponCondition = coupon.getCouponCondition();
         String[] subStr = couponCondition.split("_");
@@ -150,7 +151,7 @@ public class OrderService {
     public FindOrderDto findOrderDetailList(Long userId, Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER));
-        if(order.getMember().getId()!=userId) throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ORDER);
+        if (order.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ORDER);
 
         List<FindOrderItemDto> itemDtos = new ArrayList<>();
         List<OrderItem> orderItems = order.getOrderItems();

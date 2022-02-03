@@ -15,6 +15,11 @@ public enum ExceptionEnum {
     NOT_ADMIN_MEMBER(HttpStatus.BAD_REQUEST, "M007", "현재 admin 회원이 아닙니다."),
     NOT_FIND_ROLE(HttpStatus.BAD_REQUEST, "M008", "Role을 찾을 수 없습니다."),
     DUPLICATION_MEMBER_PHONE(HttpStatus.BAD_REQUEST, "M009", "중복된 전화번호입니다."),
+    NOT_EMAIL_FORM(HttpStatus.BAD_REQUEST, "M010", "이메일 형식이 틀립니다."),
+    NOT_PASSWORD_FORM(HttpStatus.BAD_REQUEST, "M011", "비밀번호는 영문과 특수문자, 숫자를 포함하며 8자 이상이어야 합니다."),
+    NOT_NAME_FORM(HttpStatus.BAD_REQUEST, "M011", "이름에 공백이 있으면 안됩니다."),
+    NOT_PHONE_FORM(HttpStatus.BAD_REQUEST, "M011", "전화번호가 형식에 맞지 않습니다."),
+    NOT_BIRTH_FORM(HttpStatus.BAD_REQUEST, "M011", "생년월일이 형식에 맞지 않습니다."),
 
     NO_FIND_ITEM_BY_ID(HttpStatus.BAD_REQUEST, "I001", "존재하지 않는 아이템입니다."),
     NO_STOCK_ITEM(HttpStatus.BAD_REQUEST, "I002", "해당 옵션의 재고가 부족합니다."),
@@ -34,6 +39,7 @@ public enum ExceptionEnum {
     NOT_SATISFY_USE_COUPON(HttpStatus.BAD_REQUEST, "C003", "쿠폰 사용 조건을 만족하지 못합니다."),
     NOT_MATCH_COUPON_MEMBER(HttpStatus.BAD_REQUEST, "C004", "해당 쿠폰 소유자가 아닙니다."),
     ALREADY_USED_COUPON(HttpStatus.BAD_REQUEST, "C005", "이미 사용한 쿠폰입니다."),
+    EXPIRED_COUPON(HttpStatus.BAD_REQUEST, "C006", "쿠폰 사용기한이 지났습니다."),
 
     NO_FIND_CATEGORY(HttpStatus.BAD_REQUEST, "CT01", "존재하지 않는 카테고리입니다."),
 

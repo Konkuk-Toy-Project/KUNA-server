@@ -1,5 +1,6 @@
 package konkuk.shop.controller;
 
+import konkuk.shop.dto.LoginDto;
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.Member;
 import konkuk.shop.form.requestForm.member.*;
@@ -8,6 +9,7 @@ import konkuk.shop.security.TokenProvider;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -53,13 +55,10 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public HashMap<String, Object> isDuplicationEmail(@RequestBody RequestLoginForm form) {
-        Member loginMember = memberService.login(form.getEmail(), form.getPassword());
-        String token = tokenProvider.create(loginMember);
+    public ResponseEntity<LoginDto> login(@RequestBody RequestLoginForm form) {
+        LoginDto result = memberService.login(form.getEmail(), form.getPassword());
 
-        HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("token", token);
-        return result;
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @PostMapping("/find/email")

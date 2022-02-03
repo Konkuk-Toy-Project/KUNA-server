@@ -66,6 +66,8 @@ public class CouponService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_COUPON));
 
         if(coupon.getMember()!=null) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_COUPON);
+        if(coupon.getExpiredDate().isBefore(LocalDateTime.now()))
+            throw new ApiException(ExceptionEnum.EXPIRED_COUPON);
 
         coupon.setMember(member);
         member.getCoupons().add(coupon);

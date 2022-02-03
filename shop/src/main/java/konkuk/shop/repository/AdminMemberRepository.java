@@ -12,4 +12,6 @@ public interface AdminMemberRepository extends JpaRepository<AdminMember, Long> 
     Optional<AdminMember> findByMember(Member member);
 
     Optional<AdminMember> findByMemberId(Long userId);
+
+    boolean existsByMember(Member findMember);
 }
