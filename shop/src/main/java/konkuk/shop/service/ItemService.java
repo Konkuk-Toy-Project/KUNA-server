@@ -254,4 +254,16 @@ public class ItemService {
                 .collect(Collectors.toList());
         return result;
     }
+
+    public void editPriceByItemId(Long userId, Long itemId, Integer price, Integer sale) {
+        AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+        if (adminMember.getId() != item.getAdminMember().getId())
+            throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ITEM);
+
+        item.changePriceAndSale(price, sale);
+        itemRepository.save(item);
+    }
 }

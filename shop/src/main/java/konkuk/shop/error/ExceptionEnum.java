@@ -23,6 +23,7 @@ public enum ExceptionEnum {
 
     NO_FIND_ITEM_BY_ID(HttpStatus.BAD_REQUEST, "I001", "존재하지 않는 아이템입니다."),
     NO_STOCK_ITEM(HttpStatus.BAD_REQUEST, "I002", "해당 옵션의 재고가 부족합니다."),
+    NO_AUTHORITY_ACCESS_ITEM(HttpStatus.BAD_REQUEST, "Q001", "해당 상품을 수정할 권한이 없습니다."),
 
     NO_FIND_OPTION1_BY_ID(HttpStatus.BAD_REQUEST, "P001", "존재하지 않는 옵션1입니다."),
     NO_FIND_OPTION2_BY_ID(HttpStatus.BAD_REQUEST, "P002", "존재하지 않는 옵션2입니다."),

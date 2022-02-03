@@ -2,6 +2,7 @@ package konkuk.shop.controller;
 
 
 import konkuk.shop.form.requestForm.admin.RequestAnswerQnaForm;
+import konkuk.shop.form.requestForm.item.EditPriceAndSaleForm;
 import konkuk.shop.form.responseForm.admin.ResponseQnaList;
 import konkuk.shop.form.responseForm.item.ResponseItemList;
 import konkuk.shop.service.ItemService;
@@ -47,6 +48,13 @@ public class AdminController {
         qnaService.saveAnswer(userId, qnaId, form.getAnswer());
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PutMapping("/price/{itemId}")
+    public void editPriceByItemId(@AuthenticationPrincipal Long userId, @PathVariable Long itemId,
+                                  @RequestBody EditPriceAndSaleForm form) {
+        log.info("userId={}", userId);
+        itemService.editPriceByItemId(userId, itemId, form.getPrice(), form.getSale());
     }
 
 }

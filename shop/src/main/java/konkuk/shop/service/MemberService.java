@@ -139,7 +139,7 @@ public class MemberService {
 
         if (dto.getName().contains(" ")) throw new ApiException(ExceptionEnum.NOT_NAME_FORM);
 
-        if (!dto.getPhone().matches("^01(?:0|1|[6-9]) - (?:\\d{3}|\\d{4}) - \\d{4}$"))
+        if (!dto.getPhone().matches("^[0-9]*$") || dto.getPhone().length()<9)
             throw new ApiException(ExceptionEnum.NOT_PHONE_FORM);
 
         if (!dto.getBirth().matches("^[0-9]*$") || dto.getBirth().length() != 8)

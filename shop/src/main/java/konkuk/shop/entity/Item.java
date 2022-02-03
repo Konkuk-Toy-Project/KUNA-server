@@ -21,14 +21,14 @@ public class Item {
     @Column(name = "item_id")
     private Long id;
 
-    @Column(name="preference_count")
+    @Column(name = "preference_count")
     private Integer preferenceCount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="item_state")
+    @Column(name = "item_state")
     private ItemState itemState;
 
-    @Column(name="registry_date")
+    @Column(name = "registry_date")
     private LocalDateTime registryDate;
 
     private Integer version;
@@ -37,11 +37,11 @@ public class Item {
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name="thumbnail_id")
+    @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="admin_member_id")
+    @JoinColumn(name = "admin_member_id")
     private AdminMember adminMember;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -63,18 +63,24 @@ public class Item {
 //    private List<CategoryItem> categoryItems = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     public void setThumbnail(Thumbnail thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public void plusPreferenceCount(){
-        this.preferenceCount+=1;
+    public void plusPreferenceCount() {
+        this.preferenceCount += 1;
     }
 
-    public void minusPreferenceCount(){
-        this.preferenceCount-=1;
+    public void minusPreferenceCount() {
+        this.preferenceCount -= 1;
+    }
+
+    public void changePriceAndSale(Integer price, Integer sale) {
+        if (price != null) this.price = price;
+        if (sale != null) this.sale = sale;
+        this.version += 1;
     }
 }

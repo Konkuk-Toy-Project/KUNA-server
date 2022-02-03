@@ -64,12 +64,12 @@ public class InitDB {
     }
 
     public AdminMember initAdminMember() {
-        SignupDto dto1 = new SignupDto("asdf@asdf.com", "asdfasdf@", "testMember1", "01012345678", "20000327", "admin");
+        SignupDto dto1 = new SignupDto("asdf@asdf.com", "asdfasdf@1", "testMember1", "01012345678", "20000327", "admin");
         Long saveMemberId = memberService.signup(dto1);
         return memberService.findAdminByMemberId(saveMemberId);
     }
     public Member initMember(){
-        SignupDto dto2 = new SignupDto("asdf2@asdf.com", "asdfasdf@", "testMember2", "01087654321", "19991003", "user");
+        SignupDto dto2 = new SignupDto("asdf2@asdf.com", "asdfasdf@2", "testMember2", "01087654321", "19991003", "user");
         Long member = memberService.signup(dto2);
         return memberRepository.findById(member).get();
     }
