@@ -79,6 +79,7 @@ public class MemberService {
         return tempPassword;
     }
 
+    @Transactional
     public void changePassword(Long userId, String newPassword) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
@@ -86,18 +87,7 @@ public class MemberService {
         if (match) throw new ApiException(ExceptionEnum.NOTHING_CHANGE_PASSWORD);
 
         member.setPassword(passwordEncoder.encode(newPassword));
-        memberRepository.save(member);
     }
-
-//    public AdminMember addAdminMember(Long userId) {
-//        Member member = memberRepository.findById(userId)
-//                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
-//        member.setMemberRole(MemberRole.ADMIN);
-//
-//        AdminMember adminMember = new AdminMember(member);
-//        memberRepository.save(member);
-//        return adminMemberRepository.save(adminMember);
-//    }
 
     private String randomPw() {
         char pwCollectionSpCha[] = new char[]{'!', '@', '#', '$', '%', '^', '&', '*', '(', ')'};

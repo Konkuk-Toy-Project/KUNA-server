@@ -1,6 +1,5 @@
 package konkuk.shop.service;
 
-
 import konkuk.shop.dto.FindAllCategoryDto;
 import konkuk.shop.entity.Category;
 import konkuk.shop.error.ApiException;
@@ -18,14 +17,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    //private final CategoryItemRepository categoryItemRepository;
 
     public Category findCategoryById(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
     }
 
-    public Category addCategory(String name){
+    public Category addCategory(String name) {
         return categoryRepository.save(new Category(name));
     }
 

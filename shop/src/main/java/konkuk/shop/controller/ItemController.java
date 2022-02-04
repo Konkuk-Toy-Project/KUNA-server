@@ -33,7 +33,7 @@ public class ItemController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public HashMap<String, Object> registryItem(@AuthenticationPrincipal Long userId,
+    public ResponseEntity<?> registryItem(@AuthenticationPrincipal Long userId,
                                                 RequestAddItem form) {
         log.info("name={}, price={}, sale={}, categoryId={}", form.getName(), form.getPrice(), form.getSale(), form.getCategoryId());
         //log.info("detailImages size={}, itemImage size={}", form.getDetailImages().size(), form.getItemImages().size());
@@ -57,7 +57,7 @@ public class ItemController {
 
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("itemId", item.getId());
-        return result;
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PostMapping("/{itemId}/option")

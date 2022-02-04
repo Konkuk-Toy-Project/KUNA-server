@@ -61,9 +61,9 @@ public class InitDB {
         Item item = initItem(adminMember, category);
         initCart(adminMember.getMember().getId(), item);
         initCoupon();
-        initReview(member, item);
-        Long preferenceId = initPreference(member, item);
-        Order order = initOrder(member, item);
+        initReview(adminMember.getMember(), item);
+        Long preferenceId = initPreference(adminMember.getMember(), item);
+        Order order = initOrder(adminMember.getMember(), item);
     }
 
     private AdminMember initAdminMember() {

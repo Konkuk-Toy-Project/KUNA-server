@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class CartService {
     private final Option1Repository option1Repository;
     private final Option2Repository option2Repository;
 
+    @Transactional
     public Long addItem(Long userId, Long itemId, Long option1Id, Long option2Id, int count) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
@@ -58,7 +60,6 @@ public class CartService {
 
         CartItem saveCartItem = cartRepository.save(cartItem);
         member.getCartItems().add(saveCartItem);
-        memberRepository.save(member);
         return saveCartItem.getId();
     }
 
@@ -97,12 +98,13 @@ public class CartService {
         return result;
     }
 
+    @Transactional
     public void changeCount(Long userId, Long cartItemId, Integer count) {
         CartItem cartItem = cartRepository.findById(cartItemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM));
-        if (cartItem.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NOT_AUTHORITY_CART_EDIT);
+        if (cartItem.getMember().getId() != userId)
+            throw new ApiException(ExceptionEnum.NOT_AUTHORITY_CART_EDIT);
 
         cartItem.setCount(count);
-        cartRepository.save(cartItem);
     }
 }

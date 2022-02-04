@@ -21,13 +21,13 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public HashMap<String, Object> addReview(@AuthenticationPrincipal Long userId,
+    public ResponseEntity<?> addReview(@AuthenticationPrincipal Long userId,
                                              AddReviewForm form) {
         Long reviewId = reviewService.saveReview(userId, form);
 
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("reviewId", reviewId);
-        return result;
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @GetMapping("/{itemId}")

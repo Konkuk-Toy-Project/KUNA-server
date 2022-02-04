@@ -25,6 +25,7 @@ public class PreferenceService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
 
+    @Transactional
     public Long savePreferenceItem(Long memberId, Long itemId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
@@ -34,7 +35,6 @@ public class PreferenceService {
         member.getPreferenceItems().add(savePreferenceItem);
 
         item.plusPreferenceCount();
-        itemRepository.save(item);
         return savePreferenceItem.getId();
     }
 

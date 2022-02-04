@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +98,7 @@ public class QnaService {
         return result;
     }
 
+    @Transactional
     public void saveAnswer(Long userId, Long qnaId, String answer) {
         Qna qna = qnaRepository.findById(qnaId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_QNA));
@@ -104,9 +106,7 @@ public class QnaService {
         if (qna.getAdminMember().getMember().getId() != userId)
             throw new ApiException(ExceptionEnum.NO_AUTHORITY_ANSWER_QNA);
 
-
         qna.registryAnswer(answer);
-        qnaRepository.save(qna);
     }
 
     private String checkNull(String str) {

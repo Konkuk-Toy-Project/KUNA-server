@@ -255,6 +255,7 @@ public class ItemService {
         return result;
     }
 
+    @Transactional
     public void editPriceByItemId(Long userId, Long itemId, Integer price, Integer sale) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
@@ -264,6 +265,5 @@ public class ItemService {
             throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ITEM);
 
         item.changePriceAndSale(price, sale);
-        itemRepository.save(item);
     }
 }

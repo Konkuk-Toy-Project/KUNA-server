@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -59,6 +60,7 @@ public class CouponService {
         return result;
     }
 
+    @Transactional
     public void registryCoupon(Long userId, String serialNumber) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
@@ -71,7 +73,5 @@ public class CouponService {
 
         coupon.setMember(member);
         member.getCoupons().add(coupon);
-
-        couponRepository.save(coupon); //업데이트
     }
 }
