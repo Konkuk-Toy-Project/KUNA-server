@@ -54,8 +54,8 @@ public class MemberService {
     public LoginDto login(String email, String password) {
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER_EMAIL));
-        boolean match = passwordEncoder.matches(password, findMember.getPassword());
-        if (!match) throw new ApiException(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD);
+        boolean passwordMatch = passwordEncoder.matches(password, findMember.getPassword());
+        if (!passwordMatch) throw new ApiException(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD);
 
         String token = tokenProvider.create(findMember);
         String role = "user";
@@ -64,17 +64,17 @@ public class MemberService {
     }
 
     public String findEmail(String name, String phone) {
-        Member member = memberRepository.findByNameAndPhone(name, phone)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
-        return member.getEmail();
+        return memberRepository.findByNameAndPhone(name, phone)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER))
+                .getEmail();
     }
 
+    @Transactional
     public String findPassword(String email, String name, String phone) {
         Member member = memberRepository.findByEmailAndNameAndPhone(email, name, phone)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         String tempPassword = randomPw();
         member.setPassword(passwordEncoder.encode(tempPassword));
-        memberRepository.save(member);
 
         return tempPassword;
     }
@@ -139,7 +139,7 @@ public class MemberService {
 
         if (dto.getName().contains(" ")) throw new ApiException(ExceptionEnum.NOT_NAME_FORM);
 
-        if (!dto.getPhone().matches("^[0-9]*$") || dto.getPhone().length()<9)
+        if (!dto.getPhone().matches("^[0-9]*$") || dto.getPhone().length() < 9)
             throw new ApiException(ExceptionEnum.NOT_PHONE_FORM);
 
         if (!dto.getBirth().matches("^[0-9]*$") || dto.getBirth().length() != 8)

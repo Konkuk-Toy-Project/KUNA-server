@@ -64,7 +64,6 @@ public class OrderService {
                 .payMethod(convertPayMethod(form.getPayMethod()))
                 .shippingCharge(form.getShippingCharge())
                 .orderState(OrderState.NORMALITY)
-                .orderItems(new ArrayList<>())
                 .orderItems(orderItems)
                 .build();
 
