@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class DetailImage {
     @Id
     @GeneratedValue
-    @Column(name = "delivery_id")
+    @Column(name = "detail_image_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

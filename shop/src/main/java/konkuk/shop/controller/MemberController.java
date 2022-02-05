@@ -25,7 +25,6 @@ import java.util.HashMap;
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
-    private final TokenProvider tokenProvider;
     private final Environment env;
 
     @GetMapping("/health_check")
@@ -85,8 +84,13 @@ public class MemberController {
         memberService.changePassword(userId, form.getNewPassword());
     }
 
-//    @PutMapping("/admin")
-//    public void registryAdmin(@AuthenticationPrincipal Long userId) {
-//        memberService.addAdminMember(userId);
-//    }
+    @GetMapping("/point")
+    public HashMap<String, Object> findPoint(@AuthenticationPrincipal Long userId) {
+        Integer point = memberService.findPointByMemberId(userId);
+
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("point", point);
+        return result;
+    }
+
 }

@@ -2,6 +2,8 @@ package konkuk.shop;
 
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.*;
+import konkuk.shop.error.ApiException;
+import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.repository.*;
 import konkuk.shop.service.*;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,7 @@ public class InitDB {
     private final DeliveryRepository deliveryRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final QnaRepository qnaRepository;
 
     @Value("${image.thumbnail}")
     private String thumbnailPath;
@@ -57,6 +60,7 @@ public class InitDB {
         log.info("initialize database");
         AdminMember adminMember = initAdminMember();
         Member member = initMember();
+        member.changePoint(500);
         Category category = initCategory();
         Item item = initItem(adminMember, category);
         initCart(adminMember.getMember().getId(), item);
@@ -64,11 +68,13 @@ public class InitDB {
         initReview(adminMember.getMember(), item);
         Long preferenceId = initPreference(adminMember.getMember(), item);
         Order order = initOrder(adminMember.getMember(), item);
+        initQna(member, item);
     }
 
     private AdminMember initAdminMember() {
         SignupDto dto1 = new SignupDto("asdf@asdf.com", "asdfasdf@1", "testMember1", "01012345678", "20000327", "admin");
         Long saveMemberId = memberService.signup(dto1);
+
         return memberService.findAdminByMemberId(saveMemberId);
     }
 
@@ -202,5 +208,12 @@ public class InitDB {
         orderItemRepository.save(orderItem);
 
         return saveOrder;
+    }
+
+    private void initQna(Member member, Item item) {
+        Qna qna1 = new Qna(item, member, item.getAdminMember(), "1년전에 주문했는데, 혹시 환불 가능한가요? ㅜㅜ", true, "환불 부탁드립니다.");
+        Qna qna2 = new Qna(item, member, item.getAdminMember(), "바다의.. 보물?!", false, "혹시 판매자분 바보신가요?");
+        qnaRepository.save(qna1);
+        qnaRepository.save(qna2);
     }
 }

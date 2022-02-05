@@ -69,4 +69,8 @@ public class Member {
     public void setMemberRole(MemberRole memberRole) {
         this.memberRole=memberRole;
     }
+
+    public void changePoint(Integer point) {
+        this.point+=point;
+    }
 }

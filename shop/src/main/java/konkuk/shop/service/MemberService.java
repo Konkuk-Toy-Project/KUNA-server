@@ -135,4 +135,10 @@ public class MemberService {
         if (!dto.getBirth().matches("^[0-9]*$") || dto.getBirth().length() != 8)
             throw new ApiException(ExceptionEnum.NOT_BIRTH_FORM);
     }
+
+    public Integer findPointByMemberId(Long userId) {
+        return memberRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER))
+                .getPoint();
+    }
 }
