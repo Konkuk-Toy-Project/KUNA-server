@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>DB 테이블 보기(Beta)</title>
+    <title>DB 테이블 보기</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
@@ -26,11 +26,12 @@
         <tbody>
         <tr th:each="adminMember : ${adminMembers}">
             <td th:text="${adminMember.getId()}"></td>
-            <td th:text="${adminMember.getMember().getId()}"></td>
+            <td th:if="${adminMember.getMember()==null}"></td>
+            <td th:if="${adminMember.getMember()!=null}" th:text="${adminMember.getMember().getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Member</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -63,7 +64,7 @@
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>CartItem</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -83,14 +84,23 @@
             <td th:text="${cartItem.getId()}"></td>
             <td th:text="${cartItem.getCount()}"></td>
             <td th:text="${cartItem.getItemVersion()}"></td>
-            <td th:text="${cartItem.getItem().getId()}"></td>
-            <td th:text="${cartItem.getMember().getId()}"></td>
-            <td th:text="${cartItem.getOption1().getId()}"></td>
-            <td th:text="${cartItem.getOption2().getId()}"></td>
+
+            <td th:if="${cartItem.getItem()==null}"></td>
+            <td th:if="${cartItem.getItem()!=null}" th:text="${cartItem.getItem().getId()}"></td>
+
+            <td th:if="${cartItem.getMember()==null}"></td>
+            <td th:if="${cartItem.getMember()!=null}" th:text="${cartItem.getMember().getId()}"></td>
+
+            <td th:if="${cartItem.getOption1()==null}"></td>
+            <td th:if="${cartItem.getOption1()!=null}" th:text="${cartItem.getOption1().getId()}"></td>
+
+            <td th:if="${cartItem.getOption2()==null}"></td>
+            <td th:if="${cartItem.getOption2()!=null}" th:text="${cartItem.getOption2().getId()}"></td>
+
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Category</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -107,7 +117,7 @@
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Coupon</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -139,7 +149,7 @@
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Delivery</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -162,7 +172,7 @@
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Item</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -191,13 +201,19 @@
             <td th:text="${item.registryDate}"></td>
             <td th:text="${item.sale}"></td>
             <td th:text="${item.version}"></td>
-            <td th:text="${item.adminMember.getId()}"></td>
-            <td th:text="${item.category.getId()}"></td>
-            <td th:text="${item.thumbnail.getId()}"></td>
+
+            <td th:if="${item.adminMember==null}"></td>
+            <td th:if="${item.adminMember!=null}" th:text="${item.adminMember.getId()}"></td>
+
+            <td th:if="${item.category==null}"></td>
+            <td th:if="${item.category!=null}" th:text="${item.category.getId()}"></td>
+
+            <td th:if="${item.thumbnail==null}"></td>
+            <td th:if="${item.thumbnail!=null}" th:text="${item.thumbnail.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Option1</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -214,11 +230,13 @@
             <td th:text="${option1.getId()}"></td>
             <td th:text="${option1.name}"></td>
             <td th:text="${option1.stock}"></td>
-            <td th:text="${option1.item.getId()}"></td>
+
+            <td th:if="${option1.item==null}"></td>
+            <td th:if="${option1.item!=null}" th:text="${option1.item.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Option2</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -235,11 +253,13 @@
             <td th:text="${option2.getId()}"></td>
             <td th:text="${option2.name}"></td>
             <td th:text="${option2.stock}"></td>
-            <td th:text="${option2.option1.getId()}"></td>
+
+            <td th:if="${option2.option1==null}"></td>
+            <td th:if="${option2.option1!=null}" th:text="${option2.option1.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Order</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -268,12 +288,16 @@
             <td th:text="${order.usedPoint}"></td>
             <td th:if="${order.coupon==null}"></td>
             <td th:if="${order.coupon!=null}" th:text="${order.coupon.getId()}"></td>
-            <td th:text="${order.delivery.getId()}"></td>
-            <td th:text="${order.member.getId()}"></td>
+
+            <td th:if="${order.delivery==null}"></td>
+            <td th:if="${order.delivery!=null}" th:text="${order.delivery.getId()}"></td>
+
+            <td th:if="${order.member==null}"></td>
+            <td th:if="${order.member!=null}" th:text="${order.member.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>OrderItem</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -303,12 +327,16 @@
             <td th:text="${orderItem.option1}"></td>
             <td th:text="${orderItem.option2}"></td>
             <td th:text="${orderItem.thumbnailUrl}"></td>
-            <td th:text="${orderItem.item.getId()}"></td>
-            <td th:text="${orderItem.order.getId()}"></td>
+
+            <td th:if="${orderItem.item==null}"></td>
+            <td th:if="${orderItem.item!=null}" th:text="${orderItem.item.getId()}"></td>
+
+            <td th:if="${orderItem.order==null}"></td>
+            <td th:if="${orderItem.order!=null}" th:text="${orderItem.order.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>PreferenceItem</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -322,12 +350,16 @@
         <tbody>
         <tr th:each="preferenceItem : ${preferenceItems}">
             <td th:text="${preferenceItem.getId()}"></td>
-            <td th:text="${preferenceItem.item.getId()}"></td>
-            <td th:text="${preferenceItem.member.getId()}"></td>
+
+            <td th:if="${preferenceItem.item==null}"></td>
+            <td th:if="${preferenceItem.item!=null}" th:text="${preferenceItem.item.getId()}"></td>
+
+            <td th:if="${preferenceItem.member==null}"></td>
+            <td th:if="${preferenceItem.member!=null}" th:text="${preferenceItem.member.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Qna</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -356,13 +388,19 @@
             <td th:text="${qna.question}"></td>
             <td th:text="${qna.registryDate}"></td>
             <td th:text="${qna.title}"></td>
-            <td th:text="${qna.adminMember.getId()}"></td>
-            <td th:text="${qna.item.getId()}"></td>
-            <td th:text="${qna.member.getId()}"></td>
+
+            <td th:if="${qna.adminMember==null}"></td>
+            <td th:if="${qna.adminMember!=null}" th:text="${qna.adminMember.getId()}"></td>
+
+            <td th:if="${qna.item==null}"></td>
+            <td th:if="${qna.item!=null}" th:text="${qna.item.getId()}"></td>
+
+            <td th:if="${qna.member==null}"></td>
+            <td th:if="${qna.member!=null}" th:text="${qna.member.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Review</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -384,12 +422,17 @@
             <td th:text="${review.option}"></td>
             <td th:text="${review.rate}"></td>
             <td th:text="${review.registryDate}"></td>
-            <td th:text="${review.item.id}"></td>
-            <td th:text="${review.member.id}"></td>
+
+            <td th:if="${review.item==null}"></td>
+            <td th:if="${review.item!=null}" th:text="${review.item.getId()}"></td>
+
+            <td th:if="${review.member==null}"></td>
+            <td th:if="${review.member!=null}" th:text="${review.member.getId()}"></td>
+
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>ItemImage</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -406,11 +449,14 @@
             <td th:text="${itemImage.getId()}"></td>
             <td th:text="${itemImage.store_name}"></td>
             <td th:text="${itemImage.upload_name}"></td>
-            <td th:text="${itemImage.item.getId()}"></td>
+
+            <td th:if="${itemImage.item==null}"></td>
+            <td th:if="${itemImage.item!=null}" th:text="${itemImage.item.getId()}"></td>
+
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>DetailImage</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -427,11 +473,13 @@
             <td th:text="${detailImage.getId()}"></td>
             <td th:text="${detailImage.store_name}"></td>
             <td th:text="${detailImage.upload_name}"></td>
-            <td th:text="${detailImage.item.getId()}"></td>
+
+            <td th:if="${detailImage.item==null}"></td>
+            <td th:if="${detailImage.item!=null}" th:text="${detailImage.item.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>ReviewImage</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -448,11 +496,13 @@
             <td th:text="${reviewImage.getId()}"></td>
             <td th:text="${reviewImage.store_name}"></td>
             <td th:text="${reviewImage.upload_name}"></td>
-            <td th:text="${reviewImage.review.getId()}"></td>
+
+            <td th:if="${reviewImage.review==null}"></td>
+            <td th:if="${reviewImage.review!=null}" th:text="${reviewImage.review.getId()}"></td>
         </tr>
         </tbody>
     </table>
-    <br>
+    <br><hr>
     <h3>Thumbnail</h3>
     <table class="table table-striped table-hover">
         <thead>
@@ -464,11 +514,10 @@
         </thead>
 
         <tbody>
-        <tr th:each="reviewImage : ${reviewImages}">
-            <td th:text="${reviewImage.getId()}"></td>
-            <td th:text="${reviewImage.store_name}"></td>
-            <td th:text="${reviewImage.upload_name}"></td>
-            <td th:text="${reviewImage.review.getId()}"></td>
+        <tr th:each="thumbnail : ${thumbnails}">
+            <td th:text="${thumbnail.getId()}"></td>
+            <td th:text="${thumbnail.store_name}"></td>
+            <td th:text="${thumbnail.upload_name}"></td>
         </tr>
         </tbody>
     </table>
