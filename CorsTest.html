@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <title>CorsTest</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <button onclick="e()">testButton</button>
+
+
+  <script>
+    async function e() {
+      try {
+        const response = await axios.get("http://localhost:8080/item");
+        console.log(response.data);
+      } catch (e) {
+        console.log("error:" + e);
+      }
+    }
+  </script>
+</body>
+
+</html>
