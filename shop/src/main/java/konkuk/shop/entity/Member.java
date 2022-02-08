@@ -73,4 +73,8 @@ public class Member {
     public void changePoint(Integer point) {
         this.point+=point;
     }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

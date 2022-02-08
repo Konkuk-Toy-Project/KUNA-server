@@ -13,7 +13,7 @@
   <script>
     async function e() {
       try {
-        const response = await axios.get("http://localhost:8080/item");
+        const response = await axios.post("http://localhost:8080/member/duplication/email", {email: "asdf@asdf.com"});
         console.log(response.data);
       } catch (e) {
         console.log("error:" + e);

@@ -54,6 +54,10 @@ public class OrderService {
         Delivery delivery = deliveryRepository.save(
                 new Delivery(form.getAddress(), form.getPhone(), form.getRecipient(), DeliveryState.PREPARING));
 
+        // 회원 배송지 저장
+        member.setAddress(form.getAddress());
+
+
         Order order = Order.builder()
                 .delivery(delivery)
                 .member(member)
