@@ -2,8 +2,6 @@ package konkuk.shop;
 
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.*;
-import konkuk.shop.error.ApiException;
-import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.repository.*;
 import konkuk.shop.service.*;
 import lombok.RequiredArgsConstructor;
@@ -91,6 +89,8 @@ public class InitDB {
         return category;
     }
 
+
+
     private Item initItem(AdminMember adminMember, Category category) {
         Item item = Item.builder()
                 .itemState(ItemState.NORMALITY)
@@ -107,15 +107,15 @@ public class InitDB {
                 .option1s(new ArrayList<>())
                 .build();
 
-        item.setThumbnail(thumbnailRepository.save(new Thumbnail("thumbnail.webp", "thumbnail.webp", item)));
+        item.setThumbnail(thumbnailRepository.save(new Thumbnail("thumbnail1.webp", "thumbnail1.webp", item)));
 
-        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage1", "itemImage1.jpeg", item)));
-        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage2", "itemImage2.jpeg", item)));
-        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage3", "itemImage3.jpeg", item)));
+        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage1-1", "itemImage1-1.jpeg", item)));
+        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage1-2", "itemImage1-2.jpeg", item)));
+        item.getItemImages().add(itemImageRepository.save(new ItemImage("itemImage1-3", "itemImage1-3.jpeg", item)));
 
-        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1", "detailImage1.jpeg", item)));
-        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage2", "detailImage2.jpeg", item)));
-        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage3", "detailImage3.jpeg", item)));
+        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1-1", "detailImage1-1.jpeg", item)));
+        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1-2", "detailImage1-2.jpeg", item)));
+        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1-3", "detailImage1-3.jpeg", item)));
 
         item = itemRepository.save(item);
 
