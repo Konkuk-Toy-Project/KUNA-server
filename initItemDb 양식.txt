@@ -1,23 +1,23 @@
-Jordan 1 Retro High - Men Shoes
-0
-0
-199000
-상의
+상품 이름
+찜 개수
+세일(%)
+가격
+카테고리 이름(상의, 하의, 신발)
 
-thumbnail1.webp
+썸내일
 
-itemImage1-1.jpeg
-itemImage1-2.jpeg
-itemImage1-3.jpeg
+상품 이미지1
+상품 이미지2
+...
 
-detailImage1-1.jpeg
-detailImage1-2.jpeg
-detailImage1-3.jpeg
+상품 설명 이미지1
+상품 설명 이미지2
+...
 
-Size M
-파란색 13
-노란색 3
+옵션1
+옵션2 재고
+옵션2 재고
 
-Size L
-파란색 3
-노란색 0
+옵션1
+옵션2 재고
+옵션2 재고

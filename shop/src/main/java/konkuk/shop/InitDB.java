@@ -115,7 +115,7 @@ public class InitDB {
 
         item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1-1", "detailImage1-1.jpeg", item)));
         item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1-2", "detailImage1-2.jpeg", item)));
-        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1-3", "detailImage1-3.jpeg", item)));
+        item.getDetailImages().add(detailImageRepository.save(new DetailImage("detailImage1-3", "detailImage1-3.png", item)));
 
         item = itemRepository.save(item);
 
@@ -161,8 +161,8 @@ public class InitDB {
                 .build();
         Review saveReview = reviewRepository.save(review);
 
-        saveReview.getReviewImages().add(new ReviewImage("reviewImage1", "reviewImage1.png", saveReview));
-        saveReview.getReviewImages().add(new ReviewImage("reviewImage2", "reviewImage2.png", saveReview));
+        saveReview.getReviewImages().add(new ReviewImage("reviewImage1-1", "reviewImage1-1.png", saveReview));
+        saveReview.getReviewImages().add(new ReviewImage("reviewImage1-2", "reviewImage1-2.png", saveReview));
     }
 
     private Long initPreference(Member member, Item item) {
