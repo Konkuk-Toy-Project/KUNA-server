@@ -54,6 +54,7 @@ public class InitItemDB {
             else if (initItemDto.getCategory().equals("신발")) initItem(adminMember, 신발, initItemDto);
             else log.info("====init item fail=====");
         }
+        log.info("====init item Success!=====");
     }
 
     private AdminMember findAdminMember() {
@@ -166,8 +167,10 @@ public class InitItemDB {
                     String[] newStr = lines.get(i).split("=");
                     //System.out.println("option2: " + newStr[0] + " " + Integer.parseInt(newStr[1]));
                     optionNames.add(newStr[0]);
-                    optionStocks.add(Integer.parseInt(newStr[1]));
-                    option1Stock += Integer.parseInt(newStr[1]);
+                    Integer stock=Integer.parseInt(newStr[1]);
+                    if(stock==-1) stock = (int)(Math.random()*1000);
+                    optionStocks.add(stock);
+                    option1Stock += stock;
                 }
             }
 

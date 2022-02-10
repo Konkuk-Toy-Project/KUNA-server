@@ -55,8 +55,8 @@ image:
   #thumbnail: /image/thumbnail/
 
 init:
-  #item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/initItem1.txt
-  item: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\initItem1.txt
+  #item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/initItem.txt
+  item: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\initItem.txt
 token:
   expiration_time: 600000
   secret: thisIsSecretKey
