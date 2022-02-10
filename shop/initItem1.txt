@@ -1,0 +1,49 @@
+sbs5320 무드 퍼프 벌룬 카라넥 심플 블라우스
+3
+25
+38000
+상의
+
+thumbnail2.webp
+
+itemImage2-1.jpg
+itemImage2-2.jpg
+itemImage2-3.jpg
+itemImage2-4.jpg
+
+detailImage2-1.jpg
+detailImage2-2.jpg
+detailImage2-3.jpg
+detailImage2-4.jpg
+
+Size M
+파란색=13
+노란색=3
+
+Size L
+파란색=3
+노란색=0
+
+===nextItem===
+sje3403 그라운드 쫀쫀 부츠컷 데님팬츠
+2
+24
+47000
+하의
+
+thumbnail3.webp
+
+itemImage3-1.jpg
+itemImage3-2.jpg
+itemImage3-3.jpg
+itemImage3-4.jpg
+
+detailImage3-1.jpg
+detailImage3-2.jpg
+detailImage3-3.jpg
+
+라이트블루
+Size S=50
+Size M=60
+Size L=50
+===end===

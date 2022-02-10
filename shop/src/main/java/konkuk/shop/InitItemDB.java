@@ -7,6 +7,7 @@ import konkuk.shop.repository.*;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,9 @@ public class InitItemDB {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
 
+    @Value("${init.item}")
+    private String initItemPath;
+
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initDB() throws IOException {
@@ -42,12 +46,14 @@ public class InitItemDB {
         Category 상의 = categoryRepository.findByName("상의").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
         Category 하의 = categoryRepository.findByName("하의").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
         Category 신발 = categoryRepository.findByName("신발").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
-        InitItemDto initItemDto = parseNote();
+        List<InitItemDto> initItemDtos = parseNote();
 
-        if (initItemDto.getCategory().equals("상의")) initItem(adminMember, 상의, initItemDto);
-        else if (initItemDto.getCategory().equals("하의")) initItem(adminMember, 하의, initItemDto);
-        else if (initItemDto.getCategory().equals("신발")) initItem(adminMember, 신발, initItemDto);
-        else log.info("====init item fail=====");
+        for (InitItemDto initItemDto : initItemDtos) {
+            if (initItemDto.getCategory().equals("상의")) initItem(adminMember, 상의, initItemDto);
+            else if (initItemDto.getCategory().equals("하의")) initItem(adminMember, 하의, initItemDto);
+            else if (initItemDto.getCategory().equals("신발")) initItem(adminMember, 신발, initItemDto);
+            else log.info("====init item fail=====");
+        }
     }
 
     private AdminMember findAdminMember() {
@@ -55,106 +61,119 @@ public class InitItemDB {
         return memberService.findAdminByMemberId(member.getId());
     }
 
-    private InitItemDto parseNote() throws IOException {
-        Path path = Paths.get("/Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/initItem1txt.txt");
+    private List<InitItemDto> parseNote() throws IOException {
+        Path path = Paths.get(initItemPath);
         List<String> lines = Files.readAllLines(path);
+        List<InitItemDto> returnDate = new ArrayList<>();
 
-        InitItemDto result = InitItemDto.builder()
-                .name(lines.get(0))
-                .preference(Integer.parseInt(lines.get(1)))
-                .sale(Integer.parseInt(lines.get(2)))
-                .price(Integer.parseInt(lines.get(3)))
-                .category(lines.get(4))
-                .optionName(new ArrayList<>())
-                .optionStock(new ArrayList<>())
-                .build();
+        int line = 0;
 
+        while (!lines.get(line).equals("===end===")) {
+            InitItemDto result = InitItemDto.builder()
+                    .name(lines.get(line++))
+                    .preference(Integer.parseInt(lines.get(line++)))
+                    .sale(Integer.parseInt(lines.get(line++)))
+                    .price(Integer.parseInt(lines.get(line++)))
+                    .category(lines.get(line++))
+                    .optionName(new ArrayList<>())
+                    .optionStock(new ArrayList<>())
+                    .build();
+
+            line+=1;
 //        System.out.println("name: " + lines.get(0));
 //        System.out.println("preference: " + Integer.parseInt(lines.get(1)));
 //        System.out.println("sale: " + Integer.parseInt(lines.get(2)));
 //        System.out.println("price: " + Integer.parseInt(lines.get(3)));
 //        System.out.println("category: " + lines.get(4));
 
-        int line = 6;
+            //System.out.println("\n=======thumbnail========");
+            while (lines.get(line).length() != 0) {
+                //System.out.println(lines.get(line));
+                result.setThumbnail(lines.get(line));
+                line += 1;
+            }
 
-        //System.out.println("\n=======thumbnail========");
-        while (lines.get(line).length() != 0) {
-            //System.out.println(lines.get(line));
-            result.setThumbnail(lines.get(line));
             line += 1;
-        }
+            //System.out.println("\n=======itemImage========");
+            List<String> itemImages = new ArrayList<>();
+            while (lines.get(line).length() != 0) {
+                //System.out.println(lines.get(line));
+                itemImages.add(lines.get(line));
+                line += 1;
+            }
+            result.setItemImages(itemImages);
 
-        line += 1;
-        //System.out.println("\n=======itemImage========");
-        List<String> itemImages = new ArrayList<>();
-        while (lines.get(line).length() != 0) {
-            //System.out.println(lines.get(line));
-            itemImages.add(lines.get(line));
             line += 1;
-        }
-        result.setItemImages(itemImages);
+            //System.out.println("\n=======detailImage========");
+            List<String> detailImages = new ArrayList<>();
+            while (lines.get(line).length() != 0) {
+                //System.out.println(lines.get(line));
+                detailImages.add(lines.get(line));
+                line += 1;
+            }
+            result.setDetailImages(detailImages);
 
-        line += 1;
-        //System.out.println("\n=======detailImage========");
-        List<String> detailImages = new ArrayList<>();
-        while (lines.get(line).length() != 0) {
-            //System.out.println(lines.get(line));
-            detailImages.add(lines.get(line));
             line += 1;
-        }
-        result.setDetailImages(detailImages);
+            //System.out.println("\n=======option========");
+            List<String> optionNames = new ArrayList<>();
+            List<Integer> optionStocks = new ArrayList<>();
+            boolean isOption1 = true;
 
-        line += 1;
-        //System.out.println("\n=======option========");
-        List<String> optionNames = new ArrayList<>();
-        List<Integer> optionStocks = new ArrayList<>();
-        boolean isOption1 = true;
+            int option1Stock = 0;
+            for (int i = line; i < lines.size(); i++) {
 
-        int option1Stock = 0;
-        for (int i = line; i < lines.size(); i++) {
-
-            if (lines.get(i).length() == 0) {
-                isOption1 = true;
-                //System.out.println();
-                List<String> optionName = new ArrayList<>();
-                List<Integer> optionStock = new ArrayList<>();
-                for (int k = 0; k < optionNames.size(); k++) {
-                    optionName.add(optionNames.get(k));
-                    optionStock.add(optionStocks.get(k));
+                if (lines.get(i).equals("===nextItem===")) {
+                    line = i + 1;
+                    break;
                 }
-                optionStock.set(0, option1Stock);
-                result.getOptionName().add(optionName);
-                result.getOptionStock().add(optionStock);
+                if (lines.get(i).length() == 0) {
+                    isOption1 = true;
+                    //System.out.println();
+                    List<String> optionName = new ArrayList<>();
+                    List<Integer> optionStock = new ArrayList<>();
+                    for (int k = 0; k < optionNames.size(); k++) {
+                        optionName.add(optionNames.get(k));
+                        optionStock.add(optionStocks.get(k));
+                    }
+                    optionStock.set(0, option1Stock);
+                    result.getOptionName().add(optionName);
+                    result.getOptionStock().add(optionStock);
 
-                optionNames.clear();
-                optionStocks.clear();
-                option1Stock = 0;
-                continue;
+                    optionNames.clear();
+                    optionStocks.clear();
+                    option1Stock = 0;
+                    continue;
+                }
+                if (isOption1) {
+                    //System.out.println("option1: " + lines.get(i));
+                    optionNames.add(lines.get(i));
+                    optionStocks.add(0);
+                    isOption1 = false;
+                } else {
+                    if(lines.get(i).equals("===end===")){
+                        line=i;
+                        List<String> optionName = new ArrayList<>();
+                        List<Integer> optionStock = new ArrayList<>();
+                        for (int k = 0; k < optionNames.size(); k++) {
+                            optionName.add(optionNames.get(k));
+                            optionStock.add(optionStocks.get(k));
+                        }
+                        optionStock.set(0, option1Stock);
+                        result.getOptionName().add(optionName);
+                        result.getOptionStock().add(optionStock);
+                        break;
+                    }
+                    String[] newStr = lines.get(i).split("=");
+                    //System.out.println("option2: " + newStr[0] + " " + Integer.parseInt(newStr[1]));
+                    optionNames.add(newStr[0]);
+                    optionStocks.add(Integer.parseInt(newStr[1]));
+                    option1Stock += Integer.parseInt(newStr[1]);
+                }
             }
-            if (isOption1) {
-                //System.out.println("option1: " + lines.get(i));
-                optionNames.add(lines.get(i));
-                optionStocks.add(0);
-                isOption1 = false;
-            } else {
-                String[] newStr = lines.get(i).split("\\s+");
-                //System.out.println("option2: " + newStr[0] + " " + Integer.parseInt(newStr[1]));
-                optionNames.add(newStr[0]);
-                optionStocks.add(Integer.parseInt(newStr[1]));
-                option1Stock += Integer.parseInt(newStr[1]);
-            }
+
+            returnDate.add(result);
         }
-        List<String> optionName = new ArrayList<>();
-        List<Integer> optionStock = new ArrayList<>();
-        for (int k = 0; k < optionNames.size(); k++) {
-            optionName.add(optionNames.get(k));
-            optionStock.add(optionStocks.get(k));
-        }
-        optionStock.set(0, option1Stock);
-        result.getOptionName().add(optionName);
-        result.getOptionStock().add(optionStock);
-        System.out.println(result);
-        return result;
+        return returnDate;
     }
 
     private Item initItem(AdminMember adminMember, Category category, InitItemDto dto) {
