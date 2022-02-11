@@ -57,7 +57,6 @@ public class OrderService {
         // 회원 배송지 저장
         member.setAddress(form.getAddress());
 
-
         Order order = Order.builder()
                 .delivery(delivery)
                 .member(member)
@@ -93,8 +92,9 @@ public class OrderService {
             Option1 option1 = option1Repository.findById(orderItemform.getOption1Id())
                     .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION1_BY_ID));
 
+            int itemPrice = Integer.parseInt(String.valueOf(Math.round((100 - item.getSale()) * 0.01 * item.getPrice())));
             OrderItem orderItem = OrderItem.builder()
-                    .itemPrice(item.getPrice())
+                    .itemPrice(itemPrice) // 세일이 적용된 가격, 1개당 가격
                     .itemName(item.getName())
                     .itemVersion(item.getVersion())
                     .option1(option1.getName())
@@ -118,11 +118,14 @@ public class OrderService {
 
                 orderItem.setOption2(option2.getName());
             }
-            priceSum += (item.getPrice() * orderItemform.getCount() * (100 - item.getSale()) * 0.01);
+            priceSum += (itemPrice * orderItemform.getCount());
             result.add(orderItem);
         }
 
-        if (priceSum != totalPrice) throw new ApiException(ExceptionEnum.INCORRECT_TOTAL_PRICE);
+        if (priceSum != totalPrice) {
+            log.info("Incorrect total price!! request totalPrice={},  priceSum={}", totalPrice, priceSum);
+            throw new ApiException(ExceptionEnum.INCORRECT_TOTAL_PRICE);
+        }
         return result;
     }
 
@@ -138,7 +141,7 @@ public class OrderService {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_COUPON));
 
-        if (coupon.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NOT_MATCH_COUPON_MEMBER);
+        if (!coupon.getMember().getId().equals(userId)) throw new ApiException(ExceptionEnum.NOT_MATCH_COUPON_MEMBER);
         if (coupon.isUsed()) throw new ApiException(ExceptionEnum.ALREADY_USED_COUPON);
         if (coupon.getExpiredDate().isBefore(LocalDateTime.now()))
             throw new ApiException(ExceptionEnum.EXPIRED_COUPON);
@@ -154,7 +157,7 @@ public class OrderService {
     public FindOrderDto findOrderDetailList(Long userId, Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER));
-        if (order.getMember().getId() != userId) throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ORDER);
+        if (!order.getMember().getId().equals(userId)) throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ORDER);
 
         List<FindOrderItemDto> itemDtos = new ArrayList<>();
         List<OrderItem> orderItems = order.getOrderItems();
@@ -192,10 +195,9 @@ public class OrderService {
     }
 
     public List<FindOrderListDto> findOrderList(Long userId) {
-        List<FindOrderListDto> result = orderRepository.findByMemberId(userId).stream()
+        return orderRepository.findByMemberId(userId).stream()
                 .map(e -> new FindOrderListDto(e.getOrderDate(), e.getTotalPrice(), e.getShippingCharge(),
                         e.getId(), e.getOrderState().toString(), e.getDelivery().getDeliveryState().toString()))
                 .collect(Collectors.toList());
-        return result;
     }
 }
