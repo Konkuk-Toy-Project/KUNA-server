@@ -103,7 +103,9 @@ public class QnaService {
         Qna qna = qnaRepository.findById(qnaId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_QNA));
 
-        if (qna.getAdminMember().getMember().getId() != userId)
+        if(qna.isAnswered()) throw new ApiException(ExceptionEnum.ALREADY_ANSWER_QNA);
+
+        if (!qna.getAdminMember().getMember().getId().equals(userId))
             throw new ApiException(ExceptionEnum.NO_AUTHORITY_ANSWER_QNA);
 
         qna.registryAnswer(answer);

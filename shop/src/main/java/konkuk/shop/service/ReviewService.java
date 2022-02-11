@@ -44,7 +44,8 @@ public class ReviewService {
 
         OrderItem orderItem = orderItemRepository.findById(form.getOrderItemId())
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER_ITEM));
-        if (orderItem.isReviewed()) new ApiException(ExceptionEnum.ALREADY_REGISTRY_REVIEW);
+
+        if (orderItem.isReviewed()) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_REVIEW);
 
 
         Review review = Review.builder()
@@ -58,20 +59,22 @@ public class ReviewService {
                 .build();
 
         List<MultipartFile> reviewImages = form.getReviewImage();
-        try {
-            for (MultipartFile reviewImage : reviewImages) {
-                String reviewImageFullName = createStoreFileName(reviewImage.getOriginalFilename());
-                reviewImage.transferTo(new File(reviewPath + reviewImageFullName));
-                ReviewImage saveReviewImage = reviewImageRepository.save(
-                        new ReviewImage(reviewImage.getOriginalFilename(), reviewImageFullName, review));
-                review.getReviewImages().add(saveReviewImage);
+        if (reviewImages != null) {
+            try {
+                for (MultipartFile reviewImage : reviewImages) {
+                    String reviewImageFullName = createStoreFileName(reviewImage.getOriginalFilename());
+                    reviewImage.transferTo(new File(reviewPath + reviewImageFullName));
+                    ReviewImage saveReviewImage = reviewImageRepository.save(
+                            new ReviewImage(reviewImage.getOriginalFilename(), reviewImageFullName, review));
+                    review.getReviewImages().add(saveReviewImage);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new ApiException(ExceptionEnum.FAIL_STORE_IMAGE);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ApiException(ExceptionEnum.FAIL_STORE_IMAGE);
         }
-
         orderItem.setReviewed(true);
+
 
         return reviewRepository.save(review).getId();
     }
