@@ -55,9 +55,9 @@ image:
   thumbnail: /image/thumbnail/
 
 init:
-  item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/initItem.txt
+  #item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/initItem.txt
   #item: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\initItem.txt
-  #item: /initItem.txt
+  item: /initItem.txt
 
 token:
   expiration_time: 600000
