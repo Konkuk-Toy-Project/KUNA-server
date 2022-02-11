@@ -90,9 +90,9 @@ public class MemberService {
     }
 
     private String randomPw() {
-        char pwCollectionSpCha[] = new char[]{'!', '@', '#', '$', '%', '^', '&', '*', '(', ')'};
-        char pwCollectionNum[] = new char[]{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0',};
-        char pwCollectionAll[] = new char[]{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        char[] pwCollectionSpCha = new char[]{'!', '@', '#', '$', '%', '^', '&', '*', '(', ')'};
+        char[] pwCollectionNum = new char[]{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0',};
+        char[] pwCollectionAll = new char[]{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                 '!', '@', '#', '$', '%', '^', '&', '*', '(', ')'};
@@ -100,12 +100,12 @@ public class MemberService {
     }
 
     private String getRandPw(int size, char[] pwCollection) {
-        String ranPw = "";
+        StringBuilder ranPw = new StringBuilder();
         for (int i = 0; i < size; i++) {
             int selectRandomPw = (int) (Math.random() * (pwCollection.length));
-            ranPw += pwCollection[selectRandomPw];
+            ranPw.append(pwCollection[selectRandomPw]);
         }
-        return ranPw;
+        return ranPw.toString();
     }
 
     public AdminMember findAdminByMemberId(Long userId) {

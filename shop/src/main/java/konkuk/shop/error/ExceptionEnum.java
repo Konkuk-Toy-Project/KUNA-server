@@ -17,13 +17,13 @@ public enum ExceptionEnum {
     DUPLICATION_MEMBER_PHONE(HttpStatus.BAD_REQUEST, "M009", "중복된 전화번호입니다."),
     NOT_EMAIL_FORM(HttpStatus.BAD_REQUEST, "M010", "이메일 형식이 틀립니다."),
     NOT_PASSWORD_FORM(HttpStatus.BAD_REQUEST, "M011", "비밀번호는 영문과 특수문자, 숫자를 포함하며 8자 이상이어야 합니다."),
-    NOT_NAME_FORM(HttpStatus.BAD_REQUEST, "M011", "이름에 공백이 있으면 안됩니다."),
-    NOT_PHONE_FORM(HttpStatus.BAD_REQUEST, "M011", "전화번호가 형식에 맞지 않습니다."),
-    NOT_BIRTH_FORM(HttpStatus.BAD_REQUEST, "M011", "생년월일이 형식에 맞지 않습니다."),
+    NOT_NAME_FORM(HttpStatus.BAD_REQUEST, "M012", "이름에 공백이 있으면 안됩니다."),
+    NOT_PHONE_FORM(HttpStatus.BAD_REQUEST, "M013", "전화번호가 형식에 맞지 않습니다."),
+    NOT_BIRTH_FORM(HttpStatus.BAD_REQUEST, "M014", "생년월일이 형식에 맞지 않습니다."),
 
     NO_FIND_ITEM_BY_ID(HttpStatus.BAD_REQUEST, "I001", "존재하지 않는 아이템입니다."),
     NO_STOCK_ITEM(HttpStatus.BAD_REQUEST, "I002", "해당 옵션의 재고가 부족합니다."),
-    NO_AUTHORITY_ACCESS_ITEM(HttpStatus.BAD_REQUEST, "Q001", "해당 상품을 수정할 권한이 없습니다."),
+    NO_AUTHORITY_ACCESS_ITEM(HttpStatus.BAD_REQUEST, "I003", "해당 상품을 수정할 권한이 없습니다."),
 
     NO_FIND_OPTION1_BY_ID(HttpStatus.BAD_REQUEST, "P001", "존재하지 않는 옵션1입니다."),
     NO_FIND_OPTION2_BY_ID(HttpStatus.BAD_REQUEST, "P002", "존재하지 않는 옵션2입니다."),

@@ -42,14 +42,13 @@ public class PreferenceService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
 
-        List<PreferenceDto> result = member.getPreferenceItems()
+        return member.getPreferenceItems()
                 .stream().map(e -> {
                     Item item = e.getItem();
                     return new PreferenceDto(item.getThumbnail().getStore_name(),
                             item.getName(), item.getPrice(), item.getSale(), e.getId());
                 })
                 .collect(Collectors.toList());
-        return result;
     }
 
     @Transactional
@@ -57,7 +56,7 @@ public class PreferenceService {
         PreferenceItem preferenceItem = preferenceRepository.findById(preferenceId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_PREFERENCE));
 
-        if (preferenceItem.getMember().getId() != memberId)
+        if (!preferenceItem.getMember().getId().equals(memberId))
             throw new ApiException(ExceptionEnum.NOT_AUTHORITY_PREFERENCE_EDIT);
         preferenceItem.getItem().minusPreferenceCount();
 

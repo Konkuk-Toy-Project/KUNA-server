@@ -53,11 +53,10 @@ public class CouponService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
 
-        List<ResponseGetCoupon> result = member.getCoupons().stream()
+        return member.getCoupons().stream()
                 .map(e -> new ResponseGetCoupon(e.getCouponKind().toString(), e.getRate(),
                         e.getExpiredDate(), e.getCouponCondition(), e.getName(), e.isUsed(), e.getId()))
                 .collect(Collectors.toList());
-        return result;
     }
 
     @Transactional
@@ -67,8 +66,8 @@ public class CouponService {
         Coupon coupon = couponRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_COUPON));
 
-        if(coupon.getMember()!=null) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_COUPON);
-        if(coupon.getExpiredDate().isBefore(LocalDateTime.now()))
+        if (coupon.getMember() != null) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_COUPON);
+        if (coupon.getExpiredDate().isBefore(LocalDateTime.now()))
             throw new ApiException(ExceptionEnum.EXPIRED_COUPON);
 
         coupon.setMember(member);

@@ -42,11 +42,11 @@ public class CartService {
         if (option2Id != null) {
             option2 = option2Repository.findById(option2Id)
                     .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION2_BY_ID));
-            if (option2.getOption1().getId() != option1.getId())
+            if (!option2.getOption1().getId().equals(option1.getId()))
                 throw new ApiException(ExceptionEnum.NO_MATCH_OPTION2_WITH_OPTION1);
         }
 
-        if (option1.getItem().getId() != item.getId())
+        if (!option1.getItem().getId().equals(item.getId()))
             throw new ApiException(ExceptionEnum.NO_MATCH_OPTION1_WITH_ITEM);
 
         CartItem cartItem = CartItem.builder()
@@ -78,7 +78,7 @@ public class CartService {
             Item item = cartItem.getItem();
             // 아이템 버전이 다르거나(수정), 삭제된 아이템은 조회시 장바구니에서 자동 삭제
             if (!itemRepository.existsById(item.getId())) cartRepository.delete(cartItem);
-            else if (cartItem.getItemVersion() != item.getVersion()) cartRepository.delete(cartItem);
+            else if (!cartItem.getItemVersion().equals(item.getVersion())) cartRepository.delete(cartItem);
             else {
                 CartItemDto cartItemDto = CartItemDto.builder()
                         .thumbnailUrl(item.getThumbnail().getStore_name())
@@ -102,7 +102,7 @@ public class CartService {
     public void changeCount(Long userId, Long cartItemId, Integer count) {
         CartItem cartItem = cartRepository.findById(cartItemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM));
-        if (cartItem.getMember().getId() != userId)
+        if (!cartItem.getMember().getId().equals(userId))
             throw new ApiException(ExceptionEnum.NOT_AUTHORITY_CART_EDIT);
 
         cartItem.setCount(count);

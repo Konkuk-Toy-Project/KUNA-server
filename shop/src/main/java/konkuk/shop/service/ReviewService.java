@@ -96,7 +96,7 @@ public class ReviewService {
 
         for (Review review : reviews) {
             List<String> reviewImages = review.getReviewImages()
-                    .stream().map(e -> e.getStore_name())
+                    .stream().map(ReviewImage::getStore_name)
                     .collect(Collectors.toList());
 
             result.add(FindReviewDto.builder()

@@ -113,7 +113,7 @@ public class ItemService {
 
 
     public List<ResponseItemList> findItemListByCategory(Long categoryId) {
-        List<ResponseItemList> result = itemRepository.findByCategoryId(categoryId)
+        return itemRepository.findByCategoryId(categoryId)
                 .stream().map(e -> ResponseItemList.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
@@ -126,7 +126,6 @@ public class ItemService {
                         .categoryName(e.getCategory().getName())
                         .build())
                 .collect(Collectors.toList());
-        return result;
     }
 
     @Transactional
@@ -153,11 +152,11 @@ public class ItemService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
 
         List<String> itemImages = item.getItemImages().stream()
-                .map(e -> e.getStore_name())
+                .map(ItemImage::getStore_name)
                 .collect(Collectors.toList());
 
         List<String> detailImages = item.getDetailImages().stream()
-                .map(e -> e.getStore_name())
+                .map(DetailImage::getStore_name)
                 .collect(Collectors.toList());
 
         List<Option1Dto> option1Dto = new ArrayList<>();
@@ -191,8 +190,8 @@ public class ItemService {
     }
 
     public List<ResponseItemList> findItemBySearchWord(String searchWord) {
-        /**
-         * 검색 쿼리에 대한 정확성 및 정책 강화 필요
+        /*
+          검색 쿼리에 대한 정확성 및 정책 강화 필요
          */
         List<Item> items = itemRepository.findAll();
 
@@ -222,7 +221,7 @@ public class ItemService {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
 
-        List<ResponseItemList> result = itemRepository.findByAdminMember(adminMember)
+        return itemRepository.findByAdminMember(adminMember)
                 .stream().map(e -> ResponseItemList.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
@@ -235,11 +234,10 @@ public class ItemService {
                         .categoryName(e.getCategory().getName())
                         .build())
                 .collect(Collectors.toList());
-        return result;
     }
 
     public List<ResponseItemList> findAllItem() {
-        List<ResponseItemList> result = itemRepository.findAll()
+        return itemRepository.findAll()
                 .stream().map(e -> ResponseItemList.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
@@ -252,7 +250,6 @@ public class ItemService {
                         .categoryName(e.getCategory().getName())
                         .build())
                 .collect(Collectors.toList());
-        return result;
     }
 
     @Transactional
@@ -261,7 +258,7 @@ public class ItemService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
-        if (adminMember.getId() != item.getAdminMember().getId())
+        if (!adminMember.getId().equals(item.getAdminMember().getId()))
             throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ITEM);
 
         item.changePriceAndSale(price, sale);
