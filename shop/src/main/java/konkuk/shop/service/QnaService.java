@@ -37,7 +37,7 @@ public class QnaService {
         Item item = itemRepository.findById(form.getItemId())
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
 
-        log.info("qna request. isSecret={}", form.isSecret());
+        log.info("qna 등록 요청. memberId={}, isSecret={}", userId, form.isSecret());
         Qna qna = new Qna(item, member, item.getAdminMember(), form.getQuestion(), form.isSecret(), form.getTitle());
         Qna saveQna = qnaRepository.save(qna);
 
@@ -50,7 +50,6 @@ public class QnaService {
         List<FindQnaDto> result = new ArrayList<>();
 
         for (Qna qna : qnaList) {
-            log.info("qnaUserId={}   loginId={}", qna.getMember().getId(), userId);
             if (qna.isSecret() && !qna.getMember().getId().equals(userId)) { // 남이 올린 비밀글
                 result.add(FindQnaDto.builder()
                         .isSecret(qna.isSecret())
@@ -68,6 +67,7 @@ public class QnaService {
                         .build());
             }
         }
+        log.info("qna 목록 요청. memberId={}, itemId={}", userId, itemId);
         return result;
     }
 
@@ -76,6 +76,8 @@ public class QnaService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
         List<Qna> qnaList = qnaRepository.findAllByAdminMember(adminMember);
         List<ResponseQnaList> result = new ArrayList<>();
+
+        log.info("자신의 상품 Qna 목록 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
         for (Qna qna : qnaList) {
             if (qna.isAnswered() == isAnswered) {
@@ -107,6 +109,8 @@ public class QnaService {
 
         if (!qna.getAdminMember().getMember().getId().equals(userId))
             throw new ApiException(ExceptionEnum.NO_AUTHORITY_ANSWER_QNA);
+
+        log.info("Qna에 답변 저장 요청. qnaId={}", qnaId);
 
         qna.registryAnswer(answer);
     }

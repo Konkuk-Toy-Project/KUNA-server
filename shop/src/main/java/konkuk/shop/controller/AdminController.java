@@ -29,7 +29,7 @@ public class AdminController {
 
     @GetMapping("/items")
     public ResponseEntity<List<ResponseItemList>> myItemList(@AuthenticationPrincipal Long userId) {
-        List<ResponseItemList> result = itemService.findItemByAdminMember(userId);
+        List<ResponseItemList> result = itemService.findItemByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -53,7 +53,6 @@ public class AdminController {
     @PutMapping("/price/{itemId}")
     public void editPriceByItemId(@AuthenticationPrincipal Long userId, @PathVariable Long itemId,
                                   @RequestBody EditPriceAndSaleForm form) {
-        log.info("userId={}", userId);
         itemService.editPriceByItemId(userId, itemId, form.getPrice(), form.getSale());
     }
 

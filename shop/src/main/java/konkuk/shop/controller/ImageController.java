@@ -30,9 +30,7 @@ public class ImageController {
     @GetMapping("/detail/{filename}")
     @ResponseBody
     public Resource detailImage(@PathVariable String filename) {
-        /**
-         * FileNotFoundException 예외 왜 못잡고 나가버림..??
-         */
+        log.info("detailImage 요청 filename={}", filename);
         UrlResource result;
         try {
             result = new UrlResource("file:" + detailPath + filename);
@@ -46,6 +44,7 @@ public class ImageController {
     @GetMapping("/item/{filename}")
     @ResponseBody
     public Resource itemImage(@PathVariable String filename) {
+        log.info("itemImage 요청 filename={}", filename);
         UrlResource result;
         try {
             result = new UrlResource("file:" + itemPath + filename);
@@ -59,6 +58,7 @@ public class ImageController {
     @GetMapping("/thumbnail/{filename}")
     @ResponseBody
     public Resource thumbnail(@PathVariable String filename) {
+        log.info("thumbnail 요청 filename={}", filename);
         UrlResource result;
         try {
             result = new UrlResource("file:" + thumbnailPath + filename);
@@ -73,6 +73,7 @@ public class ImageController {
     @GetMapping("/review/{filename}")
     @ResponseBody
     public Resource reviewImage(@PathVariable String filename) {
+        log.info("reviewImage 요청 filename={}", filename);
         UrlResource result;
         try {
             result = new UrlResource("file:" + reviewPath + filename);

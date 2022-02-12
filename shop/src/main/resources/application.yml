@@ -32,7 +32,7 @@ spring:
         #dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 logging.level:
-  org.hibernate.SQL: debug
+  org.hibernate.SQL: info #debug
   #org.apache.coyote.http11: debug # http 요청 메시지 보기
 
 spring.servlet.multipart.maxFileSize: 10MB

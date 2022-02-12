@@ -38,6 +38,7 @@ public class MemberService {
     public Long signup(SignupDto dto) {
         signUpValidation(dto);
 
+        log.info("회원가입 요청. email={}, password={}", dto.getEmail(), dto.getPassword());
         String encryptedPwd = passwordEncoder.encode(dto.getPassword());
         Member member = new Member(dto.getEmail(), encryptedPwd, dto.getName(), dto.getPhone(), dto.getBirth());
         Member saveMember = memberRepository.save(member);
@@ -60,10 +61,12 @@ public class MemberService {
         String token = tokenProvider.create(findMember);
         String role = "user";
         if (adminMemberRepository.existsByMember(findMember)) role = "admin";
+        log.info("로그인 요청. memberId={}, role={}", findMember.getId(), role);
         return new LoginDto(token, role);
     }
 
     public String findEmail(String name, String phone) {
+        log.info("이메일 찾기 기능. name={}, phone={}", name, phone);
         return memberRepository.findByNameAndPhone(name, phone)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER))
                 .getEmail();
@@ -75,6 +78,7 @@ public class MemberService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         String tempPassword = randomPw();
         member.setPassword(passwordEncoder.encode(tempPassword));
+        log.info("임시 비밀번호 발급. newPassword={}", tempPassword);
 
         return tempPassword;
     }
@@ -86,6 +90,7 @@ public class MemberService {
         boolean match = passwordEncoder.matches(newPassword, member.getPassword());
         if (match) throw new ApiException(ExceptionEnum.NOTHING_CHANGE_PASSWORD);
 
+        log.info("비밀번호 변경. newPassword={}", newPassword);
         member.setPassword(passwordEncoder.encode(newPassword));
     }
 
@@ -137,6 +142,7 @@ public class MemberService {
     }
 
     public Integer findPointByMemberId(Long userId) {
+        log.info("포인트 조회 memberId={}", userId);
         return memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER))
                 .getPoint();

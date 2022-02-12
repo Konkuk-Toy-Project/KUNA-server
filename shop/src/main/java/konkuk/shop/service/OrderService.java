@@ -36,6 +36,7 @@ public class OrderService {
 
     @Transactional
     public AddOrderDto addOrder(Long memberId, RequestAddOrderForm form) {
+        log.info("주문 요청. memberId={}", memberId);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
 
@@ -155,6 +156,7 @@ public class OrderService {
     }
 
     public FindOrderDto findOrderDetailList(Long userId, Long orderId) {
+        log.info("주문 상세 조회. memberId={}, orderId={}", userId, orderId);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER));
         if (!order.getMember().getId().equals(userId)) throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ORDER);
@@ -195,6 +197,7 @@ public class OrderService {
     }
 
     public List<FindOrderListDto> findOrderList(Long userId) {
+        log.info("주문 목록 조회. memberId={}", userId);
         return orderRepository.findByMemberId(userId).stream()
                 .map(e -> new FindOrderListDto(e.getOrderDate(), e.getTotalPrice(), e.getShippingCharge(),
                         e.getId(), e.getOrderState().toString(), e.getDelivery().getDeliveryState().toString()))

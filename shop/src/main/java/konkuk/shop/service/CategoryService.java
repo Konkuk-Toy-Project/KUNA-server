@@ -34,6 +34,7 @@ public class CategoryService {
         for (Category category : categories) {
             result.add(new FindAllCategoryDto(category.getId(), category.getName()));
         }
+        log.info("카테고리 목록 요청");
         return result;
     }
 }

@@ -49,6 +49,9 @@ public class CartService {
         if (!option1.getItem().getId().equals(item.getId()))
             throw new ApiException(ExceptionEnum.NO_MATCH_OPTION1_WITH_ITEM);
 
+        log.info("장바구니에 상품 담기 요청. userId={}, itemId={}, option1Id={}, option2Id={}",
+                userId, itemId, option1Id, option2Id);
+
         CartItem cartItem = CartItem.builder()
                 .item(item)
                 .itemVersion(item.getVersion())
@@ -63,11 +66,12 @@ public class CartService {
         return saveCartItem.getId();
     }
 
-    public void deleteItem(Long cartItemId) {
+    public void deleteItemInCart(Long cartItemId) {
         cartRepository.delete(
                 cartRepository.findById(cartItemId)
                         .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM))
         );
+        log.info("장바구니에서 상품 삭제 요청. cartItemId={}", cartItemId);
     }
 
     public List<CartItemDto> findAllByUserId(Long userId) {
@@ -83,7 +87,6 @@ public class CartService {
                 CartItemDto cartItemDto = CartItemDto.builder()
                         .thumbnailUrl(item.getThumbnail().getStore_name())
                         .option1(cartItem.getOption1().getName())
-                        //.option2(cartItem.getOption2().getName())
                         .count(cartItem.getCount())
                         .price(item.getPrice())
                         .sale(item.getSale())
@@ -94,7 +97,7 @@ public class CartService {
                 result.add(cartItemDto);
             }
         }
-
+        log.info("장바구니 목록 요청 userId={}", userId);
         return result;
     }
 
@@ -104,6 +107,7 @@ public class CartService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM));
         if (!cartItem.getMember().getId().equals(userId))
             throw new ApiException(ExceptionEnum.NOT_AUTHORITY_CART_EDIT);
+        log.info("장바구니 상품(cartItemId={}) 개수 {}->{}", cartItemId, cartItem.getCount(), count);
 
         cartItem.setCount(count);
     }

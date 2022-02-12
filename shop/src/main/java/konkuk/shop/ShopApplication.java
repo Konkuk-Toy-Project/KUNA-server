@@ -1,5 +1,6 @@
 package konkuk.shop;
 
+import konkuk.shop.aop.AspectLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,11 @@ public class ShopApplication {
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public AspectLog aspectLog(){
+		return new AspectLog();
 	}
 
 }

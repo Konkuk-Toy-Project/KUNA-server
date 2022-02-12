@@ -33,7 +33,7 @@ public class PreferenceService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
         PreferenceItem savePreferenceItem = preferenceRepository.save(new PreferenceItem(member, item));
         member.getPreferenceItems().add(savePreferenceItem);
-
+        log.info("찜하기 요청 memberId={}, itemId={}", memberId, itemId);
         item.plusPreferenceCount();
         return savePreferenceItem.getId();
     }
@@ -41,6 +41,7 @@ public class PreferenceService {
     public List<PreferenceDto> findPreferenceByMemberId(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        log.info("찜목록 보기. memberId={}", memberId);
 
         return member.getPreferenceItems()
                 .stream().map(e -> {
@@ -59,6 +60,8 @@ public class PreferenceService {
         if (!preferenceItem.getMember().getId().equals(memberId))
             throw new ApiException(ExceptionEnum.NOT_AUTHORITY_PREFERENCE_EDIT);
         preferenceItem.getItem().minusPreferenceCount();
+
+        log.info("찜하기 삭제 요청. memberId={}, preferenceId={}", memberId, preferenceId);
 
         preferenceRepository.delete(preferenceItem);
     }

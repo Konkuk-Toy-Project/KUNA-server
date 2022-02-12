@@ -13,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -36,7 +35,7 @@ public class CartController {
 
     @DeleteMapping("/{cartItemId}")
     public void deleteItemInCart(@PathVariable Long cartItemId) {
-        cartService.deleteItem(cartItemId);
+        cartService.deleteItemInCart(cartItemId);
     }
 
     @GetMapping

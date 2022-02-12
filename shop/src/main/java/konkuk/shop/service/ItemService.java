@@ -113,6 +113,7 @@ public class ItemService {
 
 
     public List<ResponseItemList> findItemListByCategory(Long categoryId) {
+        log.info("카테고리별 아이템 목록 조회. categoryId={}", categoryId);
         return itemRepository.findByCategoryId(categoryId)
                 .stream().map(e -> ResponseItemList.builder()
                         .itemState(e.getItemState().toString())
@@ -132,6 +133,7 @@ public class ItemService {
     public void saveOption(List<OptionOneForm> option1s, Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+        log.info("item 옵션 추가. itemId={}", itemId);
 
         for (OptionOneForm option1 : option1s) {
             Option1 saveOption1 = option1Repository.save(new Option1(option1.getName(), option1.getStock()));
@@ -150,6 +152,8 @@ public class ItemService {
     public ResponseItemDetail findItemById(Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+
+        log.info("상품 상세 조회. itemId={}", itemId);
 
         List<String> itemImages = item.getItemImages().stream()
                 .map(ItemImage::getStore_name)
@@ -190,6 +194,7 @@ public class ItemService {
     }
 
     public List<ResponseItemList> findItemBySearchWord(String searchWord) {
+        log.info("상품 검색 기능 사용. searchWord={}", searchWord);
         /*
           검색 쿼리에 대한 정확성 및 정책 강화 필요
          */
@@ -217,9 +222,11 @@ public class ItemService {
         return result;
     }
 
-    public List<ResponseItemList> findItemByAdminMember(Long userId) {
+    public List<ResponseItemList> findItemByUserId(Long userId) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+
+        log.info("아이템 조회 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
         return itemRepository.findByAdminMember(adminMember)
                 .stream().map(e -> ResponseItemList.builder()
@@ -237,6 +244,7 @@ public class ItemService {
     }
 
     public List<ResponseItemList> findAllItem() {
+        log.info("모든 상품 조회");
         return itemRepository.findAll()
                 .stream().map(e -> ResponseItemList.builder()
                         .itemState(e.getItemState().toString())
@@ -260,6 +268,9 @@ public class ItemService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
         if (!adminMember.getId().equals(item.getAdminMember().getId()))
             throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ITEM);
+
+        log.info("상품의 가격, 세일 수정 요청. itemId={}, 가격={}->{}, 세일={}->{}",
+                itemId, item.getPrice(), price, item.getSale(), sale);
 
         item.changePriceAndSale(price, sale);
     }

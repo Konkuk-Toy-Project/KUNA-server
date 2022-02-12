@@ -35,6 +35,7 @@ public class CouponService {
         Coupon coupon = new Coupon(couponKind, expiredDate, form.getCondition(), form.getRate(), form.getName());
         coupon.setUsed(false);
         coupon.setSerialNumber(UUID.randomUUID().toString().substring(0, 13));
+        log.info("관리자가 쿠폰 등록. serialNumber={}", coupon.getSerialNumber());
         return couponRepository.save(coupon);
     }
 
@@ -52,6 +53,7 @@ public class CouponService {
     public List<ResponseGetCoupon> getCoupon(Long userId) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        log.info("쿠폰 목록 조회 userId={}", userId);
 
         return member.getCoupons().stream()
                 .map(e -> new ResponseGetCoupon(e.getCouponKind().toString(), e.getRate(),
@@ -69,6 +71,8 @@ public class CouponService {
         if (coupon.getMember() != null) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_COUPON);
         if (coupon.getExpiredDate().isBefore(LocalDateTime.now()))
             throw new ApiException(ExceptionEnum.EXPIRED_COUPON);
+
+        log.info("사용자가 쿠폰 등록. couponId={}", coupon.getId());
 
         coupon.setMember(member);
         member.getCoupons().add(coupon);

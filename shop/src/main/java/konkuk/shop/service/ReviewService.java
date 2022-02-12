@@ -74,7 +74,7 @@ public class ReviewService {
             }
         }
         orderItem.setReviewed(true);
-
+        log.info("리뷰 등록 요청. memberId={}", userId);
 
         return reviewRepository.save(review).getId();
     }
@@ -108,6 +108,7 @@ public class ReviewService {
                     .registryDate(review.getRegistryDate())
                     .build());
         }
+        log.info("리뷰 목록 요청. itemId={}", itemId);
         return result;
     }
 }
