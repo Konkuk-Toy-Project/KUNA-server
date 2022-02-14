@@ -53,8 +53,11 @@ public class InitDB {
         initCart(adminMember.getMember().getId(), item);
         initCoupon(adminMember.getMember());
         Order order = initOrder(adminMember.getMember(), item, item2);
+        Order order2 = initOrder(member, item, item2);
 
-        initReview(adminMember.getMember(), order);
+        initReview(adminMember.getMember(), order, 0);
+        initReview(member, order2, 0);
+        initReview(member, order2, 1);
         Long preferenceId = initPreference(adminMember.getMember(), item);
         initQna(member, item);
     }
@@ -213,8 +216,8 @@ public class InitDB {
         couponRepository.save(coupon3);
     }
 
-    private void initReview(Member member, Order order) {
-        OrderItem orderItem = order.getOrderItems().get(0);
+    private void initReview(Member member, Order order, int orderItemOrder) {
+        OrderItem orderItem = order.getOrderItems().get(orderItemOrder);
 
         Review review = Review.builder()
                 .item(orderItem.getItem())
