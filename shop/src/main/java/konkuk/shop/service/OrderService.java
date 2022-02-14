@@ -1,10 +1,7 @@
 package konkuk.shop.service;
 
 
-import konkuk.shop.dto.AddOrderDto;
-import konkuk.shop.dto.FindOrderDto;
-import konkuk.shop.dto.FindOrderItemDto;
-import konkuk.shop.dto.FindOrderListDto;
+import konkuk.shop.dto.*;
 import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
@@ -215,5 +212,17 @@ public class OrderService {
                 .map(e -> new FindOrderListDto(e.getOrderDate(), e.getTotalPrice(), e.getShippingCharge(),
                         e.getId(), e.getOrderState().toString(), e.getDelivery().getDeliveryState().toString()))
                 .collect(Collectors.toList());
+    }
+
+    public List<OrderItemDto> findOrderItemList(Long userId) {
+        List<Order> orders = orderRepository.findByMemberId(userId);
+        List<OrderItemDto> result = new ArrayList<>();
+        for (Order order : orders) {
+            List<OrderItem> orderItems = order.getOrderItems();
+            for (OrderItem orderItem : orderItems) {
+                result.add(new OrderItemDto(orderItem.getItemName(), orderItem.isReviewed(), orderItem.getItem().getId()));
+            }
+        }
+        return result;
     }
 }

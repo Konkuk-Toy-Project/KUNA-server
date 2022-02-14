@@ -3,6 +3,7 @@ package konkuk.shop.controller;
 import konkuk.shop.dto.AddOrderDto;
 import konkuk.shop.dto.FindOrderDto;
 import konkuk.shop.dto.FindOrderListDto;
+import konkuk.shop.dto.OrderItemDto;
 import konkuk.shop.form.requestForm.order.RequestAddOrderForm;
 import konkuk.shop.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,13 @@ public class OrderController {
     public ResponseEntity<List<FindOrderListDto>> getOrderList(@AuthenticationPrincipal Long userId) {
         List<FindOrderListDto> result = orderService.findOrderList(userId);
 
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    //  주문한 제품명, 리뷰 작성 유무, 자신의 주문 상품 Id
+    @GetMapping("/item")
+    public ResponseEntity<List<OrderItemDto>> getOrderItems(@AuthenticationPrincipal Long userId){
+        List<OrderItemDto> result = orderService.findOrderItemList(userId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

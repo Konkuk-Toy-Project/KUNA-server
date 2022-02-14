@@ -15,4 +15,9 @@ public class CartItemDto {
     Integer price;
     Integer sale;
     Integer count;
+    String name;
+    Long itemId;
+    Long option1Id;
+    Long option2Id;
+    Integer stock;
 }

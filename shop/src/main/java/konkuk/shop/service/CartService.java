@@ -91,8 +91,16 @@ public class CartService {
                         .price(item.getPrice())
                         .sale(item.getSale())
                         .cartItemId(cartItem.getId())
+                        .name(item.getName())
+                        .option1Id(cartItem.getOption1().getId())
+                        .itemId(item.getId())
+                        .stock(cartItem.getOption1().getStock())
                         .build();
-                if (cartItem.getOption2() != null) cartItemDto.setOption2(cartItem.getOption2().getName());
+                if (cartItem.getOption2() != null) {
+                    cartItemDto.setOption2(cartItem.getOption2().getName());
+                    cartItemDto.setOption2Id(cartItem.getOption2().getId());
+                    cartItemDto.setStock(cartItem.getOption2().getStock());
+                }
 
                 result.add(cartItemDto);
             }
