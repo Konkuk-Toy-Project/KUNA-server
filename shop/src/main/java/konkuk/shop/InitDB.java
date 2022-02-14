@@ -8,7 +8,6 @@ import konkuk.shop.repository.*;
 import konkuk.shop.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -52,7 +51,7 @@ public class InitDB {
         Item item = initItem(adminMember, category);
         Item item2 = initItem2(adminMember);
         initCart(adminMember.getMember().getId(), item);
-        initCoupon();
+        initCoupon(adminMember.getMember());
         Order order = initOrder(adminMember.getMember(), item, item2);
 
         initReview(adminMember.getMember(), order);
@@ -195,11 +194,23 @@ public class InitDB {
         cartService.addItem(memberId, item.getId(), item.getOption1s().get(0).getId(), item.getOption1s().get(0).getOption2s().get(0).getId(), 2);
     }
 
-    private void initCoupon() {
-        Coupon coupon = new Coupon(CouponKind.STATIC, LocalDateTime.now().plusDays(1), "total_price_5000", 1000, "회원가입 감사쿠폰");
-        coupon.setUsed(false);
-        coupon.setSerialNumber("a1b2c3d4-e5f6");
-        couponRepository.save(coupon);
+    private void initCoupon(Member member) {
+        Coupon coupon1 = new Coupon(CouponKind.STATIC, LocalDateTime.now().plusDays(1), "total_price_5000", 1000, "회원가입 감사쿠폰");
+        coupon1.setUsed(false);
+        coupon1.setMember(member);
+        coupon1.setSerialNumber("a1b2c3d4-e5f8");
+        couponRepository.save(coupon1);
+
+        Coupon coupon2 = new Coupon(CouponKind.PERCENT, LocalDateTime.now().plusDays(1), "total_price_5000", 50, "관리자가 사랑하는만큼 쿠폰");
+        coupon2.setUsed(false);
+        coupon2.setMember(member);
+        coupon2.setSerialNumber("a1b2c3d4-e5f7");
+        couponRepository.save(coupon2);
+
+        Coupon coupon3 = new Coupon(CouponKind.STATIC, LocalDateTime.now().plusDays(1), "total_price_30000", 5000, "런칭 기념 쿠폰");
+        coupon3.setUsed(false);
+        coupon3.setSerialNumber("a1b2c3d4-e5f6");
+        couponRepository.save(coupon3);
     }
 
     private void initReview(Member member, Order order) {

@@ -33,10 +33,11 @@ public class CouponController {
     }
 
     @PostMapping("/user") // 사용자가 쿠폰 등록
-    public void registryCoupon(@AuthenticationPrincipal Long userId,
+    public ResponseEntity<ResponseGetCoupon> registryCoupon(@AuthenticationPrincipal Long userId,
                                @RequestBody HashMap<String, String> map) {
         String serialNumber = map.get("serialNumber");
-        couponService.registryCoupon(userId, serialNumber);
+        ResponseGetCoupon result = couponService.registryCoupon(userId, serialNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping // 로그인 회원이 자신의 쿠폰 확인

@@ -41,7 +41,7 @@ public class OrderService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
 
         // 1. 쿠폰 검증
-        Coupon coupon = validationCoupon(form.getCouponId(), form.getTotalPrice(), memberId);
+        Coupon coupon = validationCoupon(form.getCouponId(), memberId);
 
         // 2. 배송 요금 확인
         if (form.getTotalPrice() >= 50000 && form.getShippingCharge() != 0)
@@ -49,8 +49,8 @@ public class OrderService {
         if (form.getTotalPrice() < 50000 && form.getShippingCharge() == 0)
             throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
 
-        // 3. 재고 수량 확인 및 토탈 금액 검증
-        List<OrderItem> orderItems = makeOrderItem(form.getOrderItems(), form.getTotalPrice());
+        // 3. 재고 수량 확인 및 토탈 금액 검증 + 쿠폰 사용 조건 검증
+        List<OrderItem> orderItems = makeOrderItem(form.getOrderItems(), form.getTotalPrice(), coupon);
 
         Delivery delivery = deliveryRepository.save(
                 new Delivery(form.getAddress(), form.getPhone(), form.getRecipient(), DeliveryState.PREPARING));
@@ -83,9 +83,9 @@ public class OrderService {
         return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(), saveOrder.getShippingCharge(), saveOrder.getOrderDate());
     }
 
-    private List<OrderItem> makeOrderItem(List<OrderItemForm> orderItems, int totalPrice) {
+    private List<OrderItem> makeOrderItem(List<OrderItemForm> orderItems, int totalPrice, Coupon coupon) {
         List<OrderItem> result = new ArrayList<>();
-        int priceSum = 0;
+        int salePriceSum = 0;
 
         for (OrderItemForm orderItemform : orderItems) {
             Item item = itemRepository.findById(orderItemform.getItemId())
@@ -119,12 +119,30 @@ public class OrderService {
 
                 orderItem.setOption2(option2.getName());
             }
-            priceSum += (itemPrice * orderItemform.getCount());
+            salePriceSum += (itemPrice * orderItemform.getCount());
             result.add(orderItem);
         }
 
-        if (priceSum != totalPrice) {
-            log.info("Incorrect total price!! request totalPrice={},  priceSum={}", totalPrice, priceSum);
+        int validTotalPrice = salePriceSum;
+
+        if (coupon != null) {
+            // 쿠폰 사용 조건 검증
+            String couponCondition = coupon.getCouponCondition();
+            String[] subStr = couponCondition.split("_");
+            int conditionPrice = Integer.parseInt(subStr[2]);
+            if (conditionPrice > salePriceSum) throw new ApiException(ExceptionEnum.NOT_SATISFY_USE_COUPON);
+
+            if (coupon.getCouponKind().equals(CouponKind.STATIC)) {
+                if (salePriceSum > coupon.getRate()) validTotalPrice = salePriceSum - coupon.getRate();
+                else validTotalPrice = 0;
+            } else if (coupon.getCouponKind().equals(CouponKind.PERCENT)) {
+                int salePriceByCoupon = (int) (salePriceSum * (100 - coupon.getRate()) * 0.01);
+                validTotalPrice = salePriceSum - salePriceByCoupon;
+            }
+        }
+
+        if (validTotalPrice != totalPrice) {
+            log.info("Incorrect total price!! request totalPrice={},  priceSum={}", totalPrice, validTotalPrice);
             throw new ApiException(ExceptionEnum.INCORRECT_TOTAL_PRICE);
         }
         return result;
@@ -136,7 +154,7 @@ public class OrderService {
         else throw new ApiException(ExceptionEnum.INCORRECT_PAYMENT_METHOD);
     }
 
-    private Coupon validationCoupon(Long couponId, int totalPrice, Long userId) {
+    private Coupon validationCoupon(Long couponId, Long userId) {
         if (couponId == null) return null;
 
         Coupon coupon = couponRepository.findById(couponId)
@@ -146,11 +164,6 @@ public class OrderService {
         if (coupon.isUsed()) throw new ApiException(ExceptionEnum.ALREADY_USED_COUPON);
         if (coupon.getExpiredDate().isBefore(LocalDateTime.now()))
             throw new ApiException(ExceptionEnum.EXPIRED_COUPON);
-
-        String couponCondition = coupon.getCouponCondition();
-        String[] subStr = couponCondition.split("_");
-        int conditionPrice = Integer.parseInt(subStr[2]);
-        if (conditionPrice > totalPrice) throw new ApiException(ExceptionEnum.NOT_SATISFY_USE_COUPON);
 
         return coupon;
     }

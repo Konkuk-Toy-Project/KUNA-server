@@ -62,7 +62,7 @@ public class CouponService {
     }
 
     @Transactional
-    public void registryCoupon(Long userId, String serialNumber) {
+    public ResponseGetCoupon registryCoupon(Long userId, String serialNumber) {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         Coupon coupon = couponRepository.findBySerialNumber(serialNumber)
@@ -76,5 +76,8 @@ public class CouponService {
 
         coupon.setMember(member);
         member.getCoupons().add(coupon);
+
+        return new ResponseGetCoupon(coupon.getCouponKind().toString(), coupon.getRate(),
+                coupon.getExpiredDate(), coupon.getCouponCondition(), coupon.getName(), coupon.isUsed(), coupon.getId());
     }
 }

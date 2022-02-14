@@ -1,15 +1,13 @@
 package konkuk.shop.controller;
 
+import konkuk.shop.dto.FindMemberInfoByUserIdDto;
 import konkuk.shop.dto.LoginDto;
 import konkuk.shop.dto.SignupDto;
-import konkuk.shop.entity.Member;
 import konkuk.shop.form.requestForm.member.*;
 import konkuk.shop.form.responseForm.member.ResponseSignupForm;
-import konkuk.shop.security.TokenProvider;
 import konkuk.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -91,6 +89,13 @@ public class MemberController {
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("point", point);
         return result;
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<FindMemberInfoByUserIdDto> findLoginMemberInfo(@AuthenticationPrincipal Long userId) {
+        FindMemberInfoByUserIdDto result = memberService.findInfoByUserId(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
 }

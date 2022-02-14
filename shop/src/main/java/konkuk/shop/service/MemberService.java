@@ -1,5 +1,6 @@
 package konkuk.shop.service;
 
+import konkuk.shop.dto.FindMemberInfoByUserIdDto;
 import konkuk.shop.dto.LoginDto;
 import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.AdminMember;
@@ -142,9 +143,23 @@ public class MemberService {
     }
 
     public Integer findPointByMemberId(Long userId) {
-        log.info("포인트 조회 memberId={}", userId);
+        log.info("포인트 조회. memberId={}", userId);
         return memberRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER))
                 .getPoint();
+    }
+
+    public FindMemberInfoByUserIdDto findInfoByUserId(Long userId) {
+        log.info("사용자 정보 조회. memberId={}", userId);
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+
+        return FindMemberInfoByUserIdDto.builder()
+                .birth(member.getBirth())
+                .name(member.getName())
+                .phone(member.getPhone())
+                .role(member.getMemberRole())
+                .email(member.getEmail())
+                .build();
     }
 }
