@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PreferenceRepository extends JpaRepository<PreferenceItem, Long> {
+    boolean existsByMemberIdAndItemId(Long userId, Long itemId);
 }

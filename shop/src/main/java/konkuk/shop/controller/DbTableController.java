@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -74,6 +75,12 @@ public class DbTableController {
         model.addAttribute("detailImages", detailImages);
         model.addAttribute("reviewImages", reviewImages);
         model.addAttribute("thumbnails", thumbnails);
+
+        List<String> table = Arrays.asList("adminMember", "member", "cartItem", "category", "coupon", "delivery",
+                "item", "option1", "option2", "order", "orderItem", "preferenceItem", "qna", "review", "itemImage",
+                "detailImage", "reviewImage", "thumbnail");
+        model.addAttribute("tableName", table);
+
         return "showDbTable";
     }
 }

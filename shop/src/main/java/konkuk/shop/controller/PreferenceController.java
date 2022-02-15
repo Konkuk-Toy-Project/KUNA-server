@@ -48,5 +48,17 @@ public class PreferenceController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/isPreference/{itemId}")
+    public HashMap<String, Object> isPreferenceItem(@AuthenticationPrincipal Long userId, @PathVariable Long itemId) {
+        log.info("현재 상품이 찜한 상품인지 확인하는 요청. itemId={}", itemId);
+        HashMap<String, Object> result = new HashMap<String, Object>();
+
+        if(userId==null) result.put("isPreference", false);
+        else{
+            boolean isPreference = preferenceService.isPreference(userId, itemId);
+            result.put("isPreference", isPreference);
+        }
+        return result;
+    }
 
 }

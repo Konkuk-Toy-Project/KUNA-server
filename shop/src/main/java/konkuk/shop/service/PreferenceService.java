@@ -65,4 +65,8 @@ public class PreferenceService {
 
         preferenceRepository.delete(preferenceItem);
     }
+
+    public boolean isPreference(Long userId, Long itemId) {
+        return preferenceRepository.existsByMemberIdAndItemId(userId, itemId);
+    }
 }

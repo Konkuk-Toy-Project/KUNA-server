@@ -35,6 +35,11 @@ public class MemberService {
         return memberRepository.existsByPhone(phone);
     }
 
+    public boolean existsMemberById(Long id) {
+
+        return memberRepository.existsById(id);
+    }
+
     @Transactional
     public Long signup(SignupDto dto) {
         signUpValidation(dto);

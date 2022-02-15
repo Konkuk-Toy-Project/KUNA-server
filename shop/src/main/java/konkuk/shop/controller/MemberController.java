@@ -98,4 +98,21 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    @GetMapping("/isLogin")
+    public HashMap<String, Object> isLogin(@AuthenticationPrincipal Long userId) {
+        log.info("로그인 여부 요청.");
+        HashMap<String, Object> result = new HashMap<String, Object>();
+
+        if(userId==null) result.put("isLogin", false);
+        else{
+            boolean isLogin = memberService.existsMemberById(userId);
+            result.put("isLogin", isLogin);
+        }
+        return result;
+    }
+
+
+    // 로그인 여부
+    // 상ㅇ품 접속시 찜했나 안했나 여부 -> 로그인+찜 = true,  로그인x | 찜x = false;
+
 }

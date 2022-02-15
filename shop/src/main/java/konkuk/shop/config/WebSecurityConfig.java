@@ -38,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                   .antMatchers("/member/signup", "/member/duplication/email", "/member/login", "/member/find/**",
-                          "/coupon", "/h2-console/**", "/review/**", "/qna/**", "/item/**", "/image/**", "/category", "/table").permitAll()
+                          "/coupon", "/h2-console/**", "/review/**", "/qna/**", "/item/**", "/image/**", "/category", "/table", "/member/isLogin", "/preference/isPreference/**").permitAll()
                 .anyRequest().authenticated(); //이외의 모든 경로는 인증 해야 함
 
         // filter 등록
@@ -54,7 +54,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        //configuration.addAllowedOrigin("http:localhost:8080");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
