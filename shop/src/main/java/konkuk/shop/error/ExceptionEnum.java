@@ -41,6 +41,7 @@ public enum ExceptionEnum {
     NOT_MATCH_COUPON_MEMBER(HttpStatus.BAD_REQUEST, "C004", "해당 쿠폰 소유자가 아닙니다."),
     ALREADY_USED_COUPON(HttpStatus.BAD_REQUEST, "C005", "이미 사용한 쿠폰입니다."),
     EXPIRED_COUPON(HttpStatus.BAD_REQUEST, "C006", "쿠폰 사용기한이 지났습니다."),
+    NOT_HIGHER_PRICE_THAN_COUPON(HttpStatus.BAD_REQUEST, "C007", "totalPrice>=쿠폰 금액이어야 합니다."),
 
     NO_FIND_CATEGORY(HttpStatus.BAD_REQUEST, "CT01", "존재하지 않는 카테고리입니다."),
 

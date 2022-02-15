@@ -273,6 +273,7 @@ public class InitDB {
                 .build();
         orderItems.add(orderItem2);
 
+
         Order order = Order.builder()
                 .delivery(delivery)
                 .member(member)

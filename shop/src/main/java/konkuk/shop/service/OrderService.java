@@ -131,7 +131,7 @@ public class OrderService {
 
             if (coupon.getCouponKind().equals(CouponKind.STATIC)) {
                 if (salePriceSum > coupon.getRate()) validTotalPrice = salePriceSum - coupon.getRate();
-                else validTotalPrice = 0;
+                else throw new ApiException(ExceptionEnum.NOT_HIGHER_PRICE_THAN_COUPON);
             } else if (coupon.getCouponKind().equals(CouponKind.PERCENT)) {
                 int salePriceByCoupon = (int) (salePriceSum * (100 - coupon.getRate()) * 0.01);
                 validTotalPrice = salePriceSum - salePriceByCoupon;

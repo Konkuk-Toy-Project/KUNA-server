@@ -34,6 +34,9 @@ public class InitItemDB {
     private final Option2Repository option2Repository;
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
+    private final OrderRepository orderRepository;
+    private final DeliveryRepository deliveryRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Value("${init.item}")
     private String initItemPath;
@@ -54,12 +57,21 @@ public class InitItemDB {
             else if (initItemDto.getCategory().equals("신발")) initItem(adminMember, 신발, initItemDto);
             else log.info("====init item fail=====");
         }
+
+        Member member = findMember();
+        Item item1 = itemRepository.findById(96L).orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+        Item item2 = itemRepository.findById(109L).orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+        initOrder(member, item1, item2);
+
         log.info("====init item Success!=====");
     }
 
     private AdminMember findAdminMember() {
         Member member = memberRepository.findByEmail("asdf@asdf.com").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         return memberService.findAdminByMemberId(member.getId());
+    }
+    private Member findMember() {
+        return memberRepository.findByEmail("asdf2@asdf.com").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
     }
 
     private List<InitItemDto> parseNote() throws IOException {
@@ -224,6 +236,65 @@ public class InitItemDB {
             item.getOption1s().add(saveOption1);
         }
         return item;
+    }
+
+    private Order initOrder(Member member, Item item, Item item2) {
+        Delivery delivery = deliveryRepository.save(
+                new Delivery("서울특별시 ~ ", "010123456789", "이진용", DeliveryState.PREPARING));
+
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        int itemPrice1 = Integer.parseInt(String.valueOf(Math.round((100 - item.getSale()) * 0.01 * item.getPrice())));
+        OrderItem orderItem1 = OrderItem.builder()
+                .count(3)
+                .isReviewed(false)
+                .item(item)
+                .itemName(item.getName())
+                .itemPrice(itemPrice1)
+                .itemVersion(item.getVersion())
+                .option1("라이트블루")
+                .option2("Size L")
+                .thumbnailUrl(item.getThumbnail().getStore_name())
+                .build();
+        orderItems.add(orderItem1);
+
+        int itemPrice2 = Integer.parseInt(String.valueOf(Math.round((100 - item2.getSale()) * 0.01 * item2.getPrice())));
+        OrderItem orderItem2 = OrderItem.builder()
+                .count(1)
+                .isReviewed(false)
+                .item(item2)
+                .itemName(item2.getName())
+                .itemPrice(itemPrice2)
+                .itemVersion(item2.getVersion())
+                .option1("화이트")
+                .option2("Size 160")
+                .thumbnailUrl(item2.getThumbnail().getStore_name())
+                .build();
+        orderItems.add(orderItem2);
+
+
+        Order order = Order.builder()
+                .delivery(delivery)
+                .member(member)
+                .orderDate(LocalDateTime.now())
+                .totalPrice(itemPrice1*2 + itemPrice2) //각각 2개, 1개 주문
+                .coupon(null)
+                .usedPoint(0)
+                .payMethod(PayMethod.CARD)
+                .shippingCharge(0)
+                .orderState(OrderState.NORMALITY)
+                .orderItems(new ArrayList<>())
+                .orderItems(orderItems)
+                .build();
+
+        Order saveOrder = orderRepository.save(order);
+
+        orderItem1.setOrder(saveOrder);
+        orderItemRepository.save(orderItem1);
+        orderItem2.setOrder(saveOrder);
+        orderItemRepository.save(orderItem2);
+
+        return saveOrder;
     }
 
 }
