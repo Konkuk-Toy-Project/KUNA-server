@@ -9,4 +9,6 @@ public class OrderItemDto {
     String itemName;
     Boolean isReviewed;
     Long itemId;
+    String option;
+    Long orderItemId;
 }

@@ -220,9 +220,11 @@ public class OrderService {
         for (Order order : orders) {
             List<OrderItem> orderItems = order.getOrderItems();
             for (OrderItem orderItem : orderItems) {
-                result.add(new OrderItemDto(orderItem.getItemName(), orderItem.isReviewed(), orderItem.getItem().getId()));
+                result.add(new OrderItemDto(orderItem.getItemName(), orderItem.isReviewed(), orderItem.getItem().getId(),
+                        orderItem.getOption1()+"/"+orderItem.getOption2(), orderItem.getId()));
             }
         }
+        log.info("주문 상품 조회. memberId={}", userId);
         return result;
     }
 }
