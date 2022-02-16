@@ -53,10 +53,14 @@ public class PreferenceController {
         log.info("현재 상품이 찜한 상품인지 확인하는 요청. itemId={}", itemId);
         HashMap<String, Object> result = new HashMap<String, Object>();
 
-        if(userId==null) result.put("isPreference", false);
+        if(userId==null){
+            result.put("isPreference", false);
+            result.put("isLogin", false);
+        }
         else{
             boolean isPreference = preferenceService.isPreference(userId, itemId);
             result.put("isPreference", isPreference);
+            result.put("isLogin", true);
         }
         return result;
     }
