@@ -44,20 +44,20 @@ image:
   #detail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/detailImage/
   #thumbnail: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/src/main/resources/static/thumbnail/
 
-  review: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\src\main\resources\static\reviewImage\
-  item: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\src\main\resources\static\itemImage\
-  detail: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\src\main\resources\static\detailImage\
-  thumbnail: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\src\main\resources\static\thumbnail\
+  #review: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\src\main\resources\static\reviewImage\
+  #item: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\src\main\resources\static\itemImage\
+  #detail: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\src\main\resources\static\detailImage\
+  #thumbnail: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\src\main\resources\static\thumbnail\
 
-  #review: /image/review/
-  #item: /image/item/
-  #detail: /image/detail/
-  #thumbnail: /image/thumbnail/
+  review: /image/review/
+  item: /image/item/
+  detail: /image/detail/
+  thumbnail: /image/thumbnail/
 
 init:
   #item: /Users/hongseungtaeg/Desktop/toyproject/toyProject5/back-end/shop/initItem.txt
-  item: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\initItem.txt
-  #item: /initItem.txt
+  #item: C:\Users\s_gmtmoney2357\Desktop\ToyProject\ToyProject5\back-end\shop\initItem.txt
+  item: /initItem.txt
 
 token:
   expiration_time: 600000

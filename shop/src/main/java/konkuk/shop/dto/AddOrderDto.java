@@ -12,4 +12,5 @@ public class AddOrderDto {
     Integer totalPrice;
     Integer shippingCharge;
     LocalDateTime orderDate;
+    Integer usePoint;
 }

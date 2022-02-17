@@ -190,6 +190,7 @@ public class ItemService {
                 .registryDate(item.getRegistryDate())
                 .option1(option1Dto)
                 .categoryId(item.getCategory().getId())
+                .thumbnailUrl(item.getThumbnail().getStore_name())
                 .build();
     }
 

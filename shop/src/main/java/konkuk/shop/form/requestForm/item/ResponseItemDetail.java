@@ -24,4 +24,5 @@ public class ResponseItemDetail {
     String categoryName;
     Long categoryId;
     List<Option1Dto> option1=new ArrayList<>();
+    String thumbnailUrl;
 }

@@ -73,7 +73,7 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<ResponseItemDetail> findItemByItemId(@PathVariable Long itemId) {
+    public ResponseEntity<ResponseItemDetail> findItemDetailByItemId(@PathVariable Long itemId) {
         ResponseItemDetail result = itemService.findItemById(itemId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);

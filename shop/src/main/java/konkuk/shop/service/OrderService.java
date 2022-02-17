@@ -77,7 +77,8 @@ public class OrderService {
 
         if (coupon != null) coupon.setUsed(true);
 
-        return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(), saveOrder.getShippingCharge(), saveOrder.getOrderDate());
+        return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(),
+                saveOrder.getShippingCharge(), saveOrder.getOrderDate(), saveOrder.getUsedPoint());
     }
 
     private List<OrderItem> makeOrderItem(List<OrderItemForm> orderItems, int totalPrice, Coupon coupon) {
