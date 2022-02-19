@@ -218,6 +218,7 @@ public class OrderService {
     public List<OrderItemDto> findOrderItemList(Long userId) {
         List<Order> orders = orderRepository.findByMemberId(userId);
         List<OrderItemDto> result = new ArrayList<>();
+
         for (Order order : orders) {
             List<OrderItem> orderItems = order.getOrderItems();
             for (OrderItem orderItem : orderItems) {

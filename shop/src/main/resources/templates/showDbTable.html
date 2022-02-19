@@ -12,7 +12,7 @@
     </style>
     <script type="text/javascript">
         function ev(event) {
-            var con = document.getElementById(event.value);
+            const con = document.getElementById(event.value);
             if (con.style.display === 'none') {
                 con.style.display = 'block';
             } else {
@@ -25,11 +25,8 @@
                 = document.getElementsByName('table');
 
             checkboxes.forEach((checkbox) => {
-                //checkbox.checked = selectAll.checked;
                 checkbox.checked = bool;
-                //console.log(checkbox.value.checked);
-                var con = document.getElementById(checkbox.value);
-
+                const con = document.getElementById(checkbox.value);
                 if (bool) con.style.display = 'block';
                 else con.style.display = 'none';
             })

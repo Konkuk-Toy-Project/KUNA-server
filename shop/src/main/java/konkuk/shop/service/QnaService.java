@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -74,28 +75,24 @@ public class QnaService {
     public List<ResponseQnaList> findQnaByAdminMember(Long userId, boolean isAnswered) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
-        List<Qna> qnaList = qnaRepository.findAllByAdminMember(adminMember);
-        List<ResponseQnaList> result = new ArrayList<>();
 
         log.info("자신의 상품 Qna 목록 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
-        for (Qna qna : qnaList) {
-            if (qna.isAnswered() == isAnswered) {
-
-                result.add(ResponseQnaList.builder()
-                        .memberName(qna.getMember().getName())
+        List<ResponseQnaList> result = qnaRepository.findAllByAdminMember(adminMember).stream()
+                .filter(q -> q.isAnswered() == isAnswered)
+                .map(q -> ResponseQnaList.builder()
+                        .memberName(q.getMember().getName())
                         .isAnswered(isAnswered)
-                        .isSecret(qna.isSecret())
-                        .qnaId(qna.getId())
-                        .itemName(qna.getItem().getName())
-                        .question(qna.getQuestion())
-                        .registryDate(qna.getRegistryDate())
-                        .itemId(qna.getItem().getId())
-                        .answer(checkNull(qna.getAnswer()))
-                        .title(qna.getTitle())
-                        .build());
-            }
-        }
+                        .isSecret(q.isSecret())
+                        .qnaId(q.getId())
+                        .itemName(q.getItem().getName())
+                        .question(q.getQuestion())
+                        .registryDate(q.getRegistryDate())
+                        .itemId(q.getItem().getId())
+                        .answer(checkNull(q.getAnswer()))
+                        .title(q.getTitle())
+                        .build())
+                .collect(Collectors.toList());
 
         return result;
     }

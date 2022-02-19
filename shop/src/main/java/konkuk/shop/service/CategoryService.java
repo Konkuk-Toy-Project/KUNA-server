@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -28,12 +29,11 @@ public class CategoryService {
     }
 
     public List<FindAllCategoryDto> findAll() {
-        List<Category> categories = categoryRepository.findAll();
+        List<FindAllCategoryDto> result = categoryRepository.findAll()
+                .stream()
+                .map(e -> new FindAllCategoryDto(e.getId(), e.getName()))
+                .collect(Collectors.toList());
 
-        List<FindAllCategoryDto> result = new ArrayList<>();
-        for (Category category : categories) {
-            result.add(new FindAllCategoryDto(category.getId(), category.getName()));
-        }
         log.info("카테고리 목록 요청");
         return result;
     }
