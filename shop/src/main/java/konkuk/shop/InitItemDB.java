@@ -1,5 +1,6 @@
 package konkuk.shop;
 
+import konkuk.shop.dto.SignupDto;
 import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
@@ -37,6 +38,8 @@ public class InitItemDB {
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
     private final OrderItemRepository orderItemRepository;
+    private final CouponRepository couponRepository;
+    private final QnaRepository qnaRepository;
 
     @Value("${init.item}")
     private String initItemPath;
@@ -62,6 +65,11 @@ public class InitItemDB {
         Item item1 = itemRepository.findById(96L).orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
         Item item2 = itemRepository.findById(109L).orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
         initOrder(member, item1, item2);
+        initCoupon(member);
+        Member testMember3 = initMember();
+
+        Item item3 = itemRepository.findById(14L).orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+        initQna(adminMember, testMember3, item3);
 
         log.info("====init item Success!=====");
     }
@@ -295,6 +303,38 @@ public class InitItemDB {
         orderItemRepository.save(orderItem2);
 
         return saveOrder;
+    }
+
+    private void initCoupon(Member member) {
+        Coupon coupon1 = new Coupon(CouponKind.PERCENT, LocalDateTime.now().plusDays(1), "total_price_0", 30, "봄 신상품 런칭 기념");
+        coupon1.setUsed(false);
+        coupon1.setMember(member);
+        coupon1.setSerialNumber("a77sf5e7-a5k1");
+        couponRepository.save(coupon1);
+
+        Coupon coupon2 = new Coupon(CouponKind.STATIC, LocalDateTime.now().plusDays(1), "total_price_10000", 10000, "건국 제휴 할인");
+        coupon2.setUsed(false);
+        coupon2.setMember(member);
+        coupon2.setSerialNumber("e7w8cd93-vdf3");
+        couponRepository.save(coupon2);
+    }
+
+    private Member initMember() {
+        SignupDto dto2 = new SignupDto("asdf3@asdf.com", "asdfasdf@3", "testMember3", "01063324829", "19960502", "user");
+        Long memberId = memberService.signup(dto2);
+        return memberRepository.findById(memberId).orElseThrow(()->new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+    }
+
+    private void initQna(AdminMember adminMember, Member member, Item item) {
+        Qna qna1 = qnaRepository.save(new Qna(item, member, item.getAdminMember(), "택배 파업 지역도 바로 발송은 되나요? 아니면 파업 종료 이후 순차적으로 발송되나요?", false, "배송 관련 문의."));
+        Qna qna2 = qnaRepository.save(new Qna(item, adminMember.getMember(), item.getAdminMember(), "환불 가능한가요.", true, "모델분이 입으신 모습과 제가 입은 모습이 너무 다릅니다. 자괴감들어요ㅜㅜ"));
+        Qna qna3 = qnaRepository.save(new Qna(item, member, item.getAdminMember(), "재입고가 되긴 하나요? 구체적인 일정 알 수 있을까요.", false, "재입고 날짜"));
+
+        qna2.registryAnswer("안녕하세요. 저희는 옷을 판매하는 업체입니다. 성형 관련 문의는 병원에 부탁드립니다. 감사합니다.");
+        qna3.registryAnswer("안녕하세요.\n" +
+                "해당 상품은 2022년 3월 중 재입고 예정입니다.\n" +
+                "단, 생산 및 물류 상황, 브랜드의 정책에 따라 달라질 수 있는 점 참고 부탁드립니다.");
+
     }
 
 }

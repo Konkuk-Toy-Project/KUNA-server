@@ -300,7 +300,11 @@ public class InitDB {
 
     private void initQna(Member member, Item item) {
         Qna qna1 = new Qna(item, member, item.getAdminMember(), "1년전에 주문했는데, 혹시 환불 가능한가요? ㅜㅜ", true, "환불 부탁드립니다.");
-        Qna qna2 = new Qna(item, member, item.getAdminMember(), "바다의.. 보물?!", false, "혹시 판매자분 바보신가요?");
+        Qna qna2 = new Qna(item, member, item.getAdminMember(), "265사이즈를 주문했는데 사이즈 260 교환요청합니다.\n" +
+                "빠른처리부탁드립니다", false, "교환 요청드립니다.");
+        qna2.registryAnswer("안녕하세요.\n" +
+                "문의하신 상품 마이페이지를 통해 직접 접수해 주신 부분으로 확인됩니다.\n" +
+                "상품이 반송지로 도착하면, 검수 완료 이후(영업일 기준 약 2~3일 소요) 교환 처리가 이뤄집니다.");
         qnaRepository.save(qna1);
         qnaRepository.save(qna2);
     }
