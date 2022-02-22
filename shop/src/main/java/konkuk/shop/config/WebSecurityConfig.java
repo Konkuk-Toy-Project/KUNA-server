@@ -27,17 +27,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // http 시큐리티 빌더
-        http.cors() // cors 허용
-                .and()
+        http    .cors() // cors 허용
+            .and()
                 .csrf().disable() // csrf는 현재 사용하지 않으므로 disable
                 .httpBasic().disable() // token을 사용하므로 basic 인증 disable
                 .formLogin().disable()
                 .headers().frameOptions().disable()// h2 오류 방지
-                .and()
+            .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //session 기반이 아님을 선언
-                .and()
+            .and()
                 .authorizeRequests()
-                  .antMatchers("/member/signup", "/member/duplication/email", "/member/login", "/member/find/**",
+                .antMatchers("/member/signup", "/member/duplication/email", "/member/login", "/member/find/**",
                           "/coupon", "/h2-console/**", "/review/**", "/qna/**", "/item/**", "/image/**", "/category", "/table", "/member/isLogin", "/preference/isPreference/**").permitAll()
                 .anyRequest().authenticated(); //이외의 모든 경로는 인증 해야 함
 

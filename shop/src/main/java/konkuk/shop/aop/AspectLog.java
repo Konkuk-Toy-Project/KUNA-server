@@ -10,7 +10,7 @@ import org.aspectj.lang.annotation.Aspect;
 public class AspectLog {
     @Around("execution(* konkuk.shop.controller..*(..))")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
-        //log.info("호출한 컨트롤러 메소드 이름 = {}", joinPoint.getSignature().getName());
+        log.info("호출한 컨트롤러 메소드 이름 = {}", joinPoint.getSignature().getName());
 
         return joinPoint.proceed();
     }
