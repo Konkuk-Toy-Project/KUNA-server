@@ -1,7 +1,9 @@
 package konkuk.shop.controller;
 
 
+import konkuk.shop.dto.IsPreference;
 import konkuk.shop.dto.PreferenceDto;
+import konkuk.shop.entity.PreferenceItem;
 import konkuk.shop.service.PreferenceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,20 +51,16 @@ public class PreferenceController {
     }
 
     @GetMapping("/isPreference/{itemId}")
-    public HashMap<String, Object> isPreferenceItem(@AuthenticationPrincipal Long userId, @PathVariable Long itemId) {
+    public ResponseEntity<IsPreference> isPreferenceItem(@AuthenticationPrincipal Long userId, @PathVariable Long itemId) {
         log.info("현재 상품이 찜한 상품인지 확인하는 요청. itemId={}", itemId);
-        HashMap<String, Object> result = new HashMap<String, Object>();
 
-        if(userId==null){
-            result.put("isPreference", false);
-            result.put("isLogin", false);
-        }
-        else{
-            boolean isPreference = preferenceService.isPreference(userId, itemId);
-            result.put("isPreference", isPreference);
-            result.put("isLogin", true);
-        }
-        return result;
+
+        IsPreference result;
+
+        if(userId==null) result = new IsPreference(false, false, null);
+        else result = preferenceService.isPreference(userId, itemId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
 }

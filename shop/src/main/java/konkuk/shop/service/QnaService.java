@@ -55,6 +55,7 @@ public class QnaService {
                 result.add(FindQnaDto.builder()
                         .isSecret(qna.isSecret())
                         .memberName(qna.getMember().getName())
+                        .isAnswered(qna.isAnswered())
                         .build());
             } else {
                 result.add(FindQnaDto.builder()

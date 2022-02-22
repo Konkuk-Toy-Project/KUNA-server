@@ -46,7 +46,10 @@ public class OrderService {
         if (form.getTotalPrice() < 50000 && form.getShippingCharge() == 0)
             throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
 
-        // 3. 재고 수량 확인 및 토탈 금액 검증 + 쿠폰 사용 조건 검증
+        // 3. 포인트 체크
+        if(member.getPoint() < form.getUsePoint()) throw new ApiException(ExceptionEnum.NOT_ENOUGH_POINTS);
+
+        // 4. 재고 수량 확인 및 토탈 금액 검증 + 쿠폰 사용 조건 검증
         List<OrderItem> orderItems = makeOrderItem(form.getOrderItems(), form.getTotalPrice(), coupon);
 
         Delivery delivery = deliveryRepository.save(
@@ -76,6 +79,10 @@ public class OrderService {
         }
 
         if (coupon != null) coupon.setUsed(true);
+
+        member.changePoint(-form.getUsePoint());
+
+        member.changePoint((int)(form.getTotalPrice()*0.01));
 
         return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(),
                 saveOrder.getShippingCharge(), saveOrder.getOrderDate(), saveOrder.getUsedPoint());

@@ -57,6 +57,7 @@ public enum ExceptionEnum {
     INCORRECT_TOTAL_PRICE(HttpStatus.BAD_REQUEST, "O004", "합계 금액이 맞지 않습니다."),
     NO_AUTHORITY_ACCESS_ORDER(HttpStatus.BAD_REQUEST, "O005", "해당 주문의 접근할 권한이 없습니다."),
     NO_FIND_ORDER_ITEM(HttpStatus.BAD_REQUEST, "O006", "해당 주문 상품을 찾을 수 없습니다."),
+    NOT_ENOUGH_POINTS(HttpStatus.BAD_REQUEST, "O007", "사용할 수 있는 포인트보다 사용하려는 포인트가 많습니다."),
 
     NO_FIND_ADMIN_MEMBER(HttpStatus.BAD_REQUEST, "A001", "해당 관리자를 찾을 수 없습니다."),
 

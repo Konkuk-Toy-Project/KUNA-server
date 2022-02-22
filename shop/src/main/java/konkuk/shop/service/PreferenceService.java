@@ -1,5 +1,6 @@
 package konkuk.shop.service;
 
+import konkuk.shop.dto.IsPreference;
 import konkuk.shop.dto.PreferenceDto;
 import konkuk.shop.entity.Item;
 import konkuk.shop.entity.Member;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -66,7 +68,13 @@ public class PreferenceService {
         preferenceRepository.delete(preferenceItem);
     }
 
-    public boolean isPreference(Long userId, Long itemId) {
-        return preferenceRepository.existsByMemberIdAndItemId(userId, itemId);
+    public IsPreference isPreference(Long userId, Long itemId) {
+        log.info("isPreference. userId={}, itemId={}", userId, itemId);
+
+        Optional<PreferenceItem> result = preferenceRepository.findByMemberIdAndItemId(userId, itemId);
+
+        return result.map(preferenceItem -> new IsPreference(true, true, preferenceItem.getId()))
+                .orElseGet(() -> new IsPreference(false, true, null));
+
     }
 }
