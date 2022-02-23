@@ -79,7 +79,7 @@ public class QnaService {
 
         log.info("자신의 상품 Qna 목록 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
-        List<ResponseQnaList> result = qnaRepository.findAllByAdminMember(adminMember).stream()
+        return qnaRepository.findAllByAdminMember(adminMember).stream()
                 .filter(q -> q.isAnswered() == isAnswered)
                 .map(q -> ResponseQnaList.builder()
                         .memberName(q.getMember().getName())
@@ -94,8 +94,6 @@ public class QnaService {
                         .title(q.getTitle())
                         .build())
                 .collect(Collectors.toList());
-
-        return result;
     }
 
     @Transactional
@@ -103,7 +101,7 @@ public class QnaService {
         Qna qna = qnaRepository.findById(qnaId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_QNA));
 
-        if(qna.isAnswered()) throw new ApiException(ExceptionEnum.ALREADY_ANSWER_QNA);
+        if (qna.isAnswered()) throw new ApiException(ExceptionEnum.ALREADY_ANSWER_QNA);
 
         if (!qna.getAdminMember().getMember().getId().equals(userId))
             throw new ApiException(ExceptionEnum.NO_AUTHORITY_ANSWER_QNA);

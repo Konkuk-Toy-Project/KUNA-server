@@ -196,9 +196,6 @@ public class ItemService {
 
     public List<ResponseItemList> findItemBySearchWord(String searchWord) {
         log.info("상품 검색 기능 사용. searchWord={}", searchWord);
-        /*
-          검색 쿼리에 대한 정확성 및 정책 강화 필요
-         */
         List<Item> items = itemRepository.findAll();
 
         List<ResponseItemList> result = new ArrayList<>();

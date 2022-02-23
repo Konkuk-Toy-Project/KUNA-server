@@ -47,7 +47,7 @@ public class OrderService {
             throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
 
         // 3. 포인트 체크
-        if(member.getPoint() < form.getUsePoint()) throw new ApiException(ExceptionEnum.NOT_ENOUGH_POINTS);
+        if (member.getPoint() < form.getUsePoint()) throw new ApiException(ExceptionEnum.NOT_ENOUGH_POINTS);
 
         // 4. 재고 수량 확인 및 토탈 금액 검증 + 쿠폰 사용 조건 검증
         List<OrderItem> orderItems = makeOrderItem(form.getOrderItems(), form.getTotalPrice(), coupon);
@@ -82,7 +82,7 @@ public class OrderService {
 
         member.changePoint(-form.getUsePoint());
 
-        member.changePoint((int)(form.getTotalPrice()*0.01));
+        member.changePoint((int) (form.getTotalPrice() * 0.01));
 
         return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(),
                 saveOrder.getShippingCharge(), saveOrder.getOrderDate(), saveOrder.getUsedPoint());
@@ -230,7 +230,7 @@ public class OrderService {
             List<OrderItem> orderItems = order.getOrderItems();
             for (OrderItem orderItem : orderItems) {
                 result.add(new OrderItemDto(orderItem.getItemName(), orderItem.isReviewed(), orderItem.getItem().getId(),
-                        orderItem.getOption1()+"/"+orderItem.getOption2(), orderItem.getId()));
+                        orderItem.getOption1() + "/" + orderItem.getOption2(), orderItem.getId()));
             }
         }
         log.info("주문 상품 조회. memberId={}", userId);

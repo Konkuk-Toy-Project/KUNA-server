@@ -45,7 +45,8 @@
         <div class="form-group-lg col-xs-5">
             <div class="form-group-lg">
                 <div th:each="tableName : ${tableName}">
-                    <input type="checkbox" class="form-check-input" name="table" onClick="ev(this)" th:value="*{tableName}" />
+                    <input type="checkbox" class="form-check-input" name="table" onClick="ev(this)"
+                           th:value="*{tableName}"/>
                     <label class="checkbox-inline" th:text="*{tableName}"></label>
                 </div>
             </div>
