@@ -16,23 +16,23 @@ public class Coupon {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="coupon_kind")
+    @Column(name = "coupon_kind")
     private CouponKind couponKind;
 
-    @Column(name="expired_date")
+    @Column(name = "expired_date")
     private LocalDateTime expiredDate;
 
-    @Column(name="coupon_condition")
+    @Column(name = "coupon_condition")
     private String couponCondition;
 
-    @Column(name="serial_number")
+    @Column(name = "serial_number")
     private String serialNumber;
 
     private Integer rate;
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     private boolean isUsed;
@@ -43,6 +43,17 @@ public class Coupon {
         this.couponCondition = couponCondition;
         this.rate = rate;
         this.name = name;
+    }
+
+    public Coupon(CouponKind couponKind, LocalDateTime expiredDate, String couponCondition,
+                  Integer rate, String name, Boolean isUsed, String serialNumber) {
+        this.couponKind = couponKind;
+        this.expiredDate = expiredDate;
+        this.couponCondition = couponCondition;
+        this.rate = rate;
+        this.name = name;
+        this.isUsed = isUsed;
+        this.serialNumber = serialNumber;
     }
 
     public void setMember(Member member) {

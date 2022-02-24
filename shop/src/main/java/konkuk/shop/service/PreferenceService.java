@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,13 +28,15 @@ public class PreferenceService {
 
     @Transactional
     public Long savePreferenceItem(Long memberId, Long itemId) {
+        log.info("찜하기 요청 memberId={}, itemId={}", memberId, itemId);
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
         PreferenceItem savePreferenceItem = preferenceRepository.save(new PreferenceItem(member, item));
+
         member.getPreferenceItems().add(savePreferenceItem);
-        log.info("찜하기 요청 memberId={}, itemId={}", memberId, itemId);
         item.plusPreferenceCount();
         return savePreferenceItem.getId();
     }
@@ -71,9 +72,8 @@ public class PreferenceService {
     public IsPreference isPreference(Long userId, Long itemId) {
         log.info("isPreference. userId={}, itemId={}", userId, itemId);
 
-        Optional<PreferenceItem> result = preferenceRepository.findByMemberIdAndItemId(userId, itemId);
-
-        return result.map(preferenceItem -> new IsPreference(true, true, preferenceItem.getId()))
+        return preferenceRepository.findByMemberIdAndItemId(userId, itemId)
+                .map(preferenceItem -> new IsPreference(true, true, preferenceItem.getId()))
                 .orElseGet(() -> new IsPreference(false, true, null));
 
     }

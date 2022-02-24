@@ -28,12 +28,11 @@ public class CategoryService {
     }
 
     public List<FindAllCategoryDto> findAll() {
-        List<FindAllCategoryDto> result = categoryRepository.findAll()
+        log.info("카테고리 목록 요청");
+        return categoryRepository.findAll()
                 .stream()
                 .map(e -> new FindAllCategoryDto(e.getId(), e.getName()))
                 .collect(Collectors.toList());
 
-        log.info("카테고리 목록 요청");
-        return result;
     }
 }

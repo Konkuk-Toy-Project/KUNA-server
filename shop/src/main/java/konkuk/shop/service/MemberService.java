@@ -46,8 +46,8 @@ public class MemberService {
 
         log.info("회원가입 요청. email={}, password={}", dto.getEmail(), dto.getPassword());
         String encryptedPwd = passwordEncoder.encode(dto.getPassword());
-        Member member = new Member(dto.getEmail(), encryptedPwd, dto.getName(), dto.getPhone(), dto.getBirth());
-        Member saveMember = memberRepository.save(member);
+        Member saveMember = memberRepository.save
+                (new Member(dto.getEmail(), encryptedPwd, dto.getName(), dto.getPhone(), dto.getBirth()));
 
         if (dto.getRole().equals("user")) saveMember.setMemberRole(MemberRole.BRONZE);
         else if (dto.getRole().equals("admin")) {

@@ -163,18 +163,12 @@ public class ItemService {
                 .map(DetailImage::getStore_name)
                 .collect(Collectors.toList());
 
-        List<Option1Dto> option1Dto = new ArrayList<>();
-
-        List<Option1> option1s = item.getOption1s();
-        for (Option1 option1 : option1s) {
-            List<Option2Dto> option2Dto = new ArrayList<>();
-
-            List<Option2> option2s = option1.getOption2s();
-            for (Option2 option2 : option2s) {
-                option2Dto.add(new Option2Dto(option2.getName(), option2.getStock(), option2.getId()));
-            }
-            option1Dto.add(new Option1Dto(option1.getName(), option1.getStock(), option1.getId(), option2Dto));
-        }
+        List<Option1Dto> option1Dto = item.getOption1s().stream()
+                .map(option1 ->
+                        new Option1Dto(option1.getName(), option1.getStock(),
+                                option1.getId(), makeOption2Dto(option1.getOption2s()))
+                )
+                .collect(Collectors.toList());
 
 
         return ResponseItemDetail.builder()
@@ -194,30 +188,31 @@ public class ItemService {
                 .build();
     }
 
+    private List<Option2Dto> makeOption2Dto(List<Option2> option2s) {
+        return option2s.stream()
+                .map(option2 ->
+                        new Option2Dto(option2.getName(), option2.getStock(), option2.getId()))
+                .collect(Collectors.toList());
+    }
+
     public List<ResponseItemList> findItemBySearchWord(String searchWord) {
         log.info("상품 검색 기능 사용. searchWord={}", searchWord);
-        List<Item> items = itemRepository.findAll();
-
-        List<ResponseItemList> result = new ArrayList<>();
-
-        items.forEach(e -> {
-            String itemName = e.getName();
-            if (itemName.toLowerCase().contains(searchWord)) {
-                ResponseItemList item = ResponseItemList.builder()
-                        .itemState(e.getItemState().toString())
-                        .name(e.getName())
-                        .price(e.getPrice())
-                        .sale(e.getSale())
-                        .thumbnailUrl(e.getThumbnail().getStore_name())
-                        .preference(e.getPreferenceCount())
-                        .itemId(e.getId())
-                        .categoryId(e.getCategory().getId())
-                        .categoryName(e.getCategory().getName())
-                        .build();
-                result.add(item);
-            }
-        });
-        return result;
+        return itemRepository.findAll().stream()
+                .filter(e -> e.getName().toLowerCase().contains(searchWord))
+                .map(e ->
+                        ResponseItemList.builder()
+                                .itemState(e.getItemState().toString())
+                                .name(e.getName())
+                                .price(e.getPrice())
+                                .sale(e.getSale())
+                                .thumbnailUrl(e.getThumbnail().getStore_name())
+                                .preference(e.getPreferenceCount())
+                                .itemId(e.getId())
+                                .categoryId(e.getCategory().getId())
+                                .categoryName(e.getCategory().getName())
+                                .build()
+                )
+                .collect(Collectors.toList());
     }
 
     public List<ResponseItemList> findItemByUserId(Long userId) {

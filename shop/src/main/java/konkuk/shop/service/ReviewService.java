@@ -91,24 +91,22 @@ public class ReviewService {
     }
 
     public List<FindReviewDto> findReviewByItemId(Long itemId) {
-        List<Review> reviews = reviewRepository.findAllByItemId(itemId);
-        List<FindReviewDto> result = new ArrayList<>();
-
-        for (Review review : reviews) {
-            List<String> reviewImages = review.getReviewImages()
-                    .stream().map(ReviewImage::getStore_name)
-                    .collect(Collectors.toList());
-
-            result.add(FindReviewDto.builder()
-                    .memberName(review.getMember().getName())
-                    .reviewImagesUrl(reviewImages)
-                    .description(review.getDescription())
-                    .option(review.getOption())
-                    .rate(review.getRate())
-                    .registryDate(review.getRegistryDate())
-                    .build());
-        }
         log.info("리뷰 목록 요청. itemId={}", itemId);
-        return result;
+
+        return reviewRepository.findAllByItemId(itemId).stream()
+                .map(review -> {
+                    List<String> reviewImages = review.getReviewImages()
+                            .stream().map(ReviewImage::getStore_name)
+                            .collect(Collectors.toList());
+                    return FindReviewDto.builder()
+                            .memberName(review.getMember().getName())
+                            .reviewImagesUrl(reviewImages)
+                            .description(review.getDescription())
+                            .option(review.getOption())
+                            .rate(review.getRate())
+                            .registryDate(review.getRegistryDate())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 }

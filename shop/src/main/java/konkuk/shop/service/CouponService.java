@@ -32,11 +32,15 @@ public class CouponService {
         CouponKind couponKind = convertCouponKind(form.getKind());
         LocalDateTime expiredDate = convertExpiredDate(form.getExpiredDate());
 
-        Coupon coupon = new Coupon(couponKind, expiredDate, form.getCondition(), form.getRate(), form.getName());
-        coupon.setUsed(false);
-        coupon.setSerialNumber(UUID.randomUUID().toString().substring(0, 13));
+        Coupon coupon = new Coupon(couponKind, expiredDate, form.getCondition(), form.getRate(),
+                form.getName(), false, makeSerialNumber());
+
         log.info("관리자가 쿠폰 등록. serialNumber={}", coupon.getSerialNumber());
         return couponRepository.save(coupon);
+    }
+
+    private String makeSerialNumber() {
+        return UUID.randomUUID().toString().substring(0, 13);
     }
 
     private CouponKind convertCouponKind(String kind) {

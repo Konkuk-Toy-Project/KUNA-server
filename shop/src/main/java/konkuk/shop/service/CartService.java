@@ -52,16 +52,16 @@ public class CartService {
         log.info("장바구니에 상품 담기 요청. userId={}, itemId={}, option1Id={}, option2Id={}",
                 userId, itemId, option1Id, option2Id);
 
-        CartItem cartItem = CartItem.builder()
-                .item(item)
-                .itemVersion(item.getVersion())
-                .member(member)
-                .option1(option1)
-                .option2(option2)
-                .count(count)
-                .build();
+        CartItem saveCartItem = cartRepository.save(
+                CartItem.builder()
+                        .item(item)
+                        .itemVersion(item.getVersion())
+                        .member(member)
+                        .option1(option1)
+                        .option2(option2)
+                        .count(count)
+                        .build());
 
-        CartItem saveCartItem = cartRepository.save(cartItem);
         member.getCartItems().add(saveCartItem);
         return saveCartItem.getId();
     }
@@ -80,9 +80,8 @@ public class CartService {
         List<CartItemDto> result = new ArrayList<>();
         for (CartItem cartItem : cartItems) {
             Item item = cartItem.getItem();
-            // 아이템 버전이 다르거나(수정), 삭제된 아이템은 조회시 장바구니에서 자동 삭제
-            if (!itemRepository.existsById(item.getId())) cartRepository.delete(cartItem);
-            else if (!cartItem.getItemVersion().equals(item.getVersion())) cartRepository.delete(cartItem);
+
+            if (isUpdateItem(item, cartItem.getItemVersion())) cartRepository.delete(cartItem);
             else {
                 CartItemDto cartItemDto = CartItemDto.builder()
                         .thumbnailUrl(item.getThumbnail().getStore_name())
@@ -107,6 +106,11 @@ public class CartService {
         }
         log.info("장바구니 목록 요청 userId={}", userId);
         return result;
+    }
+
+    private boolean isUpdateItem(Item item, Integer cartItemVersion) {
+        // 아이템 버전이 다르거나(수정), 삭제된 아이템은 조회시 장바구니에서 자동 삭제
+        return !(itemRepository.existsById(item.getId()) && cartItemVersion.equals(item.getVersion()));
     }
 
     @Transactional

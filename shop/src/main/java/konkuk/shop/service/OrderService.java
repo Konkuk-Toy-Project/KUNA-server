@@ -41,10 +41,7 @@ public class OrderService {
         Coupon coupon = validationCoupon(form.getCouponId(), memberId);
 
         // 2. 배송 요금 확인
-        if (form.getTotalPrice() >= 50000 && form.getShippingCharge() != 0)
-            throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
-        if (form.getTotalPrice() < 50000 && form.getShippingCharge() == 0)
-            throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
+        validationShippingCharge(form.getTotalPrice(), form.getShippingCharge());
 
         // 3. 포인트 체크
         if (member.getPoint() < form.getUsePoint()) throw new ApiException(ExceptionEnum.NOT_ENOUGH_POINTS);
@@ -58,7 +55,7 @@ public class OrderService {
         // 회원 배송지 저장
         member.setAddress(form.getAddress());
 
-        Order order = Order.builder()
+        Order saveOrder = orderRepository.save(Order.builder()
                 .delivery(delivery)
                 .member(member)
                 .orderDate(LocalDateTime.now())
@@ -69,9 +66,7 @@ public class OrderService {
                 .shippingCharge(form.getShippingCharge())
                 .orderState(OrderState.NORMALITY)
                 .orderItems(orderItems)
-                .build();
-
-        Order saveOrder = orderRepository.save(order);
+                .build());
 
         for (OrderItem orderItem : orderItems) {
             orderItem.setOrder(saveOrder);
@@ -81,11 +76,17 @@ public class OrderService {
         if (coupon != null) coupon.setUsed(true);
 
         member.changePoint(-form.getUsePoint());
-
         member.changePoint((int) (form.getTotalPrice() * 0.01));
 
         return new AddOrderDto(saveOrder.getId(), saveOrder.getTotalPrice(),
                 saveOrder.getShippingCharge(), saveOrder.getOrderDate(), saveOrder.getUsedPoint());
+    }
+
+    private void validationShippingCharge(Integer totalPrice, Integer shippingCharge) {
+        if (totalPrice >= 50000 && shippingCharge != 0)
+            throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
+        if (totalPrice < 50000 && shippingCharge == 0)
+            throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
     }
 
     private List<OrderItem> makeOrderItem(List<OrderItemForm> orderItems, int totalPrice, Coupon coupon) {
@@ -179,22 +180,20 @@ public class OrderService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER));
         if (!order.getMember().getId().equals(userId)) throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ORDER);
 
-        List<FindOrderItemDto> itemDtos = new ArrayList<>();
-        List<OrderItem> orderItems = order.getOrderItems();
-        for (OrderItem orderItem : orderItems) {
-            FindOrderItemDto itemDto = FindOrderItemDto.builder()
-                    .isReviewed(orderItem.isReviewed())
-                    .itemId(orderItem.getItem().getId()) //이렇게 하면 item을 조회할텐데.. id만 따로 저장하면 안되나? 쿼리 낭비같은데
-                    .name(orderItem.getItemName())
-                    .option1(orderItem.getOption1())
-                    .option2(orderItem.getOption2())
-                    .thumbnailUrl(orderItem.getThumbnailUrl())
-                    .price(orderItem.getItemPrice())
-                    .count(orderItem.getCount())
-                    .orderItemId(orderItem.getId())
-                    .build();
-            itemDtos.add(itemDto);
-        }
+        List<FindOrderItemDto> itemDtos = order.getOrderItems().stream()
+                .map(orderItem ->
+                        FindOrderItemDto.builder()
+                                .isReviewed(orderItem.isReviewed())
+                                .itemId(orderItem.getItem().getId())
+                                .name(orderItem.getItemName())
+                                .option1(orderItem.getOption1())
+                                .option2(orderItem.getOption2())
+                                .thumbnailUrl(orderItem.getThumbnailUrl())
+                                .price(orderItem.getItemPrice())
+                                .count(orderItem.getCount())
+                                .orderItemId(orderItem.getId())
+                                .build()
+                ).collect(Collectors.toList());
 
         Delivery delivery = order.getDelivery();
 
@@ -223,16 +222,17 @@ public class OrderService {
     }
 
     public List<OrderItemDto> findOrderItemList(Long userId) {
-        List<Order> orders = orderRepository.findByMemberId(userId);
         List<OrderItemDto> result = new ArrayList<>();
 
-        for (Order order : orders) {
-            List<OrderItem> orderItems = order.getOrderItems();
-            for (OrderItem orderItem : orderItems) {
-                result.add(new OrderItemDto(orderItem.getItemName(), orderItem.isReviewed(), orderItem.getItem().getId(),
-                        orderItem.getOption1() + "/" + orderItem.getOption2(), orderItem.getId()));
-            }
-        }
+        orderRepository.findByMemberId(userId)
+                .forEach(order -> {
+                    List<OrderItem> orderItems = order.getOrderItems();
+                    for (OrderItem orderItem : orderItems) {
+                        result.add(new OrderItemDto(orderItem.getItemName(), orderItem.isReviewed(), orderItem.getItem().getId(),
+                                orderItem.getOption1() + "/" + orderItem.getOption2(), orderItem.getId()));
+                    }
+                });
+
         log.info("주문 상품 조회. memberId={}", userId);
         return result;
     }

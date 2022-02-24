@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,32 +45,40 @@ public class QnaService {
     }
 
     public List<FindQnaDto> findQnaByItemId(Long userId, Long itemId) {
-        List<Qna> qnaList = qnaRepository.findAllByItemId(itemId);
-
-        List<FindQnaDto> result = new ArrayList<>();
-
-        for (Qna qna : qnaList) {
-            if (qna.isSecret() && !qna.getMember().getId().equals(userId)) { // 남이 올린 비밀글
-                result.add(FindQnaDto.builder()
-                        .isSecret(qna.isSecret())
-                        .memberName(qna.getMember().getName())
-                        .isAnswered(qna.isAnswered())
-                        .build());
-            } else {
-                result.add(FindQnaDto.builder()
-                        .answer(qna.getAnswer())
-                        .isAnswered(qna.isAnswered())
-                        .isSecret(qna.isSecret())
-                        .memberName(qna.getMember().getName())
-                        .question(qna.getQuestion())
-                        .registryDate(qna.getRegistryDate())
-                        .title(qna.getTitle())
-                        .build());
-            }
-        }
         log.info("qna 목록 요청. memberId={}, itemId={}", userId, itemId);
-        return result;
+
+        return qnaRepository.findAllByItemId(itemId).stream()
+                .map(e -> {
+                    if (isSecretByOthers(e, userId)) return buildFindQnaDtoSecret(e);
+                    else return buildFindQnaDtoNotSecret(e);
+                })
+                .collect(Collectors.toList());
     }
+
+    private boolean isSecretByOthers(Qna qna, Long userId) {
+        return qna.isSecret() && !qna.getMember().getId().equals(userId);
+    }
+
+    private FindQnaDto buildFindQnaDtoSecret(Qna qna) {
+        return FindQnaDto.builder()
+                .isSecret(qna.isSecret())
+                .memberName(qna.getMember().getName())
+                .isAnswered(qna.isAnswered())
+                .build();
+    }
+
+    private FindQnaDto buildFindQnaDtoNotSecret(Qna qna) {
+        return FindQnaDto.builder()
+                .answer(qna.getAnswer())
+                .isAnswered(qna.isAnswered())
+                .isSecret(qna.isSecret())
+                .memberName(qna.getMember().getName())
+                .question(qna.getQuestion())
+                .registryDate(qna.getRegistryDate())
+                .title(qna.getTitle())
+                .build();
+    }
+
 
     public List<ResponseQnaList> findQnaByAdminMember(Long userId, boolean isAnswered) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
