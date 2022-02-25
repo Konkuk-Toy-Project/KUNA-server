@@ -23,16 +23,6 @@ import java.util.HashMap;
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
-    private final Environment env;
-
-    @GetMapping("/health_check")
-    public String status() {
-        return "It's Working Api Server"
-                + ", port(local.server.port)=" + env.getProperty("local.server.port")
-                + ", port(server.port)=" + env.getProperty("server.port")
-                + ", with token secret=" + env.getProperty("token.secret")
-                + ", with token time=" + env.getProperty("token.expiration_time");
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<ResponseSignupForm> memberSignup(@RequestBody RequestSignupForm form) {

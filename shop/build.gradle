@@ -2,6 +2,23 @@ plugins {
 	id 'org.springframework.boot' version '2.6.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'jacoco'
+}
+jacoco {
+	// JaCoCo 버전
+	toolVersion = '0.8.7'
+
+//  테스트결과 리포트를 저장할 경로 변경
+//  default는 "$/jacoco"
+//  reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+jacocoTestReport {
+	reports {
+		html.enabled true
+		csv.enabled true
+		xml.enabled false
+	}
 }
 
 group = 'konkuk'
@@ -34,8 +51,12 @@ dependencies {
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'com.google.code.gson:gson'
 }
 
 test {
 	useJUnitPlatform()
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacoco.exec")
+	}
 }

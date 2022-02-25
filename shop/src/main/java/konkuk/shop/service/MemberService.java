@@ -36,7 +36,6 @@ public class MemberService {
     }
 
     public boolean existsMemberById(Long id) {
-
         return memberRepository.existsById(id);
     }
 

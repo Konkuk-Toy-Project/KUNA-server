@@ -54,9 +54,7 @@ public class PreferenceController {
     public ResponseEntity<IsPreference> isPreferenceItem(@AuthenticationPrincipal Long userId, @PathVariable Long itemId) {
         log.info("현재 상품이 찜한 상품인지 확인하는 요청. itemId={}", itemId);
 
-
         IsPreference result;
-
         if(userId==null) result = new IsPreference(false, false, null);
         else result = preferenceService.isPreference(userId, itemId);
 
