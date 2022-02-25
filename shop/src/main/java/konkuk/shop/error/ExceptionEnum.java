@@ -67,6 +67,7 @@ public enum ExceptionEnum {
 
     NO_FIND_REVIEW(HttpStatus.BAD_REQUEST, "R001", "해당 리뷰를 찾을 수 없습니다."),
     ALREADY_REGISTRY_REVIEW(HttpStatus.BAD_REQUEST, "R002", "이미 리뷰를 작성했습니다."),
+    NOT_REVIEW_FORM(HttpStatus.BAD_REQUEST, "R003", "리뷰 평점은 0~5점입니다."),
 
     ;
     private final HttpStatus status;

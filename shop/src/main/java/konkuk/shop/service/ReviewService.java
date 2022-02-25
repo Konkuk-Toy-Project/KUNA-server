@@ -47,6 +47,7 @@ public class ReviewService {
 
         if (orderItem.isReviewed()) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_REVIEW);
 
+        if(form.getRate()<0 || form.getRate()>5) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_REVIEW);
 
         Review review = Review.builder()
                 .item(item)
