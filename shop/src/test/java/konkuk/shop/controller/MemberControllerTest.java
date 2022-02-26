@@ -202,9 +202,9 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("로그인 여부 테스트")
+    @DisplayName("로그인 여부 테스트(로그인 완료)")
     @WithAuthUser(email = email)
-    void isLogin() throws Exception {
+    void isLoginTrue() throws Exception {
         given(memberService.existsMemberById(any(Long.class)))
                 .willReturn(true);
 
@@ -214,5 +214,14 @@ class MemberControllerTest {
                 .andDo(print());
 
         verify(memberService).existsMemberById(any(Long.class));
+    }
+
+    @Test
+    @DisplayName("로그인 여부 테스트(로그인 안함)")
+    void isLoginFalse() throws Exception {
+        mockMvc.perform(get("/member/isLogin"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isLogin").value(false))
+                .andDo(print());
     }
 }

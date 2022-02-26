@@ -17,7 +17,7 @@ public class Member {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="member_role")
+    @Column(name = "member_role")
     private MemberRole memberRole;
 
     private String email;
@@ -62,19 +62,33 @@ public class Member {
         this.chance = 0;
     }
 
+    // 테스트 회원가입용(id 설정 가능)
+    public Member(String email, String password, String name, String phone, String birth, Long id) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.birth = birth;
+        this.point = 0;
+        this.chance = 0;
+        this.id = id;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
     public void setMemberRole(MemberRole memberRole) {
-        this.memberRole=memberRole;
+        this.memberRole = memberRole;
     }
 
     public void changePoint(Integer point) {
-        this.point+=point;
+        this.point += point;
     }
 
     public void setAddress(String address) {
         this.address = address;
     }
+
+
 }
