@@ -2,8 +2,12 @@ package konkuk.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import konkuk.shop.WithAuthUser;
+import konkuk.shop.dto.FindMemberInfoByUserIdDto;
+import konkuk.shop.dto.LoginDto;
 import konkuk.shop.dto.SignupDto;
-import konkuk.shop.form.requestForm.member.RequestSignupForm;
+import konkuk.shop.entity.MemberRole;
+import konkuk.shop.form.requestForm.member.*;
 import konkuk.shop.security.TokenProvider;
 import konkuk.shop.service.MemberService;
 import org.json.JSONObject;
@@ -15,64 +19,66 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // @WebMvcTest() : 매개변수가 없으면 @Controller와 @RestController, @ControllerAdvice 등 WEb과 관련된 설정된 클래스를 찾아 메모리에 생성한다.
 @WebMvcTest(MemberController.class) // 서블릿 컨테이너를 모킹한다. 컨트롤러를 테스트할 때 사용(DispatcherSeravlet이 필요하기 때문)
 class MemberControllerTest {
+    private final String name = "testMember";
+    private final String email = "asdf@asdf.com";
+    private final String password = "asdfasdf@1";
+    private final String phone = "01012345678";
+    private final String birth = "20000327";
+    private final String role = "user";
+
     @MockBean
     MemberService memberService;
-
     @MockBean
     TokenProvider tokenProvider;
-
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     @DisplayName("이메일 중복 테스트")
     void isDuplicationEmail() throws Exception {
-        //given
-        given(memberService.isDuplicateEmail("asdf@asdf.com")).willReturn(true);
+        given(memberService.isDuplicateEmail(email)).willReturn(true);
+
         JSONObject json = new JSONObject();
-        json.put("email", "asdf@asdf.com");
+        json.put("email", email);
         String content = json.toString();
 
-        //when
         mockMvc.perform(
-                    post("/member/duplication/email")
-                            .content("{\"email\": \"asdf@asdf.com\"}")
-                            .contentType(MediaType.APPLICATION_JSON))
+                        post("/member/duplication/email")
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.isDuplication").exists())
                 .andDo(print());
 
-        verify(memberService).isDuplicateEmail("asdf@asdf.com");
-
-        //then
+        verify(memberService).isDuplicateEmail(email);
     }
 
     @Test
     @DisplayName("회원가입 테스트")
     void memberSignup() throws Exception {
-        //given
         given(memberService.signup(
-                new SignupDto("asdf@asdf.com", "asdf", "test", "01012345678", "19991023", "user"))
+                new SignupDto(email, password, name, phone, birth, role))
         ).willReturn(1234L);
 
-        RequestSignupForm form = new RequestSignupForm("asdf@asdf.com", "asdf", "test", "01012345678", "19991023", "user");
-
+        RequestSignupForm form = new RequestSignupForm(email, password, name, phone, birth, role);
         Gson gson = new Gson();
         String content = gson.toJson(form);
         //또는 아래와 같이 json변환 가능
         //String json = new ObjectMapper().writeValueAsString(form);
-
 
         mockMvc.perform(
                         post("/member/signup")
@@ -83,10 +89,130 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.memberId").exists())
                 .andDo(print());
 
-        //when
-
-        //then
         verify(memberService)
-                .signup(new SignupDto("asdf@asdf.com", "asdf", "test", "01012345678", "19991023", "user"));
+                .signup(new SignupDto(email, password, name, phone, birth, role));
+    }
+
+    @Test
+    @DisplayName("로그인 테스트")
+    void login() throws Exception {
+        given(memberService.login(email, password)).willReturn(new LoginDto("JWTToken", role));
+
+        RequestLoginForm form = new RequestLoginForm(email, password);
+        String content = new ObjectMapper().writeValueAsString(form);
+
+        mockMvc.perform(
+                        post("/member/login")
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.role").exists())
+                .andDo(print());
+
+        verify(memberService).login(email, password);
+    }
+
+    @Test
+    @DisplayName("이메일 찾기 테스트")
+    void findEmail() throws Exception {
+        given(memberService.findEmail(name, phone)).willReturn(email);
+
+        RequestFindEmailForm form = new RequestFindEmailForm(name, phone);
+        String content = new ObjectMapper().writeValueAsString(form);
+
+        mockMvc.perform(
+                        post("/member/find/email")
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(email))
+                .andDo(print());
+
+        verify(memberService).findEmail(name, phone);
+    }
+
+    @Test
+    @DisplayName("비밀번호 찾기 테스트")
+    void findPassword() throws Exception {
+        given(memberService.findPassword(email, name, phone)).willReturn("tempPassword");
+
+        RequestFindPasswordForm form = new RequestFindPasswordForm(email, name, phone);
+        String content = new ObjectMapper().writeValueAsString(form);
+
+        mockMvc.perform(
+                        post("/member/find/password")
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tempPassword").value("tempPassword"))
+                .andDo(print());
+
+        verify(memberService).findPassword(email, name, phone);
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 테스트")
+    @WithAuthUser(email = email)
+    void changePassword() throws Exception {
+        doNothing().when(memberService).changePassword(any(Long.class), any(String.class));
+        String content = new ObjectMapper()
+                .writeValueAsString(new RequestChangePasswordForm("changePassword"));
+
+        mockMvc.perform(
+                        post("/member/change/password")
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+               .andDo(print());
+
+        verify(memberService).changePassword(any(Long.class), any(String.class));
+    }
+
+    @Test
+    @DisplayName("포인트 찾기 테스트")
+    @WithAuthUser(email = email)
+    void findPoint() throws Exception {
+        given(memberService.findPointByMemberId(any(Long.class))).willReturn(1234);
+
+        mockMvc.perform(get("/member/point"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.point").value(1234))
+                .andDo(print());
+
+        verify(memberService).findPointByMemberId(any(Long.class));
+    }
+
+    @Test
+    @DisplayName("로그인 회원 정보 얻기 테스트")
+    @WithAuthUser(email = email)
+    void findLoginMemberInfo() throws Exception {
+        given(memberService.findInfoByUserId(any(Long.class)))
+                .willReturn(new FindMemberInfoByUserIdDto(name, phone, email, birth, MemberRole.BRONZE));
+
+        mockMvc.perform(get("/member/info"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(name))
+                .andExpect(jsonPath("$.phone").value(phone))
+                .andExpect(jsonPath("$.email").value(email))
+                .andExpect(jsonPath("$.birth").value(birth))
+                .andDo(print());
+
+        verify(memberService).findInfoByUserId(any(Long.class));
+    }
+
+    @Test
+    @DisplayName("로그인 여부 테스트")
+    @WithAuthUser(email = email)
+    void isLogin() throws Exception {
+        given(memberService.existsMemberById(any(Long.class)))
+                .willReturn(true);
+
+        mockMvc.perform(get("/member/isLogin"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isLogin").value(true))
+                .andDo(print());
+
+        verify(memberService).existsMemberById(any(Long.class));
     }
 }

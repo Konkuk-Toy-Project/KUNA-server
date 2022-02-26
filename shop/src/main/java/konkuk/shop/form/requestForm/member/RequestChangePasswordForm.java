@@ -1,8 +1,12 @@
 package konkuk.shop.form.requestForm.member;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RequestChangePasswordForm {
     String newPassword;
 }
