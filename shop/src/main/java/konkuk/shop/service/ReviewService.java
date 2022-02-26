@@ -75,6 +75,8 @@ public class ReviewService {
             }
         }
         orderItem.setReviewed(true);
+        if(reviewImages==null) member.changePoint((int) (orderItem.getItemPrice()*orderItem.getCount()*0.01));
+        else member.changePoint((int) (orderItem.getItemPrice()*orderItem.getCount()*0.03));
         log.info("리뷰 등록 요청. memberId={}", userId);
 
         return reviewRepository.save(review).getId();

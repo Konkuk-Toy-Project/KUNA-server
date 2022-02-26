@@ -80,7 +80,7 @@ Size 160=300
 45000
 상의
 
-thumbnail4.webp
+thumbnail5.webp
 
 itemImage5-1.jpg
 itemImage5-2.jpg
