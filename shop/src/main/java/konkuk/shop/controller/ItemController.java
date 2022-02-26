@@ -5,11 +5,10 @@ import konkuk.shop.dto.AddItemDto;
 import konkuk.shop.entity.AdminMember;
 import konkuk.shop.entity.Category;
 import konkuk.shop.entity.Item;
-import konkuk.shop.form.requestForm.item.EditPriceAndSaleForm;
 import konkuk.shop.form.requestForm.item.RequestAddItem;
 import konkuk.shop.form.requestForm.item.RequestAddOptionForm;
 import konkuk.shop.form.requestForm.item.ResponseItemDetail;
-import konkuk.shop.form.responseForm.item.ResponseItemList;
+import konkuk.shop.form.responseForm.item.ResponseMyItem;
 import konkuk.shop.service.CategoryService;
 import konkuk.shop.service.ItemService;
 import konkuk.shop.service.MemberService;
@@ -66,8 +65,8 @@ public class ItemController {
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<ResponseItemList>> findItemListByCategory(@PathVariable Long categoryId) {
-        List<ResponseItemList> result = itemService.findItemListByCategory(categoryId);
+    public ResponseEntity<List<ResponseMyItem>> findItemListByCategory(@PathVariable Long categoryId) {
+        List<ResponseMyItem> result = itemService.findItemListByCategory(categoryId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -80,15 +79,15 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ResponseItemList>> findAllItem() {
-        List<ResponseItemList> result = itemService.findAllItem();
+    public ResponseEntity<List<ResponseMyItem>> findAllItem() {
+        List<ResponseMyItem> result = itemService.findAllItem();
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping("/search/{searchWord}")
-    public ResponseEntity<List<ResponseItemList>> findItemBySearchWord(@PathVariable String searchWord) {
-        List<ResponseItemList> result = itemService.findItemBySearchWord(searchWord.toLowerCase());
+    public ResponseEntity<List<ResponseMyItem>> findItemBySearchWord(@PathVariable String searchWord) {
+        List<ResponseMyItem> result = itemService.findItemBySearchWord(searchWord.toLowerCase());
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResponseItemList {
+public class ResponseMyItem {
     String itemState;
     String thumbnailUrl;
     String name;

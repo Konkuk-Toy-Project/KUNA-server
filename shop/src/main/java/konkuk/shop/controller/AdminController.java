@@ -4,7 +4,7 @@ package konkuk.shop.controller;
 import konkuk.shop.form.requestForm.admin.RequestAnswerQnaForm;
 import konkuk.shop.form.requestForm.item.EditPriceAndSaleForm;
 import konkuk.shop.form.responseForm.admin.ResponseQnaList;
-import konkuk.shop.form.responseForm.item.ResponseItemList;
+import konkuk.shop.form.responseForm.item.ResponseMyItem;
 import konkuk.shop.service.ItemService;
 import konkuk.shop.service.QnaService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +28,8 @@ public class AdminController {
     private final ItemService itemService;
 
     @GetMapping("/items")
-    public ResponseEntity<List<ResponseItemList>> myItemList(@AuthenticationPrincipal Long userId) {
-        List<ResponseItemList> result = itemService.findItemByUserId(userId);
+    public ResponseEntity<List<ResponseMyItem>> myItemList(@AuthenticationPrincipal Long userId) {
+        List<ResponseMyItem> result = itemService.findItemByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }

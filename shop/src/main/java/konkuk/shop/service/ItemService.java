@@ -5,7 +5,7 @@ import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
 import konkuk.shop.form.requestForm.item.*;
-import konkuk.shop.form.responseForm.item.ResponseItemList;
+import konkuk.shop.form.responseForm.item.ResponseMyItem;
 import konkuk.shop.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -112,10 +112,10 @@ public class ItemService {
     }
 
 
-    public List<ResponseItemList> findItemListByCategory(Long categoryId) {
+    public List<ResponseMyItem> findItemListByCategory(Long categoryId) {
         log.info("카테고리별 아이템 목록 조회. categoryId={}", categoryId);
         return itemRepository.findByCategoryId(categoryId)
-                .stream().map(e -> ResponseItemList.builder()
+                .stream().map(e -> ResponseMyItem.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
@@ -195,12 +195,12 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public List<ResponseItemList> findItemBySearchWord(String searchWord) {
+    public List<ResponseMyItem> findItemBySearchWord(String searchWord) {
         log.info("상품 검색 기능 사용. searchWord={}", searchWord);
         return itemRepository.findAll().stream()
                 .filter(e -> e.getName().toLowerCase().contains(searchWord))
                 .map(e ->
-                        ResponseItemList.builder()
+                        ResponseMyItem.builder()
                                 .itemState(e.getItemState().toString())
                                 .name(e.getName())
                                 .price(e.getPrice())
@@ -215,14 +215,14 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public List<ResponseItemList> findItemByUserId(Long userId) {
+    public List<ResponseMyItem> findItemByUserId(Long userId) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
 
         log.info("아이템 조회 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
         return itemRepository.findByAdminMember(adminMember)
-                .stream().map(e -> ResponseItemList.builder()
+                .stream().map(e -> ResponseMyItem.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
@@ -236,10 +236,10 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public List<ResponseItemList> findAllItem() {
+    public List<ResponseMyItem> findAllItem() {
         log.info("모든 상품 조회");
         return itemRepository.findAll()
-                .stream().map(e -> ResponseItemList.builder()
+                .stream().map(e -> ResponseMyItem.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
