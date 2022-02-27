@@ -66,11 +66,13 @@ public class CartService {
         return saveCartItem.getId();
     }
 
-    public void deleteItemInCart(Long cartItemId) {
-        cartRepository.delete(
-                cartRepository.findById(cartItemId)
-                        .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM))
-        );
+    public void deleteItemInCart(Long userId, Long cartItemId) {
+        CartItem cartItem = cartRepository.findById(cartItemId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CART_ITEM));
+
+        if (!cartItem.getMember().getId().equals(userId)) throw new ApiException(ExceptionEnum.NOT_AUTHORITY_CART_EDIT);
+
+        cartRepository.delete(cartItem);
         log.info("장바구니에서 상품 삭제 요청. cartItemId={}", cartItemId);
     }
 

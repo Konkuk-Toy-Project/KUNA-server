@@ -52,8 +52,8 @@ public enum ExceptionEnum {
     NOT_AUTHORITY_PREFERENCE_EDIT(HttpStatus.BAD_REQUEST, "P002", "해당 찜하기를 수정할 권한이 없습니다."),
 
     NO_FIND_ORDER(HttpStatus.BAD_REQUEST, "O001", "해당 주문을 찾을 수 없습니다."),
-    INCORRECT_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "O002", "옯바르지 않는 결제 방식입니다."),
-    INCORRECT_SHIPPING_CHARGE(HttpStatus.BAD_REQUEST, "O003", "옯바르지 않는 배송금액입니다."),
+    INCORRECT_PAYMENT_METHOD(HttpStatus.BAD_REQUEST, "O002", "잘못된 결제 방식입니다."),
+    INCORRECT_SHIPPING_CHARGE(HttpStatus.BAD_REQUEST, "O003", "잘못된 배송금액입니다."),
     INCORRECT_TOTAL_PRICE(HttpStatus.BAD_REQUEST, "O004", "합계 금액이 맞지 않습니다."),
     NO_AUTHORITY_ACCESS_ORDER(HttpStatus.BAD_REQUEST, "O005", "해당 주문의 접근할 권한이 없습니다."),
     NO_FIND_ORDER_ITEM(HttpStatus.BAD_REQUEST, "O006", "해당 주문 상품을 찾을 수 없습니다."),
