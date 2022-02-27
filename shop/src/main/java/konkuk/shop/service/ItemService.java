@@ -1,6 +1,5 @@
 package konkuk.shop.service;
 
-import konkuk.shop.dto.AddItemDto;
 import konkuk.shop.entity.*;
 import konkuk.shop.error.ApiException;
 import konkuk.shop.error.ExceptionEnum;
@@ -43,28 +42,33 @@ public class ItemService {
     @Value("${image.detail}")
     private String detailPath;
 
-    // thumbnail, detailImage, itemImage 은 이 메소드에서 저장
-    // adminMember, CategoryItem, option1 은 객체를 전달 받음
     @Transactional
-    public Item addItem(AddItemDto dto) {
+    public Long addItem(Long userId, RequestAddItemDto form) {
+        log.info("name={}, price={}, sale={}, categoryId={}", form.getName(), form.getPrice(), form.getSale(), form.getCategoryId());
+
+        AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+        Category category = categoryRepository.findById(form.getCategoryId())
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
+
         Item item = Item.builder()
                 .itemState(ItemState.NORMALITY)
-                .adminMember(dto.getAdminMember())
-                .name(dto.getItemName())
+                .adminMember(adminMember)
+                .name(form.getName())
                 .preferenceCount(0)
                 .registryDate(LocalDateTime.now())
                 .version(1) // 첫 번째 버전 : 1
-                .sale(dto.getSale())
-                .price(dto.getPrice())
-                .category(dto.getCategory())
+                .sale(form.getSale())
+                .price(form.getPrice())
+                .category(category)
                 .option1s(new ArrayList<>())
                 .itemImages(new ArrayList<>())
                 .detailImages(new ArrayList<>())
                 .build();
 
-        MultipartFile thumbnail = dto.getThumbnail();
-        List<MultipartFile> itemImages = dto.getItemImage();
-        List<MultipartFile> detailImages = dto.getDetailImage();
+        MultipartFile thumbnail = form.getThumbnail();
+        List<MultipartFile> itemImages = form.getItemImages();
+        List<MultipartFile> detailImages = form.getDetailImages();
         try {
             if (thumbnail.getSize() != 0) {
                 String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
@@ -96,8 +100,10 @@ public class ItemService {
             e.printStackTrace();
             throw new ApiException(ExceptionEnum.FAIL_STORE_IMAGE);
         }
+        adminMember.getItems().add(item);
+        category.getItems().add(item);
 
-        return item;
+        return item.getId();
     }
 
     private String createStoreFileName(String originalFileName) {
@@ -114,8 +120,8 @@ public class ItemService {
 
     public List<ResponseMyItem> findItemListByCategory(Long categoryId) {
         log.info("카테고리별 아이템 목록 조회. categoryId={}", categoryId);
-        return itemRepository.findByCategoryId(categoryId)
-                .stream().map(e -> ResponseMyItem.builder()
+        return itemRepository.findByCategoryId(categoryId).stream()
+                .map(e -> ResponseMyItem.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
@@ -130,9 +136,12 @@ public class ItemService {
     }
 
     @Transactional
-    public void saveOption(List<OptionOneForm> option1s, Long itemId) {
+    public void saveOption(Long userId, List<OptionOneForm> option1s, Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+        if(!item.getAdminMember().getMember().getId().equals(userId))
+            throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ITEM);
+
         log.info("item 옵션 추가. itemId={}", itemId);
 
         for (OptionOneForm option1 : option1s) {
@@ -164,10 +173,8 @@ public class ItemService {
                 .collect(Collectors.toList());
 
         List<Option1Dto> option1Dto = item.getOption1s().stream()
-                .map(option1 ->
-                        new Option1Dto(option1.getName(), option1.getStock(),
-                                option1.getId(), makeOption2Dto(option1.getOption2s()))
-                )
+                .map(option1 -> new Option1Dto(option1.getName(), option1.getStock(),
+                        option1.getId(), makeOption2Dto(option1.getOption2s())))
                 .collect(Collectors.toList());
 
 
@@ -190,8 +197,7 @@ public class ItemService {
 
     private List<Option2Dto> makeOption2Dto(List<Option2> option2s) {
         return option2s.stream()
-                .map(option2 ->
-                        new Option2Dto(option2.getName(), option2.getStock(), option2.getId()))
+                .map(option2 -> new Option2Dto(option2.getName(), option2.getStock(), option2.getId()))
                 .collect(Collectors.toList());
     }
 
@@ -199,18 +205,17 @@ public class ItemService {
         log.info("상품 검색 기능 사용. searchWord={}", searchWord);
         return itemRepository.findAll().stream()
                 .filter(e -> e.getName().toLowerCase().contains(searchWord))
-                .map(e ->
-                        ResponseMyItem.builder()
-                                .itemState(e.getItemState().toString())
-                                .name(e.getName())
-                                .price(e.getPrice())
-                                .sale(e.getSale())
-                                .thumbnailUrl(e.getThumbnail().getStore_name())
-                                .preference(e.getPreferenceCount())
-                                .itemId(e.getId())
-                                .categoryId(e.getCategory().getId())
-                                .categoryName(e.getCategory().getName())
-                                .build()
+                .map(e -> ResponseMyItem.builder()
+                        .itemState(e.getItemState().toString())
+                        .name(e.getName())
+                        .price(e.getPrice())
+                        .sale(e.getSale())
+                        .thumbnailUrl(e.getThumbnail().getStore_name())
+                        .preference(e.getPreferenceCount())
+                        .itemId(e.getId())
+                        .categoryId(e.getCategory().getId())
+                        .categoryName(e.getCategory().getName())
+                        .build()
                 )
                 .collect(Collectors.toList());
     }
@@ -221,8 +226,8 @@ public class ItemService {
 
         log.info("아이템 조회 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
-        return itemRepository.findByAdminMember(adminMember)
-                .stream().map(e -> ResponseMyItem.builder()
+        return itemRepository.findByAdminMember(adminMember).stream()
+                .map(e -> ResponseMyItem.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
@@ -238,8 +243,8 @@ public class ItemService {
 
     public List<ResponseMyItem> findAllItem() {
         log.info("모든 상품 조회");
-        return itemRepository.findAll()
-                .stream().map(e -> ResponseMyItem.builder()
+        return itemRepository.findAll().stream()
+                .map(e -> ResponseMyItem.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
@@ -259,6 +264,7 @@ public class ItemService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+
         if (!adminMember.getId().equals(item.getAdminMember().getId()))
             throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ITEM);
 

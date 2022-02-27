@@ -26,13 +26,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CouponController.class)
 class CouponControllerTest {
-    private final String email = "asdf@asdf.com";
     @MockBean
     CouponService couponService;
     @MockBean
     TokenProvider tokenProvider;
     @Autowired
     private MockMvc mockMvc;
+
+    private final String email = "asdf@asdf.com";
 
     @Test
     @DisplayName("관리자가 쿠폰 등록 테스트")

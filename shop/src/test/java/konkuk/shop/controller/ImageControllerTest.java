@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ImageController.class)
 class ImageControllerTest {
-
     @MockBean
     ImageService imageService;
     @MockBean
