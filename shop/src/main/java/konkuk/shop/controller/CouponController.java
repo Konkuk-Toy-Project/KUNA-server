@@ -1,7 +1,6 @@
 package konkuk.shop.controller;
 
 
-import konkuk.shop.entity.Coupon;
 import konkuk.shop.form.requestForm.coupon.RequestAddCouponForm;
 import konkuk.shop.form.responseForm.coupon.ResponseGetCoupon;
 import konkuk.shop.service.CouponService;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,16 +23,16 @@ public class CouponController {
 
     @PostMapping // 관리자가 쿠폰 등록
     public HashMap<String, Object> addCoupon(@RequestBody RequestAddCouponForm form) {
-        Coupon coupon = couponService.saveCoupon(form);
+        String serialNumber = couponService.saveCoupon(form);
 
         HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("serialNumber", coupon.getSerialNumber());
+        result.put("serialNumber", serialNumber);
         return result;
     }
 
     @PostMapping("/user") // 사용자가 쿠폰 등록
     public ResponseEntity<ResponseGetCoupon> registryCoupon(@AuthenticationPrincipal Long userId,
-                               @RequestBody HashMap<String, String> map) {
+                                                            @RequestBody HashMap<String, String> map) {
         String serialNumber = map.get("serialNumber");
         ResponseGetCoupon result = couponService.registryCoupon(userId, serialNumber);
         return ResponseEntity.status(HttpStatus.OK).body(result);

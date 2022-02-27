@@ -28,7 +28,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
 
-    public Coupon saveCoupon(RequestAddCouponForm form) {
+    public String saveCoupon(RequestAddCouponForm form) {
         CouponKind couponKind = convertCouponKind(form.getKind());
         LocalDateTime expiredDate = convertExpiredDate(form.getExpiredDate());
 
@@ -36,7 +36,7 @@ public class CouponService {
                 form.getName(), false, makeSerialNumber());
 
         log.info("관리자가 쿠폰 등록. serialNumber={}", coupon.getSerialNumber());
-        return couponRepository.save(coupon);
+        return couponRepository.save(coupon).getSerialNumber();
     }
 
     private String makeSerialNumber() {
