@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ItemController.class)
@@ -51,6 +52,7 @@ class ItemControllerTest {
                                 .content(content)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.itemId").value(4))
                 .andDo(print());
 
         verify(itemService).addItem(any(Long.class), any(RequestAddItemDto.class));
@@ -94,6 +96,19 @@ class ItemControllerTest {
         mockMvc.perform(
                         get("/item/3"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemState").hasJsonPath())
+                .andExpect(jsonPath("$.name").hasJsonPath())
+                .andExpect(jsonPath("$.price").hasJsonPath())
+                .andExpect(jsonPath("$.preference").hasJsonPath())
+                .andExpect(jsonPath("$.registryDate").hasJsonPath())
+                .andExpect(jsonPath("$.sale").hasJsonPath())
+                .andExpect(jsonPath("$.itemId").hasJsonPath())
+                .andExpect(jsonPath("$.categoryName").hasJsonPath())
+                .andExpect(jsonPath("$.categoryId").hasJsonPath())
+                .andExpect(jsonPath("$.thumbnailUrl").hasJsonPath())
+                .andExpect(jsonPath("$.itemImageUrl").hasJsonPath())
+                .andExpect(jsonPath("$.detailImageUrl").hasJsonPath())
+                .andExpect(jsonPath("$.option1").hasJsonPath())
                 .andDo(print());
 
         verify(itemService).findItemById(any(Long.class));

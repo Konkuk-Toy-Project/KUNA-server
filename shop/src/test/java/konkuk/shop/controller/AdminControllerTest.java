@@ -45,15 +45,11 @@ class AdminControllerTest {
     @DisplayName("등록한 아아템 리스트 조회 테스트")
     @WithAuthUser(email = email)
     void myItemList() throws Exception {
-        List<ResponseMyItem> form = new ArrayList<>();
-        form.add(new ResponseMyItem("itemState", "thumbnailUrl",
-                "name", 3000, 300, 30, 3L, 3L, "categoryName"));
-        given(itemService.findItemByUserId(any(Long.class))).willReturn(form);
+        given(itemService.findItemByUserId(any(Long.class))).willReturn(new ArrayList<>());
 
         mockMvc.perform(
                         get("/admin/items"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.itemState").exists())
                 .andDo(print());
 
         verify(itemService).findItemByUserId(any(Long.class));
@@ -63,7 +59,8 @@ class AdminControllerTest {
     @DisplayName("관리 아이템 qna 조회 테스트")
     @WithAuthUser(email = email)
     void findQna() throws Exception {
-        given(qnaService.findQnaByAdminMember(any(Long.class), any(Boolean.class))).willReturn(new ArrayList<ResponseQnaList>());
+        given(qnaService.findQnaByAdminMember(any(Long.class), any(Boolean.class)))
+                .willReturn(new ArrayList<>());
 
         mockMvc.perform(
                         get("/admin/qna/" + true))

@@ -94,6 +94,9 @@ class PreferenceControllerTest {
 
         mockMvc.perform(get("/preference/isPreference/" + itemId))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.preference").value(true))
+                .andExpect(jsonPath("$.login").value(true))
+                .andExpect(jsonPath("$.preferenceId").value(preferenceId))
                 .andDo(print());
 
         verify(preferenceService).isPreference(any(Long.class), eq(itemId));

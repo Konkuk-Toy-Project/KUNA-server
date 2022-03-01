@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(OrderController.class)
@@ -53,6 +54,11 @@ class OrderControllerTest {
                                 .content(content)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.orderId").hasJsonPath())
+                .andExpect(jsonPath("$.totalPrice").hasJsonPath())
+                .andExpect(jsonPath("$.shippingCharge").hasJsonPath())
+                .andExpect(jsonPath("$.orderDate").hasJsonPath())
+                .andExpect(jsonPath("$.usePoint").hasJsonPath())
                 .andDo(print());
 
         verify(orderService).addOrder(any(Long.class), any(RequestAddOrderForm.class));
@@ -67,6 +73,18 @@ class OrderControllerTest {
         mockMvc.perform(
                         get("/order/3"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.address").hasJsonPath())
+                .andExpect(jsonPath("$.phone").hasJsonPath())
+                .andExpect(jsonPath("$.recipient").hasJsonPath())
+                .andExpect(jsonPath("$.deliveryState").hasJsonPath())
+                .andExpect(jsonPath("$.orderDate").hasJsonPath())
+                .andExpect(jsonPath("$.totalPrice").hasJsonPath())
+                .andExpect(jsonPath("$.usedPoint").hasJsonPath())
+                .andExpect(jsonPath("$.payMethod").hasJsonPath())
+                .andExpect(jsonPath("$.shippingCharge").hasJsonPath())
+                .andExpect(jsonPath("$.orderState").hasJsonPath())
+                .andExpect(jsonPath("$.orderItems").hasJsonPath())
+                .andExpect(jsonPath("$.orderId").hasJsonPath())
                 .andDo(print());
 
         verify(orderService).findOrderDetailList(any(Long.class), any(Long.class));

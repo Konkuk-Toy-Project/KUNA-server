@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CouponController.class)
@@ -48,6 +49,7 @@ class CouponControllerTest {
                                 .content(content)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.serialNumber").value("serialNumber"))
                 .andDo(print());
 
         verify(couponService).saveCoupon(any(RequestAddCouponForm.class));
@@ -64,6 +66,13 @@ class CouponControllerTest {
                                 .content("{\"serialNumber\": \"a1b2c3-d4e5\"}")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.couponKind").hasJsonPath())
+                .andExpect(jsonPath("$.rate").hasJsonPath())
+                .andExpect(jsonPath("$.expiredDate").hasJsonPath())
+                .andExpect(jsonPath("$.couponCondition").hasJsonPath())
+                .andExpect(jsonPath("$.name").hasJsonPath())
+                .andExpect(jsonPath("$.isUsed").hasJsonPath())
+                .andExpect(jsonPath("$.couponId").hasJsonPath())
                 .andDo(print());
 
         verify(couponService).registryCoupon(any(Long.class), any(String.class));
