@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminController.class)
@@ -43,11 +45,15 @@ class AdminControllerTest {
     @DisplayName("등록한 아아템 리스트 조회 테스트")
     @WithAuthUser(email = email)
     void myItemList() throws Exception {
-        given(itemService.findItemByUserId(any(Long.class))).willReturn(new ArrayList<ResponseMyItem>());
+        List<ResponseMyItem> form = new ArrayList<>();
+        form.add(new ResponseMyItem("itemState", "thumbnailUrl",
+                "name", 3000, 300, 30, 3L, 3L, "categoryName"));
+        given(itemService.findItemByUserId(any(Long.class))).willReturn(form);
 
         mockMvc.perform(
                         get("/admin/items"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemState").exists())
                 .andDo(print());
 
         verify(itemService).findItemByUserId(any(Long.class));
