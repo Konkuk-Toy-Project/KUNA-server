@@ -71,10 +71,12 @@ public class Item {
     }
 
     public void plusPreferenceCount() {
+        if (this.preferenceCount == null) this.preferenceCount = 0; // for test
         this.preferenceCount += 1;
     }
 
     public void minusPreferenceCount() {
+        if (this.preferenceCount == null) this.preferenceCount = 0; // for test
         this.preferenceCount -= 1;
     }
 

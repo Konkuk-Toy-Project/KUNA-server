@@ -46,8 +46,8 @@ public class PreferenceService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
         log.info("찜목록 보기. memberId={}", memberId);
 
-        return member.getPreferenceItems()
-                .stream().map(e -> {
+        return member.getPreferenceItems().stream()
+                .map(e -> {
                     Item item = e.getItem();
                     return new PreferenceDto(item.getThumbnail().getStore_name(),
                             item.getName(), item.getPrice(), item.getSale(), e.getId());

@@ -26,4 +26,9 @@ public class PreferenceItem {
         this.member = member;
         this.item = item;
     }
+
+    // test 용
+    public PreferenceItem(Long id) {
+        this.id = id;
+    }
 }

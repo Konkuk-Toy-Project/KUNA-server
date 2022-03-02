@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 class MemberServiceTest {
@@ -59,6 +61,8 @@ class MemberServiceTest {
         //then
         assertThat(isDuplicateEmailTrue).isTrue();
         assertThat(isDuplicateEmailFalse).isFalse();
+        verify(memberRepository).existsByEmail(email);
+        verify(memberRepository).existsByEmail(email+"fake");
     }
 
     @Test
@@ -75,6 +79,8 @@ class MemberServiceTest {
         //then
         assertThat(isDuplicatePhoneTrue).isTrue();
         assertThat(isDuplicatePhoneFalse).isFalse();
+        verify(memberRepository).existsByPhone(phone);
+        verify(memberRepository).existsByPhone(phone+"3");
     }
 
     @Test
@@ -91,22 +97,32 @@ class MemberServiceTest {
         //then
         assertThat(existsMemberByIdTrue).isTrue();
         assertThat(existsMemberByIdFalse).isFalse();
+        verify(memberRepository).existsById(memberId);
+        verify(memberRepository).existsById(memberId+1L);
     }
 
     @Test
     @DisplayName("회원가입 테스트")
     void signup() {
         // given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member userMember = new Member(email, password, name, phone, birth, memberId);
+
         given(passwordEncoder.encode(password)).willReturn("encryptedPwd");
-        given(memberRepository.save(Mockito.any(Member.class))).willReturn(member);
+        given(memberRepository.save(Mockito.any(Member.class))).willReturn(userMember);
+        given(adminMemberRepository.save(Mockito.any(AdminMember.class))).willReturn(new AdminMember());
 
         // when
         SignupDto dto = new SignupDto(email, password, name, phone, birth, role);
         Long memberId = memberService.signup(dto);
 
+        SignupDto adminDto = new SignupDto(email, password, name, phone, birth, "admin");
+        Long adminMemberId = memberService.signup(adminDto);
+
         // then
-        assertThat(memberId).isEqualTo(memberId);
+        assertThat(memberId).isEqualTo(userMember.getId());
+
+        verify(memberRepository, times(2)).save(any(Member.class)); // 2번 호출
+        verify(adminMemberRepository).save(any(AdminMember.class));
     }
 
     @Test
@@ -125,6 +141,11 @@ class MemberServiceTest {
         // then
         assertThat(login.getToken()).isEqualTo(token);
         assertThat(login.getRole()).isEqualTo(role);
+
+        verify(memberRepository).findByEmail(email);
+        verify(adminMemberRepository).existsByMember(member);
+        verify(passwordEncoder).matches(password, member.getPassword());
+        verify(tokenProvider).create(member);
     }
 
     @Test
@@ -139,6 +160,8 @@ class MemberServiceTest {
 
         // then
         assertThat(findEmail).isEqualTo(email);
+
+        verify(memberRepository).findByNameAndPhone(name, phone);
     }
 
     @Test
@@ -161,6 +184,9 @@ class MemberServiceTest {
         // then
         assertThat(findPassword).hasSize(10)
                 .containsPattern(Pattern.compile(pattern));
+
+        verify(memberRepository).findByEmailAndNameAndPhone(email, name, phone);
+        verify(passwordEncoder).encode(any(String.class));
     }
 
     @Test
@@ -169,11 +195,15 @@ class MemberServiceTest {
         // given
         Member member = new Member(email, password, name, phone, birth, memberId);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(passwordEncoder.matches("newPassword", member.getPassword()))
-                .willReturn(false);
+        given(passwordEncoder.matches("newPassword", member.getPassword())).willReturn(false);
+        given(passwordEncoder.encode("newPassword")).willReturn("encoderPassword");
 
         // when
         memberService.changePassword(memberId, "newPassword");
+
+        verify(memberRepository).findById(memberId);
+        verify(passwordEncoder).matches("newPassword", password);
+        verify(passwordEncoder).encode("newPassword");
     }
 
     @Test
@@ -192,6 +222,9 @@ class MemberServiceTest {
         assertThat(admin.getMember())
                 .usingRecursiveComparison() // 모든 필드값 비교
                 .isEqualTo(member);
+
+        verify(memberRepository).findById(memberId);
+        verify(adminMemberRepository).findByMember(member);
     }
 
     @Test
@@ -207,6 +240,8 @@ class MemberServiceTest {
 
         // then
         assertThat(findPoint).isEqualTo(500);
+
+        verify(memberRepository).findById(memberId);
     }
 
     @Test
@@ -224,5 +259,7 @@ class MemberServiceTest {
                 .usingRecursiveComparison() // 모든 필드값 비교
                 .ignoringFields("role")
                 .isEqualTo(member);
+
+        verify(memberRepository).findById(memberId);
     }
 }
