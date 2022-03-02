@@ -31,4 +31,8 @@ public class PreferenceItem {
     public PreferenceItem(Long id) {
         this.id = id;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

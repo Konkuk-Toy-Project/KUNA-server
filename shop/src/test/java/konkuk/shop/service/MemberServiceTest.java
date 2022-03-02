@@ -201,6 +201,8 @@ class MemberServiceTest {
         // when
         memberService.changePassword(memberId, "newPassword");
 
+        assertThat(member.getPassword()).isEqualTo("encoderPassword");
+
         verify(memberRepository).findById(memberId);
         verify(passwordEncoder).matches("newPassword", password);
         verify(passwordEncoder).encode("newPassword");
