@@ -59,9 +59,6 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetailImage> detailImages = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<CategoryItem> categoryItems = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -85,4 +82,10 @@ public class Item {
         if (sale != null) this.sale = sale;
         this.version += 1;
     }
+
+    // test용
+    public Item(Long id) {
+        this.id = id;
+    }
 }
+

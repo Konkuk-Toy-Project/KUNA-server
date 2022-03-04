@@ -74,6 +74,13 @@ public class Member {
         this.id = id;
     }
 
+    // 테스트용
+
+
+    public Member(Long id) {
+        this.id = id;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -92,3 +99,4 @@ public class Member {
 
 
 }
+

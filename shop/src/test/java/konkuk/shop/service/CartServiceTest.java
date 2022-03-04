@@ -1,5 +1,7 @@
 package konkuk.shop.service;
 
+import konkuk.shop.dto.CartItemDto;
+import konkuk.shop.entity.CartItem;
 import konkuk.shop.entity.Item;
 import konkuk.shop.entity.Member;
 import konkuk.shop.entity.Option1;
@@ -12,10 +14,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
@@ -43,56 +49,80 @@ class CartServiceTest {
     private final Long memberId = 3L;
     private final String token = "JWTToken";
     private final Long itemId = 14L;
+    private final Long option1Id = 8L;
+    private final Long option2Id = 7L;
+    private final Long cartItemId = 9L;
 
     @Test
     @DisplayName("장바구니 상품 추가 테스트")
     void addItem() {
         //given
+        Item item = new Item(1L);
+        Option1 option1 = new Option1();
+        option1.setItem(item);
+        CartItem cartItem = new CartItem(cartItemId);
+
         given(memberRepository.findById(memberId)).willReturn(Optional.of(new Member()));
-        given(itemRepository.findById(itemId)).willReturn(Optional.of(new Item()));
-        given(option1Repository.findById(1L)).willReturn(Optional.of(new Option1()));
+        given(itemRepository.findById(itemId)).willReturn(Optional.of(item));
+        given(option1Repository.findById(option1Id)).willReturn(Optional.of(option1));
+        given(option2Repository.existsByOption1(any(Option1.class))).willReturn(false);
+        given(cartRepository.save(any(CartItem.class))).willReturn(cartItem);
+
 
         //when
-        boolean isDuplicateEmailTrue = memberService.isDuplicateEmail(email);
-        boolean isDuplicateEmailFalse = memberService.isDuplicateEmail(email + "fake");
+        Long cartItemId = cartService.addItem(memberId, itemId, option1Id, null, 3);
 
         //then
-        assertThat(isDuplicateEmailTrue).isTrue();
-        assertThat(isDuplicateEmailFalse).isFalse();
-        verify(memberRepository).existsByEmail(email);
-        verify(memberRepository).existsByEmail(email + "fake");
+        assertThat(cartItemId).isEqualTo(cartItemId);
+        verify(memberRepository).findById(memberId);
+        verify(itemRepository).findById(itemId);
+        verify(option1Repository).findById(option1Id);
+        verify(option2Repository).existsByOption1(any(Option1.class));
+        verify(cartRepository).save(any(CartItem.class));
     }
 
     @Test
     @DisplayName("장바구니 상품 삭제 테스트")
     void deleteItemInCart() {
-        // given
+        //given
+        CartItem cartItem = new CartItem(cartItemId, new Member(memberId));
 
-        // when
+        willDoNothing().given(cartRepository).delete(any(CartItem.class));
+        given(cartRepository.findById(cartItemId)).willReturn(Optional.of(cartItem));
 
-        // then
+        //when
+        cartService.deleteItemInCart(memberId, cartItemId);
 
+        //then
+        verify(cartRepository).findById(cartItemId);
+        verify(cartRepository).delete(any(CartItem.class));
     }
 
     @Test
-    @DisplayName("장바구니 상품 검색 테스트")
+    @DisplayName("장바구니 상품 모두 찾기 테스트")
     void findAllByUserId() {
-        // given
+        //given
+        given(cartRepository.findByMemberId(memberId)).willReturn(new ArrayList<>());
 
-        // when
+        //when
+        List<CartItemDto> result = cartService.findAllByUserId(memberId);
 
-        // then
-
+        //then
+        assertThat(result).isEmpty();
+        verify(cartRepository).findByMemberId(memberId);
     }
 
     @Test
     @DisplayName("장바구니 상품 개수 바꾸기 테스트")
     void changeCount() {
-        // given
+        //given
+        CartItem cartItem = new CartItem(cartItemId, new Member(memberId));
+        given(cartRepository.findById(cartItemId)).willReturn(Optional.of(cartItem));
 
-        // when
+        //when
+        cartService.changeCount(memberId, cartItemId, 1);
 
-        // then
-
+        //then
+        verify(cartRepository).findById(cartItemId);
     }
 }

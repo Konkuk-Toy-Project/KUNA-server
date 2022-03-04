@@ -42,4 +42,14 @@ public class CartItem {
     public void setCount(Integer count) {
         this.count = count;
     }
+
+    public CartItem(Long id) {
+        this.id = id;
+    }
+
+    public CartItem(Long id, Member member) {
+        this.id = id;
+        this.member = member;
+    }
 }
+
