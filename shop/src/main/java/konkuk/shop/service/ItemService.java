@@ -70,7 +70,7 @@ public class ItemService {
         List<MultipartFile> itemImages = form.getItemImages();
         List<MultipartFile> detailImages = form.getDetailImages();
         try {
-            if (thumbnail.getSize() != 0) {
+            if (thumbnail!=null && thumbnail.getSize() != 0) {
                 String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
                 thumbnail.transferTo(new File(thumbnailPath + thumbnailFullName));
                 Thumbnail saveThumbnail = thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName, item));

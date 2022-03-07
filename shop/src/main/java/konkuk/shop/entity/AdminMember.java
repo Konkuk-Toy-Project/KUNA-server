@@ -28,4 +28,10 @@ public class AdminMember {
     public AdminMember(Member member) {
         this.member = member;
     }
+
+    // test 용
+    public AdminMember(Long id, Member member) {
+        this.id = id;
+        this.member = member;
+    }
 }
