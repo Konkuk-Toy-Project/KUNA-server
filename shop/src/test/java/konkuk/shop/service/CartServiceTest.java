@@ -33,24 +33,14 @@ class CartServiceTest {
     @Mock
     ItemRepository itemRepository;
     @Mock
-    TokenProvider tokenProvider;
-    @Mock
     Option1Repository option1Repository;
     @Mock
     Option2Repository option2Repository;
     @InjectMocks
     CartService cartService;
-    private final String name = "testMember";
-    private final String email = "asdf@asdf.com";
-    private final String password = "asdfasdf@1";
-    private final String phone = "01012345678";
-    private final String birth = "20000327";
-    private final String role = "user";
     private final Long memberId = 3L;
-    private final String token = "JWTToken";
     private final Long itemId = 14L;
     private final Long option1Id = 8L;
-    private final Long option2Id = 7L;
     private final Long cartItemId = 9L;
 
     @Test

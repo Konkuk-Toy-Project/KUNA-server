@@ -5,28 +5,22 @@ import konkuk.shop.dto.PreferenceDto;
 import konkuk.shop.entity.Item;
 import konkuk.shop.entity.Member;
 import konkuk.shop.entity.PreferenceItem;
-import konkuk.shop.repository.AdminMemberRepository;
 import konkuk.shop.repository.ItemRepository;
 import konkuk.shop.repository.MemberRepository;
 import konkuk.shop.repository.PreferenceRepository;
-import konkuk.shop.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
@@ -37,9 +31,7 @@ class PreferenceServiceTest {
     private final String password = "asdfasdf@1";
     private final String phone = "01012345678";
     private final String birth = "20000327";
-    private final String role = "user";
     private final Long memberId = 3L;
-    private final String token = "JWTToken";
     private final Long itemId = 14L;
     private final Long preferenceItemId = 2L;
     @Mock
@@ -114,11 +106,11 @@ class PreferenceServiceTest {
         preferenceItem.setId(preferenceItemId);
         //given
         given(preferenceRepository.findByMemberIdAndItemId(memberId, itemId)).willReturn(Optional.of(preferenceItem));
-        given(preferenceRepository.findByMemberIdAndItemId(memberId+1L, itemId+1L)).willReturn(Optional.empty());
+        given(preferenceRepository.findByMemberIdAndItemId(memberId + 1L, itemId + 1L)).willReturn(Optional.empty());
 
         //when
         IsPreference isPreferenceExist = preferenceService.isPreference(memberId, itemId);
-        IsPreference isPreferenceNull = preferenceService.isPreference(memberId+1L, itemId+1L);
+        IsPreference isPreferenceNull = preferenceService.isPreference(memberId + 1L, itemId + 1L);
 
         assertThat(isPreferenceExist.getPreferenceId()).isEqualTo(preferenceItemId);
         assertThat(isPreferenceExist.isLogin()).isTrue();
@@ -129,6 +121,6 @@ class PreferenceServiceTest {
         assertThat(isPreferenceNull.isPreference()).isFalse();
 
         verify(preferenceRepository).findByMemberIdAndItemId(memberId, itemId);
-        verify(preferenceRepository).findByMemberIdAndItemId(memberId+1L, itemId+1L);
+        verify(preferenceRepository).findByMemberIdAndItemId(memberId + 1L, itemId + 1L);
     }
 }

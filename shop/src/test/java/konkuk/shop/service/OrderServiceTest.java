@@ -35,23 +35,11 @@ class OrderServiceTest {
     private final Long memberId = 1L;
     private final Long orderId = 20L;
     @Mock
-    ItemRepository itemRepository;
-    @Mock
-    AdminMemberRepository adminMemberRepository;
-    @Mock
-    Option1Repository option1Repository;
-    @Mock
-    Option2Repository option2Repository;
-    @Mock
     OrderRepository orderRepository;
     @Mock
     MemberRepository memberRepository;
     @Mock
-    CouponRepository couponRepository;
-    @Mock
     DeliveryRepository deliveryRepository;
-    @Mock
-    OrderItemRepository orderItemRepository;
     @InjectMocks
     OrderService orderService;
 
@@ -63,7 +51,7 @@ class OrderServiceTest {
                 payMethod, usePoint, totalPrice, shippingCharge, null, new ArrayList<>());
         Member member = new Member(usePoint);
 
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(new Member()));
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
         given(deliveryRepository.save(any(Delivery.class))).willReturn(new Delivery());
         given(orderRepository.save(any(Order.class))).willReturn(new Order());
 
@@ -71,10 +59,6 @@ class OrderServiceTest {
         AddOrderDto result = orderService.addOrder(memberId, form);
 
         //then
-        assertThat(result.getTotalPrice()).isEqualTo(totalPrice);
-        assertThat(result.getShippingCharge()).isEqualTo(shippingCharge);
-        assertThat(result.getUsePoint()).isEqualTo(usePoint);
-
         verify(memberRepository).findById(memberId);
         verify(deliveryRepository).save(any(Delivery.class));
         verify(orderRepository).save(any(Order.class));
@@ -93,6 +77,8 @@ class OrderServiceTest {
                 .totalPrice(totalPrice)
                 .orderItems(new ArrayList<>())
                 .shippingCharge(shippingCharge)
+                .delivery(new Delivery(address, phone, recipient, DeliveryState.PREPARING))
+                .orderState(OrderState.NORMALITY)
                 .build();
 
 
@@ -107,7 +93,7 @@ class OrderServiceTest {
         assertThat(result.getUsedPoint()).isEqualTo(usePoint);
         assertThat(result.getTotalPrice()).isEqualTo(totalPrice);
         assertThat(result.getOrderItems()).isEmpty();
-        assertThat(result.getPayMethod()).isEqualTo(payMethod);
+        assertThat(result.getPayMethod()).isEqualTo("CARD");
 
 
         verify(orderRepository).findById(orderId);
@@ -135,7 +121,7 @@ class OrderServiceTest {
         given(orderRepository.findByMemberId(memberId)).willReturn(list);
 
         //when
-        List<FindOrderListDto> resultList = orderService.findOrderList(orderId);
+        List<FindOrderListDto> resultList = orderService.findOrderList(memberId);
         FindOrderListDto result = resultList.get(0);
 
         //then
@@ -163,6 +149,7 @@ class OrderServiceTest {
                 .totalPrice(totalPrice)
                 .orderItems(new ArrayList<>())
                 .shippingCharge(shippingCharge)
+                .delivery(new Delivery())
                 .build();
         List<Order> list = new ArrayList<>();
         list.add(order);
@@ -170,7 +157,7 @@ class OrderServiceTest {
         given(orderRepository.findByMemberId(memberId)).willReturn(list);
 
         //when
-        List<OrderItemDto> result = orderService.findOrderItemList(orderId);
+        List<OrderItemDto> result = orderService.findOrderItemList(memberId);
 
         //then
         assertThat(result).hasSize(0);

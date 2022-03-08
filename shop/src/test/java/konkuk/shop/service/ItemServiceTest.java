@@ -31,16 +31,6 @@ class ItemServiceTest {
     @Mock
     AdminMemberRepository adminMemberRepository;
     @Mock
-    Option1Repository option1Repository;
-    @Mock
-    Option2Repository option2Repository;
-    @Mock
-    ItemImageRepository itemImageRepository;
-    @Mock
-    ThumbnailRepository thumbnailRepository;
-    @Mock
-    DetailImageRepository detailImageRepository;
-    @Mock
     CategoryRepository categoryRepository;
     @InjectMocks
     ItemService itemService;
