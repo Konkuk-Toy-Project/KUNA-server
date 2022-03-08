@@ -55,18 +55,20 @@ public class OrderService {
         // 회원 배송지 저장
         member.setAddress(form.getAddress());
 
-        Order saveOrder = orderRepository.save(Order.builder()
-                .delivery(delivery)
-                .member(member)
-                .orderDate(LocalDateTime.now())
-                .totalPrice(form.getTotalPrice())
-                .coupon(coupon)
-                .usedPoint(form.getUsePoint())
-                .payMethod(convertPayMethod(form.getPayMethod()))
-                .shippingCharge(form.getShippingCharge())
-                .orderState(OrderState.NORMALITY)
-                .orderItems(orderItems)
-                .build());
+        Order saveOrder = orderRepository.save(
+                Order.builder()
+                        .delivery(delivery)
+                        .member(member)
+                        .orderDate(LocalDateTime.now())
+                        .totalPrice(form.getTotalPrice())
+                        .coupon(coupon)
+                        .usedPoint(form.getUsePoint())
+                        .payMethod(convertPayMethod(form.getPayMethod()))
+                        .shippingCharge(form.getShippingCharge())
+                        .orderState(OrderState.NORMALITY)
+                        .orderItems(orderItems)
+                        .build()
+        );
 
         for (OrderItem orderItem : orderItems) {
             orderItem.setOrder(saveOrder);

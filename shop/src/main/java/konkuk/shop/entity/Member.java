@@ -75,11 +75,13 @@ public class Member {
     }
 
     // 테스트용
-
-
     public Member(Long id) {
         this.id = id;
     }
+    public Member(Integer point){
+        this.point = point;
+    }
+
 
     public void setPassword(String password) {
         this.password = password;
