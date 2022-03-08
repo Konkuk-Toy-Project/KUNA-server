@@ -52,4 +52,12 @@ public class OrderItem {
     public void setReviewed(boolean reviewed) {
         isReviewed = reviewed;
     }
+
+    //test용
+    public OrderItem(Long id, Integer itemPrice, Integer count, boolean isReviewed) {
+        this.id = id;
+        this.itemPrice = itemPrice;
+        this.count = count;
+        this.isReviewed = isReviewed;
+    }
 }
