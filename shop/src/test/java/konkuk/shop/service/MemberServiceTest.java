@@ -1,13 +1,13 @@
 package konkuk.shop.service;
 
-import konkuk.shop.domain.member.application.MemberService;
-import konkuk.shop.dto.FindMemberInfoByUserIdDto;
-import konkuk.shop.dto.LoginDto;
-import konkuk.shop.dto.SignupDto;
 import konkuk.shop.domain.admin.entity.AdminMember;
-import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.admin.repository.AdminMemberRepository;
+import konkuk.shop.domain.member.application.MemberService;
+import konkuk.shop.domain.member.dto.LoginDto;
+import konkuk.shop.domain.member.dto.SignupDto;
+import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
+import konkuk.shop.dto.FindMemberInfoByUserIdDto;
 import konkuk.shop.global.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +63,7 @@ class MemberServiceTest {
         assertThat(isDuplicateEmailTrue).isTrue();
         assertThat(isDuplicateEmailFalse).isFalse();
         verify(memberRepository).existsByEmail(email);
-        verify(memberRepository).existsByEmail(email+"fake");
+        verify(memberRepository).existsByEmail(email + "fake");
     }
 
     @Test
@@ -81,7 +81,7 @@ class MemberServiceTest {
         assertThat(isDuplicatePhoneTrue).isTrue();
         assertThat(isDuplicatePhoneFalse).isFalse();
         verify(memberRepository).existsByPhone(phone);
-        verify(memberRepository).existsByPhone(phone+"3");
+        verify(memberRepository).existsByPhone(phone + "3");
     }
 
     @Test
@@ -99,7 +99,7 @@ class MemberServiceTest {
         assertThat(existsMemberByIdTrue).isTrue();
         assertThat(existsMemberByIdFalse).isFalse();
         verify(memberRepository).existsById(memberId);
-        verify(memberRepository).existsById(memberId+1L);
+        verify(memberRepository).existsById(memberId + 1L);
     }
 
     @Test
@@ -113,10 +113,10 @@ class MemberServiceTest {
         given(adminMemberRepository.save(Mockito.any(AdminMember.class))).willReturn(new AdminMember());
 
         // when
-        SignupDto dto = new SignupDto(email, password, name, phone, birth, role);
+        SignupDto.Request dto = new SignupDto.Request(email, password, name, phone, birth, role);
         Long memberId = memberService.signup(dto);
 
-        SignupDto adminDto = new SignupDto(email, password, name, phone, birth, "admin");
+        SignupDto.Request adminDto = new SignupDto.Request(email, password, name, phone, birth, "admin");
         Long adminMemberId = memberService.signup(adminDto);
 
         // then
@@ -137,7 +137,7 @@ class MemberServiceTest {
         given(tokenProvider.create(member)).willReturn(token);
 
         // when
-        LoginDto login = memberService.login(email, password);
+        LoginDto.Response login = memberService.login(email, password);
 
         // then
         assertThat(login.getToken()).isEqualTo(token);

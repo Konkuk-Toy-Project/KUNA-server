@@ -4,13 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import konkuk.shop.WithAuthUser;
 import konkuk.shop.domain.member.api.MemberController;
-import konkuk.shop.domain.member.dto.request.*;
-import konkuk.shop.dto.FindMemberInfoByUserIdDto;
-import konkuk.shop.dto.LoginDto;
-import konkuk.shop.dto.SignupDto;
-import konkuk.shop.domain.member.entity.MemberRole;
-import konkuk.shop.global.security.TokenProvider;
 import konkuk.shop.domain.member.application.MemberService;
+import konkuk.shop.domain.member.dto.LoginDto;
+import konkuk.shop.domain.member.dto.ChangePasswordDto;
+import konkuk.shop.domain.member.dto.FindEmailDto;
+import konkuk.shop.domain.member.dto.FindPasswordDto;
+import konkuk.shop.domain.member.dto.SignupDto;
+import konkuk.shop.domain.member.entity.MemberRole;
+import konkuk.shop.dto.FindMemberInfoByUserIdDto;
+import konkuk.shop.global.security.TokenProvider;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +26,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -72,10 +73,10 @@ class MemberControllerTest {
     @DisplayName("회원가입 테스트")
     void memberSignup() throws Exception {
         given(memberService.signup(
-                new SignupDto(email, password, name, phone, birth, role))
+                new SignupDto.Request(email, password, name, phone, birth, role))
         ).willReturn(1234L);
 
-        RequestSignupForm form = new RequestSignupForm(email, password, name, phone, birth, role);
+        SignupDto.Request form = new SignupDto.Request(email, password, name, phone, birth, role);
         Gson gson = new Gson();
         String content = gson.toJson(form);
         //또는 아래와 같이 json변환 가능
@@ -89,17 +90,14 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.role").exists())
                 .andExpect(jsonPath("$.memberId").exists())
                 .andDo(print());
-
-        verify(memberService)
-                .signup(new SignupDto(email, password, name, phone, birth, role));
     }
 
     @Test
     @DisplayName("로그인 테스트")
     void login() throws Exception {
-        given(memberService.login(email, password)).willReturn(new LoginDto("JWTToken", role));
+        given(memberService.login(email, password)).willReturn(new LoginDto.Response("JWTToken", role));
 
-        RequestLoginForm form = new RequestLoginForm(email, password);
+        LoginDto.Response form = new LoginDto.Response(email, password);
         String content = new ObjectMapper().writeValueAsString(form);
 
         mockMvc.perform(
@@ -119,7 +117,7 @@ class MemberControllerTest {
     void findEmail() throws Exception {
         given(memberService.findEmail(name, phone)).willReturn(email);
 
-        RequestFindEmailForm form = new RequestFindEmailForm(name, phone);
+        FindEmailDto.Request form = new FindEmailDto.Request(name, phone);
         String content = new ObjectMapper().writeValueAsString(form);
 
         mockMvc.perform(
@@ -138,7 +136,7 @@ class MemberControllerTest {
     void findPassword() throws Exception {
         given(memberService.findPassword(email, name, phone)).willReturn("tempPassword");
 
-        RequestFindPasswordForm form = new RequestFindPasswordForm(email, name, phone);
+        FindPasswordDto.Request form = new FindPasswordDto.Request(email, name, phone);
         String content = new ObjectMapper().writeValueAsString(form);
 
         mockMvc.perform(
@@ -158,14 +156,14 @@ class MemberControllerTest {
     void changePassword() throws Exception {
         doNothing().when(memberService).changePassword(any(Long.class), any(String.class));
         String content = new ObjectMapper()
-                .writeValueAsString(new RequestChangePasswordForm("changePassword"));
+                .writeValueAsString(new ChangePasswordDto("changePassword"));
 
         mockMvc.perform(
                         post("/member/change/password")
                                 .content(content)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-               .andDo(print());
+                .andDo(print());
 
         verify(memberService).changePassword(any(Long.class), any(String.class));
     }

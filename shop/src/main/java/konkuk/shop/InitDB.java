@@ -23,6 +23,7 @@ import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.item.repository.Option1Repository;
 import konkuk.shop.domain.item.repository.Option2Repository;
 import konkuk.shop.domain.member.application.MemberService;
+import konkuk.shop.domain.member.dto.SignupDto;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.domain.order.entity.Order;
@@ -36,7 +37,6 @@ import konkuk.shop.domain.qna.entity.Qna;
 import konkuk.shop.domain.qna.repository.QnaRepository;
 import konkuk.shop.domain.review.entity.Review;
 import konkuk.shop.domain.review.repository.ReviewRepository;
-import konkuk.shop.dto.SignupDto;
 import konkuk.shop.global.error.ApiException;
 import konkuk.shop.global.error.ExceptionEnum;
 import lombok.RequiredArgsConstructor;
@@ -96,14 +96,14 @@ public class InitDB {
     }
 
     private AdminMember initAdminMember() {
-        SignupDto dto1 = new SignupDto("asdf@asdf.com", "asdfasdf@1", "testMember1", "01012345678", "20000327", "admin");
+        SignupDto.Request dto1 = new SignupDto.Request("asdf@asdf.com", "asdfasdf@1", "testMember1", "01012345678", "20000327", "admin");
         Long saveMemberId = memberService.signup(dto1);
 
         return memberService.findAdminByMemberId(saveMemberId);
     }
 
     private Member initMember() {
-        SignupDto dto2 = new SignupDto("asdf2@asdf.com", "asdfasdf@2", "testMember2", "01087654321", "19991003", "user");
+        SignupDto.Request dto2 = new SignupDto.Request("asdf2@asdf.com", "asdfasdf@2", "testMember2", "01087654321", "19991003", "user");
         Long memberId = memberService.signup(dto2);
         return memberRepository.findById(memberId).orElseThrow(()->new ApiException(ExceptionEnum.NO_FIND_MEMBER));
     }
