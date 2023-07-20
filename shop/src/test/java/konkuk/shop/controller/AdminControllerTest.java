@@ -2,13 +2,12 @@ package konkuk.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
-import konkuk.shop.form.requestForm.admin.RequestAnswerQnaForm;
-import konkuk.shop.form.requestForm.item.EditPriceAndSaleForm;
-import konkuk.shop.form.responseForm.admin.ResponseQnaList;
-import konkuk.shop.form.responseForm.item.ResponseMyItem;
-import konkuk.shop.security.TokenProvider;
-import konkuk.shop.service.ItemService;
-import konkuk.shop.service.QnaService;
+import konkuk.shop.domain.admin.api.AdminController;
+import konkuk.shop.domain.admin.dto.RequestAnswerQnaForm;
+import konkuk.shop.domain.item.dto.EditPriceAndSaleForm;
+import konkuk.shop.global.security.TokenProvider;
+import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.qna.application.QnaService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

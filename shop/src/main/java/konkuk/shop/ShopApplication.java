@@ -1,6 +1,6 @@
 package konkuk.shop;
 
-import konkuk.shop.aop.AspectLog;
+import konkuk.shop.global.aop.AspectLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

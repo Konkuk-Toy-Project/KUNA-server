@@ -1,8 +1,9 @@
 package konkuk.shop.service;
 
+import konkuk.shop.domain.category.application.CategoryService;
 import konkuk.shop.dto.FindAllCategoryDto;
-import konkuk.shop.entity.Category;
-import konkuk.shop.repository.CategoryRepository;
+import konkuk.shop.domain.category.entity.Category;
+import konkuk.shop.domain.category.repository.CategoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

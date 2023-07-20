@@ -1,7 +1,8 @@
 package konkuk.shop.controller;
 
-import konkuk.shop.security.TokenProvider;
-import konkuk.shop.service.ImageService;
+import konkuk.shop.domain.image.api.ImageController;
+import konkuk.shop.global.security.TokenProvider;
+import konkuk.shop.domain.image.application.ImageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

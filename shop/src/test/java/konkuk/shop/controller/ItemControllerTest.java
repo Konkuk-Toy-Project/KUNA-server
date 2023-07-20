@@ -2,11 +2,12 @@ package konkuk.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
-import konkuk.shop.form.requestForm.item.RequestAddItemDto;
-import konkuk.shop.form.requestForm.item.RequestAddOptionForm;
-import konkuk.shop.form.requestForm.item.ResponseItemDetail;
-import konkuk.shop.security.TokenProvider;
-import konkuk.shop.service.ItemService;
+import konkuk.shop.domain.item.api.ItemController;
+import konkuk.shop.domain.item.dto.RequestAddItemDto;
+import konkuk.shop.domain.item.dto.RequestAddOptionForm;
+import konkuk.shop.domain.item.dto.ResponseItemDetail;
+import konkuk.shop.global.security.TokenProvider;
+import konkuk.shop.domain.item.application.ItemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

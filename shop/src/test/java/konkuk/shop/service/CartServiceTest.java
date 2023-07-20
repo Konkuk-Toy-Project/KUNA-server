@@ -1,12 +1,16 @@
 package konkuk.shop.service;
 
+import konkuk.shop.domain.cart.application.CartService;
+import konkuk.shop.domain.cart.repository.CartRepository;
+import konkuk.shop.domain.item.repository.ItemRepository;
+import konkuk.shop.domain.item.repository.Option1Repository;
+import konkuk.shop.domain.item.repository.Option2Repository;
+import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.dto.CartItemDto;
-import konkuk.shop.entity.CartItem;
-import konkuk.shop.entity.Item;
-import konkuk.shop.entity.Member;
-import konkuk.shop.entity.Option1;
-import konkuk.shop.repository.*;
-import konkuk.shop.security.TokenProvider;
+import konkuk.shop.domain.cart.entity.CartItem;
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.item.entity.Option1;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

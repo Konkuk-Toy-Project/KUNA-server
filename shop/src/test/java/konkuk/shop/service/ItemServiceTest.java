@@ -1,10 +1,18 @@
 package konkuk.shop.service;
 
-import konkuk.shop.entity.*;
-import konkuk.shop.form.requestForm.item.RequestAddItemDto;
-import konkuk.shop.form.requestForm.item.ResponseItemDetail;
-import konkuk.shop.form.responseForm.item.ResponseMyItem;
-import konkuk.shop.repository.*;
+import konkuk.shop.domain.admin.entity.AdminMember;
+import konkuk.shop.domain.admin.repository.AdminMemberRepository;
+import konkuk.shop.domain.category.entity.Category;
+import konkuk.shop.domain.category.repository.CategoryRepository;
+import konkuk.shop.domain.image.entity.Thumbnail;
+import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.item.entity.ItemState;
+import konkuk.shop.domain.item.repository.ItemRepository;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.item.dto.RequestAddItemDto;
+import konkuk.shop.domain.item.dto.ResponseItemDetail;
+import konkuk.shop.domain.item.dto.ResponseMyItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;

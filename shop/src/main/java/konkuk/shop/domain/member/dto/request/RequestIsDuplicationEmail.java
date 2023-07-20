@@ -1,0 +1,8 @@
+package konkuk.shop.domain.member.dto.request;
+
+import lombok.Data;
+
+@Data
+public class RequestIsDuplicationEmail {
+    String email;
+}

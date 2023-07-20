@@ -2,13 +2,12 @@ package konkuk.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
+import konkuk.shop.domain.order.api.OrderController;
 import konkuk.shop.dto.AddOrderDto;
 import konkuk.shop.dto.FindOrderDto;
-import konkuk.shop.form.requestForm.item.RequestAddItemDto;
-import konkuk.shop.form.requestForm.order.RequestAddOrderForm;
-import konkuk.shop.security.TokenProvider;
-import konkuk.shop.service.ItemService;
-import konkuk.shop.service.OrderService;
+import konkuk.shop.domain.order.dto.RequestAddOrderForm;
+import konkuk.shop.global.security.TokenProvider;
+import konkuk.shop.domain.order.application.OrderService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;

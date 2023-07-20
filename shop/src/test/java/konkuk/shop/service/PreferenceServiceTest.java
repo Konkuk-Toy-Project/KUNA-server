@@ -1,13 +1,14 @@
 package konkuk.shop.service;
 
+import konkuk.shop.domain.preference.application.PreferenceService;
 import konkuk.shop.dto.IsPreference;
 import konkuk.shop.dto.PreferenceDto;
-import konkuk.shop.entity.Item;
-import konkuk.shop.entity.Member;
-import konkuk.shop.entity.PreferenceItem;
-import konkuk.shop.repository.ItemRepository;
-import konkuk.shop.repository.MemberRepository;
-import konkuk.shop.repository.PreferenceRepository;
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.preference.entity.PreferenceItem;
+import konkuk.shop.domain.item.repository.ItemRepository;
+import konkuk.shop.domain.member.repository.MemberRepository;
+import konkuk.shop.domain.preference.repository.PreferenceRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

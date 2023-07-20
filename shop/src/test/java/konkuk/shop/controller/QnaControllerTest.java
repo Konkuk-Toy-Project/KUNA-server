@@ -2,9 +2,10 @@ package konkuk.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
-import konkuk.shop.form.requestForm.qna.RequestAddQnaForm;
-import konkuk.shop.security.TokenProvider;
-import konkuk.shop.service.QnaService;
+import konkuk.shop.domain.qna.api.QnaController;
+import konkuk.shop.domain.qna.dto.RequestAddQnaForm;
+import konkuk.shop.global.security.TokenProvider;
+import konkuk.shop.domain.qna.application.QnaService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

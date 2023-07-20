@@ -1,12 +1,20 @@
 package konkuk.shop.service;
 
+import konkuk.shop.domain.delivery.entity.Delivery;
+import konkuk.shop.domain.delivery.entity.DeliveryState;
+import konkuk.shop.domain.delivery.repository.DeliveryRepository;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.member.repository.MemberRepository;
+import konkuk.shop.domain.order.application.OrderService;
+import konkuk.shop.domain.order.entity.Order;
+import konkuk.shop.domain.order.entity.OrderState;
+import konkuk.shop.domain.order.entity.PayMethod;
+import konkuk.shop.domain.order.repository.OrderRepository;
 import konkuk.shop.dto.AddOrderDto;
 import konkuk.shop.dto.FindOrderDto;
 import konkuk.shop.dto.FindOrderListDto;
 import konkuk.shop.dto.OrderItemDto;
-import konkuk.shop.entity.*;
-import konkuk.shop.form.requestForm.order.RequestAddOrderForm;
-import konkuk.shop.repository.*;
+import konkuk.shop.domain.order.dto.RequestAddOrderForm;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

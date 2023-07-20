@@ -1,13 +1,14 @@
 package konkuk.shop.service;
 
+import konkuk.shop.domain.member.application.MemberService;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;
 import konkuk.shop.dto.LoginDto;
 import konkuk.shop.dto.SignupDto;
-import konkuk.shop.entity.AdminMember;
-import konkuk.shop.entity.Member;
-import konkuk.shop.repository.AdminMemberRepository;
-import konkuk.shop.repository.MemberRepository;
-import konkuk.shop.security.TokenProvider;
+import konkuk.shop.domain.admin.entity.AdminMember;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.admin.repository.AdminMemberRepository;
+import konkuk.shop.domain.member.repository.MemberRepository;
+import konkuk.shop.global.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

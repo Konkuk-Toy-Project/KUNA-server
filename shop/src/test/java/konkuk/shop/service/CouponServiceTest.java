@@ -1,17 +1,17 @@
 package konkuk.shop.service;
 
-import konkuk.shop.entity.Coupon;
-import konkuk.shop.entity.CouponKind;
-import konkuk.shop.entity.Member;
-import konkuk.shop.form.requestForm.coupon.RequestAddCouponForm;
-import konkuk.shop.form.responseForm.coupon.ResponseGetCoupon;
-import konkuk.shop.repository.CouponRepository;
-import konkuk.shop.repository.MemberRepository;
+import konkuk.shop.domain.coupon.application.CouponService;
+import konkuk.shop.domain.coupon.entity.Coupon;
+import konkuk.shop.domain.coupon.entity.CouponKind;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.coupon.dto.RequestAddCouponForm;
+import konkuk.shop.domain.coupon.dto.ResponseGetCoupon;
+import konkuk.shop.domain.coupon.repository.CouponRepository;
+import konkuk.shop.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.UpperCase;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;

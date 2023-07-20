@@ -2,10 +2,11 @@ package konkuk.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
-import konkuk.shop.form.requestForm.coupon.RequestAddCouponForm;
-import konkuk.shop.form.responseForm.coupon.ResponseGetCoupon;
-import konkuk.shop.security.TokenProvider;
-import konkuk.shop.service.CouponService;
+import konkuk.shop.domain.coupon.api.CouponController;
+import konkuk.shop.domain.coupon.dto.RequestAddCouponForm;
+import konkuk.shop.domain.coupon.dto.ResponseGetCoupon;
+import konkuk.shop.global.security.TokenProvider;
+import konkuk.shop.domain.coupon.application.CouponService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

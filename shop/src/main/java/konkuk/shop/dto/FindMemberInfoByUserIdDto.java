@@ -1,6 +1,6 @@
 package konkuk.shop.dto;
 
-import konkuk.shop.entity.MemberRole;
+import konkuk.shop.domain.member.entity.MemberRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

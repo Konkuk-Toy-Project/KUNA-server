@@ -1,13 +1,17 @@
 package konkuk.shop.service;
 
+import konkuk.shop.domain.admin.entity.AdminMember;
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.qna.application.QnaService;
+import konkuk.shop.domain.qna.entity.Qna;
 import konkuk.shop.dto.FindQnaDto;
-import konkuk.shop.entity.*;
-import konkuk.shop.form.requestForm.qna.RequestAddQnaForm;
-import konkuk.shop.form.responseForm.admin.ResponseQnaList;
-import konkuk.shop.repository.AdminMemberRepository;
-import konkuk.shop.repository.ItemRepository;
-import konkuk.shop.repository.MemberRepository;
-import konkuk.shop.repository.QnaRepository;
+import konkuk.shop.domain.qna.dto.RequestAddQnaForm;
+import konkuk.shop.domain.admin.dto.ResponseQnaList;
+import konkuk.shop.domain.admin.repository.AdminMemberRepository;
+import konkuk.shop.domain.item.repository.ItemRepository;
+import konkuk.shop.domain.member.repository.MemberRepository;
+import konkuk.shop.domain.qna.repository.QnaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

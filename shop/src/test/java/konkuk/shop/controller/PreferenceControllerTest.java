@@ -1,10 +1,11 @@
 package konkuk.shop.controller;
 
 import konkuk.shop.WithAuthUser;
+import konkuk.shop.domain.preference.api.PreferenceController;
 import konkuk.shop.dto.IsPreference;
 import konkuk.shop.dto.PreferenceDto;
-import konkuk.shop.security.TokenProvider;
-import konkuk.shop.service.PreferenceService;
+import konkuk.shop.global.security.TokenProvider;
+import konkuk.shop.domain.preference.application.PreferenceService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,9 +2,10 @@ package konkuk.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
-import konkuk.shop.form.requestForm.review.AddReviewForm;
-import konkuk.shop.security.TokenProvider;
-import konkuk.shop.service.ReviewService;
+import konkuk.shop.domain.review.api.ReviewController;
+import konkuk.shop.domain.review.dto.AddReviewForm;
+import konkuk.shop.global.security.TokenProvider;
+import konkuk.shop.domain.review.application.ReviewService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

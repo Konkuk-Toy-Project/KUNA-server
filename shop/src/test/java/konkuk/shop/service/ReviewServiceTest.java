@@ -1,12 +1,16 @@
 package konkuk.shop.service;
 
+import konkuk.shop.domain.item.repository.ItemRepository;
+import konkuk.shop.domain.member.repository.MemberRepository;
+import konkuk.shop.domain.order.repository.OrderItemRepository;
+import konkuk.shop.domain.review.application.ReviewService;
+import konkuk.shop.domain.review.repository.ReviewRepository;
 import konkuk.shop.dto.FindReviewDto;
-import konkuk.shop.entity.Item;
-import konkuk.shop.entity.Member;
-import konkuk.shop.entity.OrderItem;
-import konkuk.shop.entity.Review;
-import konkuk.shop.form.requestForm.review.AddReviewForm;
-import konkuk.shop.repository.*;
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.order.entity.OrderItem;
+import konkuk.shop.domain.review.entity.Review;
+import konkuk.shop.domain.review.dto.AddReviewForm;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
