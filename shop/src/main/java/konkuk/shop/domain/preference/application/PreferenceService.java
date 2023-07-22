@@ -5,8 +5,8 @@ import konkuk.shop.dto.PreferenceDto;
 import konkuk.shop.domain.item.entity.Item;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.preference.entity.PreferenceItem;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.domain.preference.repository.PreferenceRepository;
@@ -31,9 +31,9 @@ public class PreferenceService {
         log.info("찜하기 요청 memberId={}, itemId={}", memberId, itemId);
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
         PreferenceItem savePreferenceItem = preferenceRepository.save(new PreferenceItem(member, item));
 
         member.getPreferenceItems().add(savePreferenceItem);
@@ -43,7 +43,7 @@ public class PreferenceService {
 
     public List<PreferenceDto> findPreferenceByMemberId(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         log.info("찜목록 보기. memberId={}", memberId);
 
         return member.getPreferenceItems().stream()
@@ -58,10 +58,10 @@ public class PreferenceService {
     @Transactional
     public void deletePreference(Long memberId, Long preferenceId) {
         PreferenceItem preferenceItem = preferenceRepository.findById(preferenceId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_PREFERENCE));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_PREFERENCE));
 
         if (!preferenceItem.getMember().getId().equals(memberId))
-            throw new ApiException(ExceptionEnum.NOT_AUTHORITY_PREFERENCE_EDIT);
+            throw new ApplicationException(ErrorCode.NOT_AUTHORITY_PREFERENCE_EDIT);
         preferenceItem.getItem().minusPreferenceCount();
 
         log.info("찜하기 삭제 요청. memberId={}, preferenceId={}", memberId, preferenceId);

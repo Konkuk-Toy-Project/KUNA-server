@@ -12,8 +12,8 @@ import konkuk.shop.domain.order.repository.OrderItemRepository;
 import konkuk.shop.domain.review.entity.Review;
 import konkuk.shop.domain.review.repository.ReviewRepository;
 import konkuk.shop.dto.FindReviewDto;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.domain.review.dto.AddReviewForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,16 +46,16 @@ public class ReviewService {
     @Transactional
     public Long saveReview(Long userId, AddReviewForm form) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         Item item = itemRepository.findById(form.getItemId())
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
 
         OrderItem orderItem = orderItemRepository.findById(form.getOrderItemId())
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER_ITEM));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ORDER_ITEM));
 
-        if (orderItem.isReviewed()) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_REVIEW);
+        if (orderItem.isReviewed()) throw new ApplicationException(ErrorCode.ALREADY_REGISTRY_REVIEW);
 
-        if(form.getRate()<0 || form.getRate()>5) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_REVIEW);
+        if(form.getRate()<0 || form.getRate()>5) throw new ApplicationException(ErrorCode.ALREADY_REGISTRY_REVIEW);
 
         Review review = Review.builder()
                 .item(item)
@@ -79,7 +79,7 @@ public class ReviewService {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new ApiException(ExceptionEnum.FAIL_STORE_IMAGE);
+                throw new ApplicationException(ErrorCode.FAIL_STORE_IMAGE);
             }
         }
         orderItem.setReviewed(true);

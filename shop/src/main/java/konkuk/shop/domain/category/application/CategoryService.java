@@ -2,8 +2,8 @@ package konkuk.shop.domain.category.application;
 
 import konkuk.shop.dto.FindAllCategoryDto;
 import konkuk.shop.domain.category.entity.Category;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.domain.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class CategoryService {
 
     public Category findCategoryById(Long id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_CATEGORY));
     }
 
     public Category addCategory(String name) {

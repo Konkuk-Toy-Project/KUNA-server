@@ -15,8 +15,8 @@ import konkuk.shop.domain.item.entity.*;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.item.repository.Option1Repository;
 import konkuk.shop.domain.item.repository.Option2Repository;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,9 +58,9 @@ public class ItemService {
         log.info("name={}, price={}, sale={}, categoryId={}", form.getName(), form.getPrice(), form.getSale(), form.getCategoryId());
 
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ADMIN_MEMBER));
         Category category = categoryRepository.findById(form.getCategoryId())
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_CATEGORY));
 
         Item item = Item.builder()
                 .itemState(ItemState.NORMALITY)
@@ -109,7 +109,7 @@ public class ItemService {
             item = itemRepository.save(item);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ApiException(ExceptionEnum.FAIL_STORE_IMAGE);
+            throw new ApplicationException(ErrorCode.FAIL_STORE_IMAGE);
         }
         adminMember.getItems().add(item);
         category.getItems().add(item);
@@ -149,9 +149,9 @@ public class ItemService {
     @Transactional
     public void saveOption(Long userId, List<OptionOneForm> option1s, Long itemId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
         if(!item.getAdminMember().getMember().getId().equals(userId))
-            throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ITEM);
+            throw new ApplicationException(ErrorCode.NO_AUTHORITY_ACCESS_ITEM);
 
         log.info("item 옵션 추가. itemId={}", itemId);
 
@@ -171,7 +171,7 @@ public class ItemService {
 
     public ResponseItemDetail findItemById(Long itemId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
 
         log.info("상품 상세 조회. itemId={}", itemId);
 
@@ -233,7 +233,7 @@ public class ItemService {
 
     public List<ResponseMyItem> findItemByUserId(Long userId) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ADMIN_MEMBER));
 
         log.info("아이템 조회 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
@@ -272,12 +272,12 @@ public class ItemService {
     @Transactional
     public void editPriceByItemId(Long userId, Long itemId, Integer price, Integer sale) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ADMIN_MEMBER));
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
 
         if (!adminMember.getId().equals(item.getAdminMember().getId()))
-            throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ITEM);
+            throw new ApplicationException(ErrorCode.NO_AUTHORITY_ACCESS_ITEM);
 
         log.info("상품의 가격, 세일 수정 요청. itemId={}, 가격={}->{}, 세일={}->{}",
                 itemId, item.getPrice(), price, item.getSale(), sale);

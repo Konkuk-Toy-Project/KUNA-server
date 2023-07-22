@@ -5,8 +5,8 @@ import konkuk.shop.domain.admin.entity.AdminMember;
 import konkuk.shop.domain.item.entity.Item;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.qna.entity.Qna;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.domain.qna.dto.RequestAddQnaForm;
 import konkuk.shop.domain.admin.dto.ResponseQnaList;
 import konkuk.shop.domain.admin.repository.AdminMemberRepository;
@@ -33,9 +33,9 @@ public class QnaService {
 
     public Long saveQna(Long userId, RequestAddQnaForm form) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         Item item = itemRepository.findById(form.getItemId())
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
 
         log.info("qna 등록 요청. memberId={}, isSecret={}", userId, form.isSecret());
         Qna qna = new Qna(item, member, item.getAdminMember(), form.getQuestion(), form.isSecret(), form.getTitle());
@@ -82,7 +82,7 @@ public class QnaService {
 
     public List<ResponseQnaList> findQnaByAdminMember(Long userId, boolean isAnswered) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ADMIN_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ADMIN_MEMBER));
 
         log.info("자신의 상품 Qna 목록 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
@@ -106,12 +106,12 @@ public class QnaService {
     @Transactional
     public void saveAnswer(Long userId, Long qnaId, String answer) {
         Qna qna = qnaRepository.findById(qnaId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_QNA));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_QNA));
 
-        if (qna.isAnswered()) throw new ApiException(ExceptionEnum.ALREADY_ANSWER_QNA);
+        if (qna.isAnswered()) throw new ApplicationException(ErrorCode.ALREADY_ANSWER_QNA);
 
         if (!qna.getAdminMember().getMember().getId().equals(userId))
-            throw new ApiException(ExceptionEnum.NO_AUTHORITY_ANSWER_QNA);
+            throw new ApplicationException(ErrorCode.NO_AUTHORITY_ANSWER_QNA);
 
         log.info("Qna에 답변 저장 요청. qnaId={}", qnaId);
 

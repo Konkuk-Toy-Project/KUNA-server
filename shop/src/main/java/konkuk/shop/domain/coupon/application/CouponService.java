@@ -3,8 +3,8 @@ package konkuk.shop.domain.coupon.application;
 import konkuk.shop.domain.coupon.entity.Coupon;
 import konkuk.shop.domain.coupon.entity.CouponKind;
 import konkuk.shop.domain.member.entity.Member;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.domain.coupon.dto.RequestAddCouponForm;
 import konkuk.shop.domain.coupon.dto.ResponseGetCoupon;
 import konkuk.shop.domain.coupon.repository.CouponRepository;
@@ -56,7 +56,7 @@ public class CouponService {
 
     public List<ResponseGetCoupon> getCoupon(Long userId) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         log.info("쿠폰 목록 조회 userId={}", userId);
 
         return member.getCoupons().stream()
@@ -68,13 +68,13 @@ public class CouponService {
     @Transactional
     public ResponseGetCoupon registryCoupon(Long userId, String serialNumber) {
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         Coupon coupon = couponRepository.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_COUPON));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_COUPON));
 
-        if (coupon.getMember() != null) throw new ApiException(ExceptionEnum.ALREADY_REGISTRY_COUPON);
+        if (coupon.getMember() != null) throw new ApplicationException(ErrorCode.ALREADY_REGISTRY_COUPON);
         if (coupon.getExpiredDate().isBefore(LocalDateTime.now()))
-            throw new ApiException(ExceptionEnum.EXPIRED_COUPON);
+            throw new ApplicationException(ErrorCode.EXPIRED_COUPON);
 
         log.info("사용자가 쿠폰 등록. couponId={}", coupon.getId());
 

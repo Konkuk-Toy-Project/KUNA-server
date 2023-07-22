@@ -37,8 +37,8 @@ import konkuk.shop.domain.qna.entity.Qna;
 import konkuk.shop.domain.qna.repository.QnaRepository;
 import konkuk.shop.domain.review.entity.Review;
 import konkuk.shop.domain.review.repository.ReviewRepository;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -105,7 +105,7 @@ public class InitDB {
     private Member initMember() {
         SignupDto.Request dto2 = new SignupDto.Request("asdf2@asdf.com", "asdfasdf@2", "testMember2", "01087654321", "19991003", "user");
         Long memberId = memberService.signup(dto2);
-        return memberRepository.findById(memberId).orElseThrow(()->new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        return memberRepository.findById(memberId).orElseThrow(()->new ApplicationException(ErrorCode.NO_FIND_MEMBER));
     }
 
     private Category initCategory() {

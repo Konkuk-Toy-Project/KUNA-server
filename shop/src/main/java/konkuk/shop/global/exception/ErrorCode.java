@@ -1,11 +1,19 @@
-package konkuk.shop.global.error;
+package konkuk.shop.global.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum ExceptionEnum {
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "0001", "예상치 못한 서버 에러입니다."),
+public enum ErrorCode {
+    // Common
+    ENTITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "C001", "엔티티 조회에 실패하였습니다."),
+    INVALID_VALUE(HttpStatus.BAD_REQUEST, "C002", "잘못된 입력값입니다."),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "C003", "잘못된 HTTP 메서드입니다."),
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "C004", "권한이 없습니다."),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C005", "서버 내부에서 에러가 발생하였습니다."),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "C006", "Not Found"),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "C007", "Bad Request"),
+    INCORRECT_RESULT_SIZE_DATA_ACCESS(HttpStatus.INTERNAL_SERVER_ERROR, "C008", "조회한 데이터의 개수가 의도했던 개수와 다릅니다."),
 
     DUPLICATION_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M002", "중복된 이메일입니다."),
     NO_FIND_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M003", "존재하지 않은 이메일입니다."),
@@ -74,7 +82,7 @@ public enum ExceptionEnum {
     private final String code;
     private String message;
 
-    ExceptionEnum(HttpStatus status, String code, String message) {
+    ErrorCode(HttpStatus status, String code, String message) {
         this.status = status;
         this.code = code;
         this.message = message;

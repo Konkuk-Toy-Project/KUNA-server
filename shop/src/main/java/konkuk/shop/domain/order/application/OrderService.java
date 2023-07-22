@@ -22,8 +22,8 @@ import konkuk.shop.domain.order.entity.PayMethod;
 import konkuk.shop.domain.order.repository.OrderItemRepository;
 import konkuk.shop.domain.order.repository.OrderRepository;
 import konkuk.shop.dto.*;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.domain.order.dto.OrderItemForm;
 import konkuk.shop.domain.order.dto.RequestAddOrderForm;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +53,7 @@ public class OrderService {
     public AddOrderDto addOrder(Long memberId, RequestAddOrderForm form) {
         log.info("주문 요청. memberId={}", memberId);
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
 
         // 1. 쿠폰 검증
         Coupon coupon = validationCoupon(form.getCouponId(), memberId);
@@ -62,7 +62,7 @@ public class OrderService {
         validationShippingCharge(form.getTotalPrice(), form.getShippingCharge());
 
         // 3. 포인트 체크
-        if (member.getPoint() < form.getUsePoint()) throw new ApiException(ExceptionEnum.NOT_ENOUGH_POINTS);
+        if (member.getPoint() < form.getUsePoint()) throw new ApplicationException(ErrorCode.NOT_ENOUGH_POINTS);
 
         // 4. 재고 수량 확인 및 토탈 금액 검증 + 쿠폰 사용 조건 검증
         List<OrderItem> orderItems = makeOrderItem(form.getOrderItems(), form.getTotalPrice(), coupon);
@@ -104,9 +104,9 @@ public class OrderService {
 
     private void validationShippingCharge(Integer totalPrice, Integer shippingCharge) {
         if (totalPrice >= 50000 && shippingCharge != 0)
-            throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
+            throw new ApplicationException(ErrorCode.INCORRECT_SHIPPING_CHARGE);
         if (totalPrice < 50000 && shippingCharge == 0)
-            throw new ApiException(ExceptionEnum.INCORRECT_SHIPPING_CHARGE);
+            throw new ApplicationException(ErrorCode.INCORRECT_SHIPPING_CHARGE);
     }
 
     private List<OrderItem> makeOrderItem(List<OrderItemForm> orderItems, int totalPrice, Coupon coupon) {
@@ -115,9 +115,9 @@ public class OrderService {
 
         for (OrderItemForm orderItemform : orderItems) {
             Item item = itemRepository.findById(orderItemform.getItemId())
-                    .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
             Option1 option1 = option1Repository.findById(orderItemform.getOption1Id())
-                    .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION1_BY_ID));
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION1_BY_ID));
 
             int itemPrice = Integer.parseInt(String.valueOf(Math.round((100 - item.getSale()) * 0.01 * item.getPrice())));
             OrderItem orderItem = OrderItem.builder()
@@ -132,15 +132,15 @@ public class OrderService {
                     .build();
 
             if (option1.getStock() < orderItemform.getCount())
-                throw new ApiException(ExceptionEnum.NO_STOCK_ITEM);
+                throw new ApplicationException(ErrorCode.NO_STOCK_ITEM);
             option1.minusStock(orderItemform.getCount());
 
             if (orderItemform.getOption2Id() != null) {
                 Option2 option2 = option2Repository.findById(orderItemform.getOption2Id())
-                        .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_OPTION2_BY_ID));
+                        .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION2_BY_ID));
 
                 if (option2.getStock() < orderItemform.getCount())
-                    throw new ApiException(ExceptionEnum.NO_STOCK_ITEM);
+                    throw new ApplicationException(ErrorCode.NO_STOCK_ITEM);
                 option2.minusStock(orderItemform.getCount());
 
                 orderItem.setOption2(option2.getName());
@@ -156,11 +156,11 @@ public class OrderService {
             String couponCondition = coupon.getCouponCondition();
             String[] subStr = couponCondition.split("_");
             int conditionPrice = Integer.parseInt(subStr[2]);
-            if (conditionPrice > salePriceSum) throw new ApiException(ExceptionEnum.NOT_SATISFY_USE_COUPON);
+            if (conditionPrice > salePriceSum) throw new ApplicationException(ErrorCode.NOT_SATISFY_USE_COUPON);
 
             if (coupon.getCouponKind().equals(CouponKind.STATIC)) {
                 if (salePriceSum > coupon.getRate()) validTotalPrice = salePriceSum - coupon.getRate();
-                else throw new ApiException(ExceptionEnum.NOT_HIGHER_PRICE_THAN_COUPON);
+                else throw new ApplicationException(ErrorCode.NOT_HIGHER_PRICE_THAN_COUPON);
             } else if (coupon.getCouponKind().equals(CouponKind.PERCENT)) {
                 int salePriceByCoupon = (int) (salePriceSum * (100 - coupon.getRate()) * 0.01);
                 validTotalPrice = salePriceSum - salePriceByCoupon;
@@ -169,7 +169,7 @@ public class OrderService {
 
         if (validTotalPrice != totalPrice) {
             log.info("Incorrect total price!! request totalPrice={},  priceSum={}", totalPrice, validTotalPrice);
-            throw new ApiException(ExceptionEnum.INCORRECT_TOTAL_PRICE);
+            throw new ApplicationException(ErrorCode.INCORRECT_TOTAL_PRICE);
         }
         return result;
     }
@@ -177,19 +177,19 @@ public class OrderService {
     private PayMethod convertPayMethod(String payMethod) {
         if (payMethod.equals("card")) return PayMethod.CARD;
         else if (payMethod.equals("bankbook")) return PayMethod.BANKBOOK;
-        else throw new ApiException(ExceptionEnum.INCORRECT_PAYMENT_METHOD);
+        else throw new ApplicationException(ErrorCode.INCORRECT_PAYMENT_METHOD);
     }
 
     private Coupon validationCoupon(Long couponId, Long userId) {
         if (couponId == null) return null;
 
         Coupon coupon = couponRepository.findById(couponId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_COUPON));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_COUPON));
 
-        if (!coupon.getMember().getId().equals(userId)) throw new ApiException(ExceptionEnum.NOT_MATCH_COUPON_MEMBER);
-        if (coupon.isUsed()) throw new ApiException(ExceptionEnum.ALREADY_USED_COUPON);
+        if (!coupon.getMember().getId().equals(userId)) throw new ApplicationException(ErrorCode.NOT_MATCH_COUPON_MEMBER);
+        if (coupon.isUsed()) throw new ApplicationException(ErrorCode.ALREADY_USED_COUPON);
         if (coupon.getExpiredDate().isBefore(LocalDateTime.now()))
-            throw new ApiException(ExceptionEnum.EXPIRED_COUPON);
+            throw new ApplicationException(ErrorCode.EXPIRED_COUPON);
 
         return coupon;
     }
@@ -197,8 +197,8 @@ public class OrderService {
     public FindOrderDto findOrderDetailList(Long userId, Long orderId) {
         log.info("주문 상세 조회. memberId={}, orderId={}", userId, orderId);
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_ORDER));
-        if (!order.getMember().getId().equals(userId)) throw new ApiException(ExceptionEnum.NO_AUTHORITY_ACCESS_ORDER);
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ORDER));
+        if (!order.getMember().getId().equals(userId)) throw new ApplicationException(ErrorCode.NO_AUTHORITY_ACCESS_ORDER);
 
         List<FindOrderItemDto> itemDtos = order.getOrderItems().stream()
                 .map(orderItem ->

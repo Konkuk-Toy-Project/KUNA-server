@@ -1,7 +1,7 @@
 package konkuk.shop.domain.image.application;
 
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +31,7 @@ public class ImageService {
             return new UrlResource("file:" + typeConvert(type) + fileName);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ApiException(ExceptionEnum.FAIL_CALL_IMAGE);
+            throw new ApplicationException(ErrorCode.FAIL_CALL_IMAGE);
         }
     }
 
@@ -46,7 +46,7 @@ public class ImageService {
             case "thumbnail":
                 return thumbnailPath;
             default:
-                throw new ApiException(ExceptionEnum.FAIL_CALL_IMAGE);
+                throw new ApplicationException(ErrorCode.FAIL_CALL_IMAGE);
         }
     }
 }

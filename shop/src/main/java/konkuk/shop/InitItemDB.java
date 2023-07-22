@@ -30,8 +30,8 @@ import konkuk.shop.domain.order.repository.OrderItemRepository;
 import konkuk.shop.domain.order.repository.OrderRepository;
 import konkuk.shop.domain.qna.entity.Qna;
 import konkuk.shop.domain.qna.repository.QnaRepository;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.domain.member.application.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,9 +76,9 @@ public class InitItemDB {
     public void initDB() throws IOException {
         log.info("initialize Item database");
         AdminMember adminMember = findAdminMember();
-        Category 상의 = categoryRepository.findByName("상의").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
-        Category 하의 = categoryRepository.findByName("하의").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
-        Category 신발 = categoryRepository.findByName("신발").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_CATEGORY));
+        Category 상의 = categoryRepository.findByName("상의").orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_CATEGORY));
+        Category 하의 = categoryRepository.findByName("하의").orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_CATEGORY));
+        Category 신발 = categoryRepository.findByName("신발").orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_CATEGORY));
         List<InitItemDto> initItemDtos = parseNote();
 
         for (InitItemDto initItemDto : initItemDtos) {
@@ -89,24 +89,24 @@ public class InitItemDB {
         }
 
         Member member = findMember();
-        Item item1 = itemRepository.findById(96L).orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
-        Item item2 = itemRepository.findById(109L).orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+        Item item1 = itemRepository.findById(96L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
+        Item item2 = itemRepository.findById(109L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
         initOrder(member, item1, item2);
         initCoupon(member);
         Member testMember3 = initMember();
 
-        Item item3 = itemRepository.findById(14L).orElseThrow(()-> new ApiException(ExceptionEnum.NO_FIND_ITEM_BY_ID));
+        Item item3 = itemRepository.findById(14L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
         initQna(adminMember, testMember3, item3);
 
         log.info("====init item Success!=====");
     }
 
     private AdminMember findAdminMember() {
-        Member member = memberRepository.findByEmail("asdf@asdf.com").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        Member member = memberRepository.findByEmail("asdf@asdf.com").orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         return memberService.findAdminByMemberId(member.getId());
     }
     private Member findMember() {
-        return memberRepository.findByEmail("asdf2@asdf.com").orElseThrow(() -> new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        return memberRepository.findByEmail("asdf2@asdf.com").orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
     }
 
     private List<InitItemDto> parseNote() throws IOException {
@@ -349,7 +349,7 @@ public class InitItemDB {
     private Member initMember() {
         SignupDto.Request dto2 = new SignupDto.Request("asdf3@asdf.com", "asdfasdf@3", "testMember3", "01063324829", "19960502", "user");
         Long memberId = memberService.signup(dto2);
-        return memberRepository.findById(memberId).orElseThrow(()->new ApiException(ExceptionEnum.NO_FIND_MEMBER));
+        return memberRepository.findById(memberId).orElseThrow(()->new ApplicationException(ErrorCode.NO_FIND_MEMBER));
     }
 
     private void initQna(AdminMember adminMember, Member member, Item item) {
