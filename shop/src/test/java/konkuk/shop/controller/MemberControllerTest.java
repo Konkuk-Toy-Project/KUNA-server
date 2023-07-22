@@ -1,19 +1,15 @@
 package konkuk.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import konkuk.shop.WithAuthUser;
 import konkuk.shop.domain.member.api.MemberController;
 import konkuk.shop.domain.member.application.MemberService;
-import konkuk.shop.domain.member.dto.LoginDto;
-import konkuk.shop.domain.member.dto.ChangePasswordDto;
-import konkuk.shop.domain.member.dto.FindEmailDto;
-import konkuk.shop.domain.member.dto.FindPasswordDto;
-import konkuk.shop.domain.member.dto.SignupDto;
+import konkuk.shop.domain.member.dto.*;
 import konkuk.shop.domain.member.entity.MemberRole;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;
+import konkuk.shop.global.error.ApiException;
+import konkuk.shop.global.error.ExceptionEnum;
 import konkuk.shop.global.security.TokenProvider;
-import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// @WebMvcTest() : 매개변수가 없으면 @Controller와 @RestController, @ControllerAdvice 등 WEb과 관련된 설정된 클래스를 찾아 메모리에 생성한다.
-@WebMvcTest(MemberController.class) // 서블릿 컨테이너를 모킹한다. 컨트롤러를 테스트할 때 사용(DispatcherSeravlet이 필요하기 때문)
+// 매개변수가 없으면 @Controller와 @RestController, @ControllerAdvice 등 Web과 관련된 설정된 클래스를 찾아 메모리에 생성한다.
+// @WebMvcTest()
+@WebMvcTest(MemberController.class)
 class MemberControllerTest {
     private final String name = "testMember";
     private final String email = "asdf@asdf.com";
@@ -42,74 +39,109 @@ class MemberControllerTest {
     private final String birth = "20000327";
     private final String role = "user";
 
-    @MockBean
-    MemberService memberService;
-    @MockBean
-    TokenProvider tokenProvider;
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private MemberService memberService;
+
+    @MockBean
+    private TokenProvider tokenProvider;
+
+
     @Test
-    @DisplayName("이메일 중복 테스트")
-    void isDuplicationEmail() throws Exception {
-        given(memberService.isDuplicateEmail(email)).willReturn(true);
+    @DisplayName("이메일 중복 테스트 - 중복")
+    void duplicationEmail() throws Exception {
+        given(memberService.isDuplicateEmail(email))
+                .willReturn(true);
 
-        JSONObject json = new JSONObject();
-        json.put("email", email);
-        String content = json.toString();
+        DuplicationEmailDto.Request request = new DuplicationEmailDto.Request(email);
+        String content = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(
-                        post("/member/duplication/email")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/member/duplication/email")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isDuplication").exists())
+                .andExpect(jsonPath("$.isDuplication").value(true))
                 .andDo(print());
+    }
 
-        verify(memberService).isDuplicateEmail(email);
+    @Test
+    @DisplayName("이메일 중복 테스트 - 중복 아님")
+    void notDuplicationEmail() throws Exception {
+        given(memberService.isDuplicateEmail(email))
+                .willReturn(false);
+
+        DuplicationEmailDto.Request request = new DuplicationEmailDto.Request(email);
+        String content = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/member/duplication/email")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isDuplication").value(false))
+                .andDo(print());
     }
 
     @Test
     @DisplayName("회원가입 테스트")
     void memberSignup() throws Exception {
-        given(memberService.signup(
-                new SignupDto.Request(email, password, name, phone, birth, role))
-        ).willReturn(1234L);
+        final long memberId = 1234L;
+        given(memberService.signup(any(SignupDto.Request.class)))
+                .willReturn(memberId);
 
-        SignupDto.Request form = new SignupDto.Request(email, password, name, phone, birth, role);
-        Gson gson = new Gson();
-        String content = gson.toJson(form);
-        //또는 아래와 같이 json변환 가능
-        //String json = new ObjectMapper().writeValueAsString(form);
+        SignupDto.Request request = new SignupDto.Request(email, password, name, phone, birth, role);
+        String content = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(
-                        post("/member/signup")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/member/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.role").exists())
-                .andExpect(jsonPath("$.memberId").exists())
+                .andExpect(jsonPath("$.role").value(role))
+                .andExpect(jsonPath("$.memberId").value(memberId))
                 .andDo(print());
     }
 
     @Test
-    @DisplayName("로그인 테스트")
-    void login() throws Exception {
-        given(memberService.login(email, password)).willReturn(new LoginDto.Response("JWTToken", role));
+    @DisplayName("로그인 테스트 - 로그인 성공")
+    void loginSuccess() throws Exception {
+        final String token = "jwtToken";
+        given(memberService.login(email, password))
+                .willReturn(new LoginDto.Response(token, role));
 
-        LoginDto.Response form = new LoginDto.Response(email, password);
-        String content = new ObjectMapper().writeValueAsString(form);
+        LoginDto.Request request = new LoginDto.Request(email, password);
+        String content = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(
-                        post("/member/login")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/member/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.role").exists())
+                .andExpect(jsonPath("$.token").value(token))
+                .andExpect(jsonPath("$.role").value(role))
                 .andDo(print());
+    }
 
-        verify(memberService).login(email, password);
+    @Test
+    @DisplayName("로그인 테스트 - 로그인 실패")
+    void loginFail() throws Exception {
+        given(memberService.login(email, password))
+                .willThrow(new ApiException(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD));
+
+        LoginDto.Request request = new LoginDto.Request(email, password);
+        String content = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/member/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD.getCode()))
+                .andExpect(jsonPath("$.message").value(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD.getMessage()))
+                .andDo(print());
     }
 
     @Test
@@ -117,13 +149,12 @@ class MemberControllerTest {
     void findEmail() throws Exception {
         given(memberService.findEmail(name, phone)).willReturn(email);
 
-        FindEmailDto.Request form = new FindEmailDto.Request(name, phone);
-        String content = new ObjectMapper().writeValueAsString(form);
+        FindEmailDto.Request request = new FindEmailDto.Request(name, phone);
+        String content = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(
-                        post("/member/find/email")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/member/find/email")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value(email))
                 .andDo(print());
@@ -134,17 +165,18 @@ class MemberControllerTest {
     @Test
     @DisplayName("비밀번호 찾기 테스트")
     void findPassword() throws Exception {
-        given(memberService.findPassword(email, name, phone)).willReturn("tempPassword");
+        final String tmpPassword = "tempPassword";
+        given(memberService.findPassword(email, name, phone))
+                .willReturn(tmpPassword);
 
-        FindPasswordDto.Request form = new FindPasswordDto.Request(email, name, phone);
-        String content = new ObjectMapper().writeValueAsString(form);
+        FindPasswordDto.Request request = new FindPasswordDto.Request(email, name, phone);
+        String content = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(
-                        post("/member/find/password")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/member/find/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tempPassword").value("tempPassword"))
+                .andExpect(jsonPath("$.tempPassword").value(tmpPassword))
                 .andDo(print());
 
         verify(memberService).findPassword(email, name, phone);
@@ -154,14 +186,14 @@ class MemberControllerTest {
     @DisplayName("비밀번호 변경 테스트")
     @WithAuthUser(email = email)
     void changePassword() throws Exception {
-        doNothing().when(memberService).changePassword(any(Long.class), any(String.class));
-        String content = new ObjectMapper()
-                .writeValueAsString(new ChangePasswordDto("changePassword"));
+        doNothing().when(memberService)
+                .changePassword(any(Long.class), any(String.class));
 
-        mockMvc.perform(
-                        post("/member/change/password")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
+        String content = objectMapper.writeValueAsString(new ChangePasswordDto("changePassword"));
+
+        mockMvc.perform(post("/member/change/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -172,11 +204,13 @@ class MemberControllerTest {
     @DisplayName("포인트 찾기 테스트")
     @WithAuthUser(email = email)
     void findPoint() throws Exception {
-        given(memberService.findPointByMemberId(any(Long.class))).willReturn(1234);
+        final int point = 1234;
+        given(memberService.findPointByMemberId(any(Long.class)))
+                .willReturn(point);
 
         mockMvc.perform(get("/member/point"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.point").value(1234))
+                .andExpect(jsonPath("$.point").value(point))
                 .andDo(print());
 
         verify(memberService).findPointByMemberId(any(Long.class));
@@ -186,8 +220,9 @@ class MemberControllerTest {
     @DisplayName("로그인 회원 정보 얻기 테스트")
     @WithAuthUser(email = email)
     void findLoginMemberInfo() throws Exception {
+        FindMemberInfoByUserIdDto userInfo = new FindMemberInfoByUserIdDto(name, phone, email, birth, MemberRole.BRONZE);
         given(memberService.findInfoByUserId(any(Long.class)))
-                .willReturn(new FindMemberInfoByUserIdDto(name, phone, email, birth, MemberRole.BRONZE));
+                .willReturn(userInfo);
 
         mockMvc.perform(get("/member/info"))
                 .andExpect(status().isOk())
