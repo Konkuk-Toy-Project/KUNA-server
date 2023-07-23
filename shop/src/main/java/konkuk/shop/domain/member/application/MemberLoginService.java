@@ -3,10 +3,9 @@ package konkuk.shop.domain.member.application;
 import konkuk.shop.domain.admin.repository.AdminMemberRepository;
 import konkuk.shop.domain.member.dto.LoginDto;
 import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.member.exception.NotMatchPasswordException;
 import konkuk.shop.domain.member.exception.UserNotFoundException;
 import konkuk.shop.domain.member.repository.MemberRepository;
-import konkuk.shop.global.exception.ApplicationException;
-import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.global.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,8 +38,10 @@ public class MemberLoginService {
     }
 
     private void validPassword(String password, Member findMember) {
-        boolean passwordMatch = passwordEncoder.matches(password, findMember.getPassword());
-        if (!passwordMatch) throw new ApplicationException(ErrorCode.NO_MATCH_MEMBER_PASSWORD);
+        boolean isPasswordMatch = passwordEncoder.matches(password, findMember.getPassword());
+        if (!isPasswordMatch) {
+            throw new NotMatchPasswordException();
+        }
     }
 
 

@@ -3,6 +3,7 @@ package konkuk.shop.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
 import konkuk.shop.domain.member.api.MemberController;
+import konkuk.shop.domain.member.application.MemberLoginService;
 import konkuk.shop.domain.member.application.MemberService;
 import konkuk.shop.domain.member.application.MemberSignupService;
 import konkuk.shop.domain.member.dto.*;
@@ -51,6 +52,9 @@ class MemberControllerTest {
 
     @MockBean
     private MemberSignupService memberSignupService;
+
+    @MockBean
+    private MemberLoginService memberLoginService;
 
     @MockBean
     private TokenProvider tokenProvider;
@@ -115,7 +119,7 @@ class MemberControllerTest {
     @DisplayName("로그인 테스트 - 로그인 성공")
     void loginSuccess() throws Exception {
         final String token = "jwtToken";
-        given(memberService.login(email, password))
+        given(memberLoginService.login(email, password))
                 .willReturn(new LoginDto.Response(token, role));
 
         LoginDto.Request request = new LoginDto.Request(email, password);
@@ -133,7 +137,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("로그인 테스트 - 로그인 실패")
     void loginFail() throws Exception {
-        given(memberService.login(email, password))
+        given(memberLoginService.login(email, password))
                 .willThrow(new ApplicationException(ErrorCode.NO_MATCH_MEMBER_PASSWORD));
 
         LoginDto.Request request = new LoginDto.Request(email, password);
