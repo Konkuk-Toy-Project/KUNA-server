@@ -1,23 +1,24 @@
 package konkuk.shop.service;
 
-import konkuk.shop.domain.admin.entity.AdminMember;
-import konkuk.shop.domain.item.entity.Item;
-import konkuk.shop.domain.member.entity.Member;
-import konkuk.shop.domain.qna.application.QnaService;
-import konkuk.shop.domain.qna.entity.Qna;
-import konkuk.shop.dto.FindQnaDto;
-import konkuk.shop.domain.qna.dto.RequestAddQnaForm;
 import konkuk.shop.domain.admin.dto.ResponseQnaList;
+import konkuk.shop.domain.admin.entity.AdminMember;
 import konkuk.shop.domain.admin.repository.AdminMemberRepository;
+import konkuk.shop.domain.item.entity.Item;
 import konkuk.shop.domain.item.repository.ItemRepository;
+import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
+import konkuk.shop.domain.qna.application.QnaService;
+import konkuk.shop.domain.qna.dto.RequestAddQnaForm;
+import konkuk.shop.domain.qna.entity.Qna;
 import konkuk.shop.domain.qna.repository.QnaRepository;
+import konkuk.shop.dto.FindQnaDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +107,9 @@ class QnaServiceTest {
     @Test
     @DisplayName("답변하기 테스트")
     void saveAnswer() {
-        Qna qna = new Qna(new Item(), new Member(), new AdminMember(new Member(memberId)),
+        Member member = new Member();
+        ReflectionTestUtils.setField(member, "id", memberId);
+        Qna qna = new Qna(new Item(), new Member(), new AdminMember(member),
                 question, false, title);
 
 

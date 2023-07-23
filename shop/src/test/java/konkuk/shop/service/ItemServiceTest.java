@@ -6,13 +6,13 @@ import konkuk.shop.domain.category.entity.Category;
 import konkuk.shop.domain.category.repository.CategoryRepository;
 import konkuk.shop.domain.image.entity.Thumbnail;
 import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.dto.RequestAddItemDto;
+import konkuk.shop.domain.item.dto.ResponseItemDetail;
+import konkuk.shop.domain.item.dto.ResponseMyItem;
 import konkuk.shop.domain.item.entity.Item;
 import konkuk.shop.domain.item.entity.ItemState;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.member.entity.Member;
-import konkuk.shop.domain.item.dto.RequestAddItemDto;
-import konkuk.shop.domain.item.dto.ResponseItemDetail;
-import konkuk.shop.domain.item.dto.ResponseMyItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,10 +53,14 @@ class ItemServiceTest {
     private final Long memberId = 3L;
     private final Long AdminMemberId = 4L;
     private Item item;
-    private AdminMember adminMember = new AdminMember(AdminMemberId, new Member(memberId));
+    private AdminMember adminMember;
 
     @BeforeEach
     void dataSetting() {
+        Member member = new Member();
+        ReflectionTestUtils.setField(member, "id", memberId);
+        adminMember = new AdminMember(AdminMemberId, member);
+
         item = Item.builder()
                 .itemState(ItemState.NORMALITY)
                 .adminMember(new AdminMember())
@@ -229,8 +234,8 @@ class ItemServiceTest {
     @DisplayName("상품 가격 수정 테스트")
     void editPriceByItemId() {
         //given
-        given(itemRepository.findById(itemId)).willReturn(Optional.of(item));
         given(adminMemberRepository.findByMemberId(memberId)).willReturn(Optional.of(adminMember));
+        given(itemRepository.findById(itemId)).willReturn(Optional.of(item));
 
         //when
         itemService.editPriceByItemId(memberId, itemId, 5000, 10);

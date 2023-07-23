@@ -1,20 +1,21 @@
 package konkuk.shop.service;
 
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.item.repository.ItemRepository;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.domain.preference.application.PreferenceService;
+import konkuk.shop.domain.preference.entity.PreferenceItem;
+import konkuk.shop.domain.preference.repository.PreferenceRepository;
 import konkuk.shop.dto.IsPreference;
 import konkuk.shop.dto.PreferenceDto;
-import konkuk.shop.domain.item.entity.Item;
-import konkuk.shop.domain.member.entity.Member;
-import konkuk.shop.domain.preference.entity.PreferenceItem;
-import konkuk.shop.domain.item.repository.ItemRepository;
-import konkuk.shop.domain.member.repository.MemberRepository;
-import konkuk.shop.domain.preference.repository.PreferenceRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -69,7 +70,8 @@ class PreferenceServiceTest {
     @DisplayName("찜 목록 찾기 테스트")
     void findPreferenceByMemberId() {
         //given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
         //when
@@ -84,7 +86,8 @@ class PreferenceServiceTest {
     @Test
     @DisplayName("찜 목록 삭제 테스트")
     void deletePreference() {
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
         PreferenceItem preferenceItem = new PreferenceItem(member, new Item());
         //given
         given(preferenceRepository.findById(preferenceItemId)).willReturn(Optional.of(preferenceItem));
@@ -102,7 +105,8 @@ class PreferenceServiceTest {
     @Test
     @DisplayName("해당 아이템이 찜한 상품인지 확인 테스")
     void isPreference() {
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
         PreferenceItem preferenceItem = new PreferenceItem(member, new Item());
         preferenceItem.setId(preferenceItemId);
         //given

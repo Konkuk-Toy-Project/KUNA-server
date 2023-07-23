@@ -19,6 +19,7 @@ import konkuk.shop.domain.item.entity.*;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.item.repository.Option1Repository;
 import konkuk.shop.domain.item.repository.Option2Repository;
+import konkuk.shop.domain.member.application.MemberSignupService;
 import konkuk.shop.domain.member.dto.SignupDto;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
@@ -67,6 +68,7 @@ public class InitItemDB {
     private final OrderItemRepository orderItemRepository;
     private final CouponRepository couponRepository;
     private final QnaRepository qnaRepository;
+    private final MemberSignupService memberSignupService;
 
     @Value("${init.item}")
     private String initItemPath;
@@ -348,7 +350,7 @@ public class InitItemDB {
 
     private Member initMember() {
         SignupDto.Request dto2 = new SignupDto.Request("asdf3@asdf.com", "asdfasdf@3", "testMember3", "01063324829", "19960502", "user");
-        Long memberId = memberService.signup(dto2);
+        Long memberId = memberSignupService.signup(dto2);
         return memberRepository.findById(memberId).orElseThrow(()->new ApplicationException(ErrorCode.NO_FIND_MEMBER));
     }
 

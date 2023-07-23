@@ -4,11 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
 import konkuk.shop.domain.member.api.MemberController;
 import konkuk.shop.domain.member.application.MemberService;
+import konkuk.shop.domain.member.application.MemberSignupService;
 import konkuk.shop.domain.member.dto.*;
 import konkuk.shop.domain.member.entity.MemberRole;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;
-import konkuk.shop.global.error.ApiException;
-import konkuk.shop.global.error.ExceptionEnum;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
 import konkuk.shop.global.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,9 @@ class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
+
+    @MockBean
+    private MemberSignupService memberSignupService;
 
     @MockBean
     private TokenProvider tokenProvider;
@@ -92,7 +96,7 @@ class MemberControllerTest {
     @DisplayName("회원가입 테스트")
     void memberSignup() throws Exception {
         final long memberId = 1234L;
-        given(memberService.signup(any(SignupDto.Request.class)))
+        given(memberSignupService.signup(any(SignupDto.Request.class)))
                 .willReturn(memberId);
 
         SignupDto.Request request = new SignupDto.Request(email, password, name, phone, birth, role);
@@ -130,7 +134,7 @@ class MemberControllerTest {
     @DisplayName("로그인 테스트 - 로그인 실패")
     void loginFail() throws Exception {
         given(memberService.login(email, password))
-                .willThrow(new ApiException(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD));
+                .willThrow(new ApplicationException(ErrorCode.NO_MATCH_MEMBER_PASSWORD));
 
         LoginDto.Request request = new LoginDto.Request(email, password);
         String content = objectMapper.writeValueAsString(request);
@@ -139,8 +143,8 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorCode").value(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD.getCode()))
-                .andExpect(jsonPath("$.message").value(ExceptionEnum.NO_MATCH_MEMBER_PASSWORD.getMessage()))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.NO_MATCH_MEMBER_PASSWORD.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.NO_MATCH_MEMBER_PASSWORD.getMessage()))
                 .andDo(print());
     }
 

@@ -1,14 +1,8 @@
 package konkuk.shop.domain.member.api;
 
 import konkuk.shop.domain.member.application.MemberService;
-import konkuk.shop.domain.member.dto.DuplicationEmailDto;
-import konkuk.shop.domain.member.dto.FindPointDto;
-import konkuk.shop.domain.member.dto.LoginCheckDto;
-import konkuk.shop.domain.member.dto.LoginDto;
-import konkuk.shop.domain.member.dto.ChangePasswordDto;
-import konkuk.shop.domain.member.dto.FindEmailDto;
-import konkuk.shop.domain.member.dto.FindPasswordDto;
-import konkuk.shop.domain.member.dto.SignupDto;
+import konkuk.shop.domain.member.application.MemberSignupService;
+import konkuk.shop.domain.member.dto.*;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,15 +10,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final MemberSignupService memberSignupService;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupDto.Response> memberSignup(@RequestBody SignupDto.Request request) {
-        Long saveMemberId = memberService.signup(request);
+    public ResponseEntity<SignupDto.Response> memberSignup(@Valid @RequestBody SignupDto.Request request) {
+        Long saveMemberId = memberSignupService.signup(request);
         SignupDto.Response response = new SignupDto.Response(request.getRole(), saveMemberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

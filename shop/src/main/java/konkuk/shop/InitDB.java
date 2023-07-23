@@ -18,11 +18,15 @@ import konkuk.shop.domain.image.repository.DetailImageRepository;
 import konkuk.shop.domain.image.repository.ItemImageRepository;
 import konkuk.shop.domain.image.repository.ThumbnailRepository;
 import konkuk.shop.domain.item.application.ItemService;
-import konkuk.shop.domain.item.entity.*;
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.item.entity.ItemState;
+import konkuk.shop.domain.item.entity.Option1;
+import konkuk.shop.domain.item.entity.Option2;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.item.repository.Option1Repository;
 import konkuk.shop.domain.item.repository.Option2Repository;
 import konkuk.shop.domain.member.application.MemberService;
+import konkuk.shop.domain.member.application.MemberSignupService;
 import konkuk.shop.domain.member.dto.SignupDto;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
@@ -72,6 +76,7 @@ public class InitDB {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final QnaRepository qnaRepository;
+    private final MemberSignupService memberSignupService;
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
@@ -97,15 +102,15 @@ public class InitDB {
 
     private AdminMember initAdminMember() {
         SignupDto.Request dto1 = new SignupDto.Request("asdf@asdf.com", "asdfasdf@1", "testMember1", "01012345678", "20000327", "admin");
-        Long saveMemberId = memberService.signup(dto1);
+        Long saveMemberId = memberSignupService.signup(dto1);
 
         return memberService.findAdminByMemberId(saveMemberId);
     }
 
     private Member initMember() {
         SignupDto.Request dto2 = new SignupDto.Request("asdf2@asdf.com", "asdfasdf@2", "testMember2", "01087654321", "19991003", "user");
-        Long memberId = memberService.signup(dto2);
-        return memberRepository.findById(memberId).orElseThrow(()->new ApplicationException(ErrorCode.NO_FIND_MEMBER));
+        Long memberId = memberSignupService.signup(dto2);
+        return memberRepository.findById(memberId).orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
     }
 
     private Category initCategory() {
@@ -254,7 +259,7 @@ public class InitDB {
 
         Review review = Review.builder()
                 .item(orderItem.getItem())
-                .option(orderItem.getOption1()+"/"+orderItem.getOption2())
+                .option(orderItem.getOption1() + "/" + orderItem.getOption2())
                 .member(member)
                 .description("생각보다 사이즈가 크긴 한데, 입었을 때 진짜 편하네요. 운동복으로 딱 좋아요!")
                 .rate(4)
@@ -311,7 +316,7 @@ public class InitDB {
                 .delivery(delivery)
                 .member(member)
                 .orderDate(LocalDateTime.now())
-                .totalPrice(itemPrice1*3 + itemPrice2) //각각 3개, 1개 주문
+                .totalPrice(itemPrice1 * 3 + itemPrice2) //각각 3개, 1개 주문
                 .coupon(null)
                 .usedPoint(0)
                 .payMethod(PayMethod.CARD)

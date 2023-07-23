@@ -6,6 +6,7 @@ import konkuk.shop.domain.delivery.repository.DeliveryRepository;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.domain.order.application.OrderService;
+import konkuk.shop.domain.order.dto.RequestAddOrderForm;
 import konkuk.shop.domain.order.entity.Order;
 import konkuk.shop.domain.order.entity.OrderState;
 import konkuk.shop.domain.order.entity.PayMethod;
@@ -14,13 +15,13 @@ import konkuk.shop.dto.AddOrderDto;
 import konkuk.shop.dto.FindOrderDto;
 import konkuk.shop.dto.FindOrderListDto;
 import konkuk.shop.dto.OrderItemDto;
-import konkuk.shop.domain.order.dto.RequestAddOrderForm;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,9 @@ class OrderServiceTest {
     @DisplayName("주문 상세 정보 조회 테스트")
     void findOrderDetailList() {
         //given
-        Member member = new Member(memberId);
+        Member member = new Member();
+        ReflectionTestUtils.setField(member, "id", memberId);
+
         Order order = Order.builder()
                 .member(member)
                 .id(orderId)
@@ -111,7 +114,8 @@ class OrderServiceTest {
     @DisplayName("주문 내역 조회 테스트")
     void findOrderList() {
         //given
-        Member member = new Member(memberId);
+        Member member = new Member();
+        ReflectionTestUtils.setField(member, "id", memberId);
         Order order = Order.builder()
                 .member(member)
                 .id(orderId)
@@ -148,7 +152,8 @@ class OrderServiceTest {
     @DisplayName("주문 상품 조회 테스트")
     void findOrderItemList() {
         //given
-        Member member = new Member(memberId);
+        Member member = new Member();
+        ReflectionTestUtils.setField(member, "id", memberId);
         Order order = Order.builder()
                 .member(member)
                 .id(orderId)

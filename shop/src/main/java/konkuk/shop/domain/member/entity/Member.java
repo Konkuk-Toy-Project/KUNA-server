@@ -68,23 +68,7 @@ public class Member {
         this.chance = 0;
     }
 
-    // 테스트 회원가입용(id 설정 가능)
-    public Member(String email, String password, String name, String phone, String birth, Long id) {
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
-        this.birth = birth;
-        this.point = 0;
-        this.chance = 0;
-        this.id = id;
-    }
-
-    // 테스트용
-    public Member(Long id) {
-        this.id = id;
-    }
-    public Member(Integer point){
+    public Member(Integer point) {
         this.point = point;
     }
 

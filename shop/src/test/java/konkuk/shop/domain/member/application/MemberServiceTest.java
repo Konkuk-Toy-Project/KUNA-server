@@ -1,10 +1,8 @@
-package konkuk.shop.service;
+package konkuk.shop.domain.member.application;
 
 import konkuk.shop.domain.admin.entity.AdminMember;
 import konkuk.shop.domain.admin.repository.AdminMemberRepository;
-import konkuk.shop.domain.member.application.MemberService;
 import konkuk.shop.domain.member.dto.LoginDto;
-import konkuk.shop.domain.member.dto.SignupDto;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;
@@ -14,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -24,10 +22,9 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
     private final String name = "testMember";
     private final String email = "asdf@asdf.com";
@@ -103,34 +100,11 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원가입 테스트")
-    void signup() {
-        // given
-        Member userMember = new Member(email, password, name, phone, birth, memberId);
-
-        given(passwordEncoder.encode(password)).willReturn("encryptedPwd");
-        given(memberRepository.save(Mockito.any(Member.class))).willReturn(userMember);
-        given(adminMemberRepository.save(Mockito.any(AdminMember.class))).willReturn(new AdminMember());
-
-        // when
-        SignupDto.Request dto = new SignupDto.Request(email, password, name, phone, birth, role);
-        Long memberId = memberService.signup(dto);
-
-        SignupDto.Request adminDto = new SignupDto.Request(email, password, name, phone, birth, "admin");
-        Long adminMemberId = memberService.signup(adminDto);
-
-        // then
-        assertThat(memberId).isEqualTo(userMember.getId());
-
-        verify(memberRepository, times(2)).save(any(Member.class)); // 2번 호출
-        verify(adminMemberRepository).save(any(AdminMember.class));
-    }
-
-    @Test
     @DisplayName("로그인 테스트")
     void login() {
         // given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
         given(adminMemberRepository.existsByMember(member)).willReturn(false);
         given(passwordEncoder.matches(password, member.getPassword())).willReturn(true);
@@ -153,7 +127,9 @@ class MemberServiceTest {
     @DisplayName("이메일 찾기 테스트")
     void findEmail() {
         // given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
+
         given(memberRepository.findByNameAndPhone(name, phone)).willReturn(Optional.of(member));
 
         // when
@@ -169,7 +145,9 @@ class MemberServiceTest {
     @DisplayName("비밀번호 찾기 테스트")
     void findPassword() {
         // given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
+
         given(memberRepository.findByEmailAndNameAndPhone(email, name, phone))
                 .willReturn(Optional.of(member));
         given(passwordEncoder.encode(any(String.class)))
@@ -194,7 +172,9 @@ class MemberServiceTest {
     @DisplayName("비밀번호 변경 테스트")
     void changePassword() {
         // given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
+
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
         given(passwordEncoder.matches("newPassword", member.getPassword())).willReturn(false);
         given(passwordEncoder.encode("newPassword")).willReturn("encoderPassword");
@@ -213,7 +193,9 @@ class MemberServiceTest {
     @DisplayName("회원 id로 admin id 찾기")
     void findAdminByMemberId() {
         // given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
+
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
         given(adminMemberRepository.findByMember(member))
                 .willReturn(Optional.of(new AdminMember(member)));
@@ -234,7 +216,8 @@ class MemberServiceTest {
     @DisplayName("포인트 찾기 테스트")
     void findPointByMemberId() {
         // given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
         member.changePoint(500);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
@@ -251,7 +234,8 @@ class MemberServiceTest {
     @DisplayName("회원 정보 조회 테스트")
     void findInfoByUserId() {
         // given
-        Member member = new Member(email, password, name, phone, birth, memberId);
+        Member member = new Member(email, password, name, phone, birth);
+        ReflectionTestUtils.setField(member, "id", memberId);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
         // when

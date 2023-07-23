@@ -1,22 +1,23 @@
 package konkuk.shop.service;
 
 import konkuk.shop.domain.cart.application.CartService;
+import konkuk.shop.domain.cart.entity.CartItem;
 import konkuk.shop.domain.cart.repository.CartRepository;
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.item.entity.Option1;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.item.repository.Option1Repository;
 import konkuk.shop.domain.item.repository.Option2Repository;
+import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.dto.CartItemDto;
-import konkuk.shop.domain.cart.entity.CartItem;
-import konkuk.shop.domain.item.entity.Item;
-import konkuk.shop.domain.member.entity.Member;
-import konkuk.shop.domain.item.entity.Option1;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,9 @@ class CartServiceTest {
     @DisplayName("장바구니 상품 삭제 테스트")
     void deleteItemInCart() {
         //given
-        CartItem cartItem = new CartItem(cartItemId, new Member(memberId));
+        Member member = new Member();
+        ReflectionTestUtils.setField(member, "id", memberId);
+        CartItem cartItem = new CartItem(cartItemId, member);
 
         willDoNothing().given(cartRepository).delete(any(CartItem.class));
         given(cartRepository.findById(cartItemId)).willReturn(Optional.of(cartItem));
@@ -110,7 +113,9 @@ class CartServiceTest {
     @DisplayName("장바구니 상품 개수 바꾸기 테스트")
     void changeCount() {
         //given
-        CartItem cartItem = new CartItem(cartItemId, new Member(memberId));
+        Member member = new Member();
+        ReflectionTestUtils.setField(member, "id", memberId);
+        CartItem cartItem = new CartItem(cartItemId, member);
         given(cartRepository.findById(cartItemId)).willReturn(Optional.of(cartItem));
 
         //when
