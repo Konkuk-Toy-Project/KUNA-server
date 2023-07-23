@@ -1,5 +1,6 @@
 package konkuk.shop.domain.member.api;
 
+import konkuk.shop.domain.member.application.MemberLoginService;
 import konkuk.shop.domain.member.application.MemberService;
 import konkuk.shop.domain.member.application.MemberSignupService;
 import konkuk.shop.domain.member.dto.*;
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 public class MemberController {
     private final MemberService memberService;
     private final MemberSignupService memberSignupService;
+    private final MemberLoginService memberLoginService;
 
     @PostMapping("/signup")
     public ResponseEntity<SignupDto.Response> memberSignup(@Valid @RequestBody SignupDto.Request request) {
@@ -35,7 +37,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginDto.Response> login(@RequestBody LoginDto.Request form) {
-        LoginDto.Response response = memberService.login(form.getEmail(), form.getPassword());
+        LoginDto.Response response = memberLoginService.login(form.getEmail(), form.getPassword());
         return ResponseEntity.ok(response);
     }
 

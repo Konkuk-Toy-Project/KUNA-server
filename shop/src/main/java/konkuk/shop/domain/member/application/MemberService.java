@@ -2,7 +2,6 @@ package konkuk.shop.domain.member.application;
 
 import konkuk.shop.domain.admin.entity.AdminMember;
 import konkuk.shop.domain.admin.repository.AdminMemberRepository;
-import konkuk.shop.domain.member.dto.LoginDto;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;
@@ -23,7 +22,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final AdminMemberRepository adminMemberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final TokenProvider tokenProvider;
 
     public boolean isDuplicateEmail(String email) {
         return memberRepository.existsByEmail(email);
@@ -35,19 +33,6 @@ public class MemberService {
 
     public boolean existsMemberById(Long id) {
         return memberRepository.existsById(id);
-    }
-
-    public LoginDto.Response login(String email, String password) {
-        Member findMember = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER_EMAIL));
-        boolean passwordMatch = passwordEncoder.matches(password, findMember.getPassword());
-        if (!passwordMatch) throw new ApplicationException(ErrorCode.NO_MATCH_MEMBER_PASSWORD);
-
-        String token = tokenProvider.create(findMember);
-        String role = "user";
-        if (adminMemberRepository.existsByMember(findMember)) role = "admin";
-        log.info("로그인 요청. memberId={}, role={}", findMember.getId(), role);
-        return new LoginDto.Response(token, role);
     }
 
     public String findEmail(String name, String phone) {

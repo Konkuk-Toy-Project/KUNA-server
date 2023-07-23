@@ -1,0 +1,47 @@
+package konkuk.shop.domain.member.application;
+
+import konkuk.shop.domain.admin.repository.AdminMemberRepository;
+import konkuk.shop.domain.member.dto.LoginDto;
+import konkuk.shop.domain.member.entity.Member;
+import konkuk.shop.domain.member.exception.UserNotFoundException;
+import konkuk.shop.domain.member.repository.MemberRepository;
+import konkuk.shop.global.exception.ApplicationException;
+import konkuk.shop.global.exception.ErrorCode;
+import konkuk.shop.global.security.TokenProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class MemberLoginService {
+    private final MemberRepository memberRepository;
+    private final AdminMemberRepository adminMemberRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+
+    public LoginDto.Response login(String email, String password) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
+
+        validPassword(password, member);
+
+        String token = tokenProvider.create(member);
+        String role = getRole(member);
+        return new LoginDto.Response(token, role);
+    }
+
+    private String getRole(Member member) {
+        if (adminMemberRepository.existsByMember(member)) {
+            return "admin";
+        }
+        return "user";
+    }
+
+    private void validPassword(String password, Member findMember) {
+        boolean passwordMatch = passwordEncoder.matches(password, findMember.getPassword());
+        if (!passwordMatch) throw new ApplicationException(ErrorCode.NO_MATCH_MEMBER_PASSWORD);
+    }
+
+
+}

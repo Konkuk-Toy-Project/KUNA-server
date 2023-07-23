@@ -2,7 +2,6 @@ package konkuk.shop.domain.member.application;
 
 import konkuk.shop.domain.admin.entity.AdminMember;
 import konkuk.shop.domain.admin.repository.AdminMemberRepository;
-import konkuk.shop.domain.member.dto.LoginDto;
 import konkuk.shop.domain.member.entity.Member;
 import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;
@@ -31,17 +30,20 @@ class MemberServiceTest {
     private final String password = "asdfasdf@1";
     private final String phone = "01012345678";
     private final String birth = "20000327";
-    private final String role = "user";
     private final Long memberId = 3L;
-    private final String token = "JWTToken";
+
     @Mock
     MemberRepository memberRepository;
+
     @Mock
     AdminMemberRepository adminMemberRepository;
+
     @Mock
     BCryptPasswordEncoder passwordEncoder;
+
     @Mock
     TokenProvider tokenProvider;
+
     @InjectMocks
     MemberService memberService;
 
@@ -97,30 +99,6 @@ class MemberServiceTest {
         assertThat(existsMemberByIdFalse).isFalse();
         verify(memberRepository).existsById(memberId);
         verify(memberRepository).existsById(memberId + 1L);
-    }
-
-    @Test
-    @DisplayName("로그인 테스트")
-    void login() {
-        // given
-        Member member = new Member(email, password, name, phone, birth);
-        ReflectionTestUtils.setField(member, "id", memberId);
-        given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
-        given(adminMemberRepository.existsByMember(member)).willReturn(false);
-        given(passwordEncoder.matches(password, member.getPassword())).willReturn(true);
-        given(tokenProvider.create(member)).willReturn(token);
-
-        // when
-        LoginDto.Response login = memberService.login(email, password);
-
-        // then
-        assertThat(login.getToken()).isEqualTo(token);
-        assertThat(login.getRole()).isEqualTo(role);
-
-        verify(memberRepository).findByEmail(email);
-        verify(adminMemberRepository).existsByMember(member);
-        verify(passwordEncoder).matches(password, member.getPassword());
-        verify(tokenProvider).create(member);
     }
 
     @Test
