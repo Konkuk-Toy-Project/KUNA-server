@@ -3,8 +3,9 @@ package konkuk.shop.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
 import konkuk.shop.domain.member.api.MemberController;
+import konkuk.shop.domain.member.application.MemberFindInfoService;
 import konkuk.shop.domain.member.application.MemberLoginService;
-import konkuk.shop.domain.member.application.MemberService;
+import konkuk.shop.domain.member.application.MemberUpdateAccountService;
 import konkuk.shop.domain.member.application.MemberSignupService;
 import konkuk.shop.domain.member.dto.*;
 import konkuk.shop.domain.member.entity.MemberRole;
@@ -48,7 +49,7 @@ class MemberControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private MemberService memberService;
+    private MemberUpdateAccountService memberUpdateAccountService;
 
     @MockBean
     private MemberSignupService memberSignupService;
@@ -57,13 +58,16 @@ class MemberControllerTest {
     private MemberLoginService memberLoginService;
 
     @MockBean
+    private MemberFindInfoService memberFindInfoService;
+
+    @MockBean
     private TokenProvider tokenProvider;
 
 
     @Test
     @DisplayName("이메일 중복 테스트 - 중복")
     void duplicationEmail() throws Exception {
-        given(memberService.isDuplicateEmail(email))
+        given(memberFindInfoService.isDuplicateEmail(email))
                 .willReturn(true);
 
         DuplicationEmailDto.Request request = new DuplicationEmailDto.Request(email);
@@ -81,7 +85,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("이메일 중복 테스트 - 중복 아님")
     void notDuplicationEmail() throws Exception {
-        given(memberService.isDuplicateEmail(email))
+        given(memberFindInfoService.isDuplicateEmail(email))
                 .willReturn(false);
 
         DuplicationEmailDto.Request request = new DuplicationEmailDto.Request(email);
@@ -155,7 +159,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("이메일 찾기 테스트")
     void findEmail() throws Exception {
-        given(memberService.findEmail(name, phone)).willReturn(email);
+        given(memberFindInfoService.findEmail(name, phone)).willReturn(email);
 
         FindEmailDto.Request request = new FindEmailDto.Request(name, phone);
         String content = objectMapper.writeValueAsString(request);
@@ -167,14 +171,14 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.email").value(email))
                 .andDo(print());
 
-        verify(memberService).findEmail(name, phone);
+        verify(memberFindInfoService).findEmail(name, phone);
     }
 
     @Test
     @DisplayName("비밀번호 찾기 테스트")
     void findPassword() throws Exception {
         final String tmpPassword = "tempPassword";
-        given(memberService.findPassword(email, name, phone))
+        given(memberUpdateAccountService.updateTemporaryPassword(email, name, phone))
                 .willReturn(tmpPassword);
 
         FindPasswordDto.Request request = new FindPasswordDto.Request(email, name, phone);
@@ -187,17 +191,17 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.tempPassword").value(tmpPassword))
                 .andDo(print());
 
-        verify(memberService).findPassword(email, name, phone);
+        verify(memberUpdateAccountService).updateTemporaryPassword(email, name, phone);
     }
 
     @Test
     @DisplayName("비밀번호 변경 테스트")
     @WithAuthUser(email = email)
     void changePassword() throws Exception {
-        doNothing().when(memberService)
+        doNothing().when(memberUpdateAccountService)
                 .changePassword(any(Long.class), any(String.class));
 
-        String content = objectMapper.writeValueAsString(new ChangePasswordDto("changePassword"));
+        String content = objectMapper.writeValueAsString(new ChangePasswordDto("newPassword1@"));
 
         mockMvc.perform(post("/member/change/password")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -205,7 +209,7 @@ class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(memberService).changePassword(any(Long.class), any(String.class));
+        verify(memberUpdateAccountService).changePassword(any(Long.class), any(String.class));
     }
 
     @Test
@@ -213,7 +217,7 @@ class MemberControllerTest {
     @WithAuthUser(email = email)
     void findPoint() throws Exception {
         final int point = 1234;
-        given(memberService.findPointByMemberId(any(Long.class)))
+        given(memberFindInfoService.findPointByMemberId(any(Long.class)))
                 .willReturn(point);
 
         mockMvc.perform(get("/member/point"))
@@ -221,7 +225,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.point").value(point))
                 .andDo(print());
 
-        verify(memberService).findPointByMemberId(any(Long.class));
+        verify(memberFindInfoService).findPointByMemberId(any(Long.class));
     }
 
     @Test
@@ -229,7 +233,7 @@ class MemberControllerTest {
     @WithAuthUser(email = email)
     void findLoginMemberInfo() throws Exception {
         FindMemberInfoByUserIdDto userInfo = new FindMemberInfoByUserIdDto(name, phone, email, birth, MemberRole.BRONZE);
-        given(memberService.findInfoByUserId(any(Long.class)))
+        given(memberFindInfoService.findInfoByUserId(any(Long.class)))
                 .willReturn(userInfo);
 
         mockMvc.perform(get("/member/info"))
@@ -240,14 +244,14 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.birth").value(birth))
                 .andDo(print());
 
-        verify(memberService).findInfoByUserId(any(Long.class));
+        verify(memberFindInfoService).findInfoByUserId(any(Long.class));
     }
 
     @Test
     @DisplayName("로그인 여부 테스트(로그인 완료)")
     @WithAuthUser(email = email)
     void isLoginTrue() throws Exception {
-        given(memberService.existsMemberById(any(Long.class)))
+        given(memberFindInfoService.existsMemberById(any(Long.class)))
                 .willReturn(true);
 
         mockMvc.perform(get("/member/isLogin"))
@@ -255,7 +259,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.isLogin").value(true))
                 .andDo(print());
 
-        verify(memberService).existsMemberById(any(Long.class));
+        verify(memberFindInfoService).existsMemberById(any(Long.class));
     }
 
     @Test

@@ -1,8 +1,9 @@
 package konkuk.shop.domain.member.api;
 
+import konkuk.shop.domain.member.application.MemberFindInfoService;
 import konkuk.shop.domain.member.application.MemberLoginService;
-import konkuk.shop.domain.member.application.MemberService;
 import konkuk.shop.domain.member.application.MemberSignupService;
+import konkuk.shop.domain.member.application.MemberUpdateAccountService;
 import konkuk.shop.domain.member.dto.*;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,10 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
-    private final MemberService memberService;
+    private final MemberUpdateAccountService memberUpdateAccountService;
     private final MemberSignupService memberSignupService;
     private final MemberLoginService memberLoginService;
+    private final MemberFindInfoService memberFindInfoService;
 
     @PostMapping("/signup")
     public ResponseEntity<SignupDto.Response> memberSignup(@Valid @RequestBody SignupDto.Request request) {
@@ -30,7 +32,7 @@ public class MemberController {
 
     @PostMapping("/duplication/email")
     public ResponseEntity<DuplicationEmailDto.Response> checkDuplicationEmail(@RequestBody DuplicationEmailDto.Request request) {
-        boolean isDuplicationEmail = memberService.isDuplicateEmail(request.getEmail());
+        boolean isDuplicationEmail = memberFindInfoService.isDuplicateEmail(request.getEmail());
         DuplicationEmailDto.Response response = new DuplicationEmailDto.Response(isDuplicationEmail);
         return ResponseEntity.ok(response);
     }
@@ -43,34 +45,34 @@ public class MemberController {
 
     @PostMapping("/find/email")
     public ResponseEntity<FindEmailDto.Response> findEmail(@RequestBody FindEmailDto.Request form) {
-        String email = memberService.findEmail(form.getName(), form.getPhone());
+        String email = memberFindInfoService.findEmail(form.getName(), form.getPhone());
         FindEmailDto.Response response = new FindEmailDto.Response(email);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/find/password")
     public ResponseEntity<FindPasswordDto.Response> findPassword(@RequestBody FindPasswordDto.Request form) {
-        String tempPassword = memberService.findPassword(form.getEmail(), form.getName(), form.getPhone());
+        String tempPassword = memberUpdateAccountService.updateTemporaryPassword(form.getEmail(), form.getName(), form.getPhone());
         FindPasswordDto.Response response = new FindPasswordDto.Response(tempPassword);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/change/password")
     public void changePassword(@AuthenticationPrincipal Long userId,
-                               @RequestBody ChangePasswordDto form) {
-        memberService.changePassword(userId, form.getNewPassword());
+                               @Valid @RequestBody ChangePasswordDto form) {
+        memberUpdateAccountService.changePassword(userId, form.getNewPassword());
     }
 
     @GetMapping("/point")
     public ResponseEntity<FindPointDto> findPoint(@AuthenticationPrincipal Long userId) {
-        Integer point = memberService.findPointByMemberId(userId);
+        Integer point = memberFindInfoService.findPointByMemberId(userId);
         FindPointDto response = new FindPointDto(point);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/info")
     public ResponseEntity<FindMemberInfoByUserIdDto> findLoginMemberInfo(@AuthenticationPrincipal Long userId) {
-        FindMemberInfoByUserIdDto response = memberService.findInfoByUserId(userId);
+        FindMemberInfoByUserIdDto response = memberFindInfoService.findInfoByUserId(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -78,7 +80,7 @@ public class MemberController {
     public ResponseEntity<LoginCheckDto> isLogin(@AuthenticationPrincipal Long userId) {
         boolean isLogin = false;
         if (userId != null) {
-            isLogin = memberService.existsMemberById(userId);
+            isLogin = memberFindInfoService.existsMemberById(userId);
         }
         LoginCheckDto response = new LoginCheckDto(isLogin);
         return ResponseEntity.ok(response);

@@ -10,6 +10,8 @@ import konkuk.shop.global.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class MemberLoginService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
+    @Transactional(readOnly = true)
     public LoginDto.Response login(String email, String password) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);

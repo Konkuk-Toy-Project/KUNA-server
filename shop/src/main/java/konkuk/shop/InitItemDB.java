@@ -19,6 +19,7 @@ import konkuk.shop.domain.item.entity.*;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.item.repository.Option1Repository;
 import konkuk.shop.domain.item.repository.Option2Repository;
+import konkuk.shop.domain.member.application.MemberFindInfoService;
 import konkuk.shop.domain.member.application.MemberSignupService;
 import konkuk.shop.domain.member.dto.SignupDto;
 import konkuk.shop.domain.member.entity.Member;
@@ -33,7 +34,7 @@ import konkuk.shop.domain.qna.entity.Qna;
 import konkuk.shop.domain.qna.repository.QnaRepository;
 import konkuk.shop.global.exception.ApplicationException;
 import konkuk.shop.global.exception.ErrorCode;
-import konkuk.shop.domain.member.application.MemberService;
+import konkuk.shop.domain.member.application.MemberUpdateAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +55,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class InitItemDB {
-    private final MemberService memberService;
+    private final MemberUpdateAccountService memberUpdateAccountService;
     private final ThumbnailRepository thumbnailRepository;
     private final DetailImageRepository detailImageRepository;
     private final ItemImageRepository itemImageRepository;
@@ -69,6 +70,7 @@ public class InitItemDB {
     private final CouponRepository couponRepository;
     private final QnaRepository qnaRepository;
     private final MemberSignupService memberSignupService;
+    private final MemberFindInfoService memberFindInfoService;
 
     @Value("${init.item}")
     private String initItemPath;
@@ -105,7 +107,7 @@ public class InitItemDB {
 
     private AdminMember findAdminMember() {
         Member member = memberRepository.findByEmail("asdf@asdf.com").orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
-        return memberService.findAdminByMemberId(member.getId());
+        return memberFindInfoService.findAdminByMemberId(member.getId());
     }
     private Member findMember() {
         return memberRepository.findByEmail("asdf2@asdf.com").orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));

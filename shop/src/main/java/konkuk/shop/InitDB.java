@@ -25,7 +25,8 @@ import konkuk.shop.domain.item.entity.Option2;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.item.repository.Option1Repository;
 import konkuk.shop.domain.item.repository.Option2Repository;
-import konkuk.shop.domain.member.application.MemberService;
+import konkuk.shop.domain.member.application.MemberFindInfoService;
+import konkuk.shop.domain.member.application.MemberUpdateAccountService;
 import konkuk.shop.domain.member.application.MemberSignupService;
 import konkuk.shop.domain.member.dto.SignupDto;
 import konkuk.shop.domain.member.entity.Member;
@@ -58,7 +59,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class InitDB {
-    private final MemberService memberService;
+    private final MemberUpdateAccountService memberUpdateAccountService;
     private final CategoryService categoryService;
     private final ItemService itemService;
     private final ThumbnailRepository thumbnailRepository;
@@ -77,6 +78,7 @@ public class InitDB {
     private final OrderItemRepository orderItemRepository;
     private final QnaRepository qnaRepository;
     private final MemberSignupService memberSignupService;
+    private final MemberFindInfoService memberFindInfoService;
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
@@ -104,7 +106,7 @@ public class InitDB {
         SignupDto.Request dto1 = new SignupDto.Request("asdf@asdf.com", "asdfasdf@1", "testMember1", "01012345678", "20000327", "admin");
         Long saveMemberId = memberSignupService.signup(dto1);
 
-        return memberService.findAdminByMemberId(saveMemberId);
+        return memberFindInfoService.findAdminByMemberId(saveMemberId);
     }
 
     private Member initMember() {
