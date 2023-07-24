@@ -2,7 +2,7 @@ package konkuk.shop.domain.item.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
-import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.application.ItemRegistryService;
 import konkuk.shop.domain.item.dto.ItemAddDto;
 import konkuk.shop.global.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ class ItemRegistryControllerTest {
     private final String email = "asdf@asdf.com";
 
     @MockBean
-    ItemService itemService;
+    ItemRegistryService itemRegistryService;
 
     @MockBean
     TokenProvider tokenProvider;
@@ -38,7 +38,7 @@ class ItemRegistryControllerTest {
     @DisplayName("아이템 등록 테스트")
     @WithAuthUser(email = email)
     void registryItem() throws Exception {
-        given(itemService.addItem(any(Long.class), any(ItemAddDto.Request.class))).willReturn(4L);
+        given(itemRegistryService.addItem(any(Long.class), any(ItemAddDto.Request.class))).willReturn(4L);
 
         String content = new ObjectMapper()
                 .writeValueAsString(new ItemAddDto.Request());
@@ -51,6 +51,6 @@ class ItemRegistryControllerTest {
                 .andExpect(jsonPath("$.itemId").value(4))
                 .andDo(print());
 
-        verify(itemService).addItem(any(Long.class), any(ItemAddDto.Request.class));
+        verify(itemRegistryService).addItem(any(Long.class), any(ItemAddDto.Request.class));
     }
 }

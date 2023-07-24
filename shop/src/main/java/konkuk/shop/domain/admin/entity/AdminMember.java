@@ -20,21 +20,16 @@ public class AdminMember {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "adminMember")
     private List<Qna> qnas = new ArrayList<>();
+
     @OneToMany(mappedBy = "adminMember")
     private List<Item> items = new ArrayList<>();
 
     public AdminMember(Member member) {
-        this.member = member;
-    }
-
-    // test 용
-    public AdminMember(Long id, Member member) {
-        this.id = id;
         this.member = member;
     }
 }

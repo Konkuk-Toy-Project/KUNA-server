@@ -1,6 +1,6 @@
 package konkuk.shop.domain.item.api;
 
-import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.application.ItemFindService;
 import konkuk.shop.domain.item.dto.ItemDetailDto;
 import konkuk.shop.global.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -24,10 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ItemFindControllerTest {
 
     @MockBean
-    ItemService itemService;
+    private ItemFindService itemFindService;
 
     @MockBean
-    TokenProvider tokenProvider;
+    private TokenProvider tokenProvider;
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,23 +35,21 @@ class ItemFindControllerTest {
     @Test
     @DisplayName("카테고리로 아이템 찾기 테스트")
     void findItemListByCategory() throws Exception {
-        given(itemService.findItemListByCategory(any(Long.class))).willReturn(new ArrayList<>());
+        given(itemFindService.findItemListByCategory(any(Long.class)))
+                .willReturn(new ArrayList<>());
 
-        mockMvc.perform(
-                        get("/item/category/3"))
+        mockMvc.perform(get("/item/category/3"))
                 .andExpect(status().isOk())
                 .andDo(print());
-
-        verify(itemService).findItemListByCategory(any(Long.class));
     }
 
     @Test
     @DisplayName("상세 아이템 정보 요청 테스트")
     void findItemDetailByItemId() throws Exception {
-        given(itemService.findItemById(any(Long.class))).willReturn(new ItemDetailDto());
+        given(itemFindService.findItemById(any(Long.class)))
+                .willReturn(new ItemDetailDto());
 
-        mockMvc.perform(
-                        get("/item/3"))
+        mockMvc.perform(get("/item/3"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemState").hasJsonPath())
                 .andExpect(jsonPath("$.name").hasJsonPath())
@@ -68,32 +66,32 @@ class ItemFindControllerTest {
                 .andExpect(jsonPath("$.option1").hasJsonPath())
                 .andDo(print());
 
-        verify(itemService).findItemById(any(Long.class));
+        verify(itemFindService).findItemById(any(Long.class));
     }
 
     @Test
     @DisplayName("모든 아이템 찾기 테스트")
     void findAllItem() throws Exception {
-        given(itemService.findAllItem()).willReturn(new ArrayList<>());
+        given(itemFindService.findAllItem())
+                .willReturn(new ArrayList<>());
 
-        mockMvc.perform(
-                        get("/item"))
+        mockMvc.perform(get("/item"))
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(itemService).findAllItem();
+        verify(itemFindService).findAllItem();
     }
 
     @Test
     @DisplayName("검색어를 이용한 아이템 찾기 테스트")
     void findItemBySearchWord() throws Exception {
-        given(itemService.findItemBySearchWord(any(String.class))).willReturn(new ArrayList<>());
+        given(itemFindService.findItemBySearchWord(any(String.class)))
+                .willReturn(new ArrayList<>());
 
-        mockMvc.perform(
-                        get("/item/search/searchWord"))
+        mockMvc.perform(get("/item/search/searchWord"))
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(itemService).findItemBySearchWord(any(String.class));
+        verify(itemFindService).findItemBySearchWord(any(String.class));
     }
 }

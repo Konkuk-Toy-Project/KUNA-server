@@ -2,7 +2,7 @@ package konkuk.shop.domain.item.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
-import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.application.OptionRegistryService;
 import konkuk.shop.domain.item.dto.OptionAddDto;
 import konkuk.shop.global.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -28,27 +28,28 @@ class OptionRegistryControllerTest {
     private final String email = "asdf@asdf.com";
 
     @MockBean
-    ItemService itemService;
+    private OptionRegistryService optionRegistryService;
 
     @MockBean
-    TokenProvider tokenProvider;
+    private TokenProvider tokenProvider;
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("옵션 추가 테스트")
     @WithAuthUser(email = email)
     void registryOption() throws Exception {
-        doNothing().when(itemService).saveOption(any(Long.class), eq(new ArrayList<>()), any(Long.class));
+        doNothing().when(optionRegistryService).saveOption(any(Long.class), eq(new ArrayList<>()), any(Long.class));
 
-        String content = new ObjectMapper()
-                .writeValueAsString(new OptionAddDto());
+        String content = objectMapper.writeValueAsString(new OptionAddDto());
 
-        mockMvc.perform(
-                        post("/item/3/option")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/item/3/option")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

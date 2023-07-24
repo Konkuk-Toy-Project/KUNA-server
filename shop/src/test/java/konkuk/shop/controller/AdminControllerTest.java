@@ -3,11 +3,11 @@ package konkuk.shop.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
 import konkuk.shop.domain.admin.api.AdminController;
-import konkuk.shop.domain.admin.dto.RequestAnswerQnaForm;
+import konkuk.shop.domain.admin.application.AdminManageItemService;
 import konkuk.shop.domain.admin.dto.EditPriceAndSaleForm;
-import konkuk.shop.global.security.TokenProvider;
-import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.admin.dto.RequestAnswerQnaForm;
 import konkuk.shop.domain.qna.application.QnaService;
+import konkuk.shop.global.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +24,21 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminController.class)
 class AdminControllerTest {
     private final String email = "asdf@asdf.com";
+
     @MockBean
-    QnaService qnaService;
+    private QnaService qnaService;
+
     @MockBean
-    ItemService itemService;
+    private AdminManageItemService adminManageItemService;
+
     @MockBean
-    TokenProvider tokenProvider;
+    private TokenProvider tokenProvider;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -43,14 +46,14 @@ class AdminControllerTest {
     @DisplayName("등록한 아아템 리스트 조회 테스트")
     @WithAuthUser(email = email)
     void myItemList() throws Exception {
-        given(itemService.findItemByUserId(any(Long.class))).willReturn(new ArrayList<>());
+        given(adminManageItemService.findItemByUserId(any(Long.class))).willReturn(new ArrayList<>());
 
         mockMvc.perform(
                         get("/admin/items"))
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(itemService).findItemByUserId(any(Long.class));
+        verify(adminManageItemService).findItemByUserId(any(Long.class));
     }
 
     @Test
@@ -89,7 +92,7 @@ class AdminControllerTest {
     @DisplayName("상품 가격 조정 테스트")
     @WithAuthUser(email = email)
     void editPriceByItemId() throws Exception {
-        doNothing().when(itemService).editPriceByItemId(any(Long.class), any(Long.class), any(Integer.class), any(Integer.class));
+        doNothing().when(adminManageItemService).editPriceByItemId(any(Long.class), any(Long.class), any(Integer.class), any(Integer.class));
 
         String content = new ObjectMapper().writeValueAsString(new EditPriceAndSaleForm(45000, 30));
 
@@ -99,6 +102,6 @@ class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        verify(itemService).editPriceByItemId(any(Long.class), any(Long.class), any(Integer.class), any(Integer.class));
+        verify(adminManageItemService).editPriceByItemId(any(Long.class), any(Long.class), any(Integer.class), any(Integer.class));
     }
 }
