@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;
 import konkuk.shop.domain.admin.api.AdminController;
 import konkuk.shop.domain.admin.dto.RequestAnswerQnaForm;
-import konkuk.shop.domain.item.dto.EditPriceAndSaleForm;
+import konkuk.shop.domain.admin.dto.EditPriceAndSaleForm;
 import konkuk.shop.global.security.TokenProvider;
 import konkuk.shop.domain.item.application.ItemService;
 import konkuk.shop.domain.qna.application.QnaService;

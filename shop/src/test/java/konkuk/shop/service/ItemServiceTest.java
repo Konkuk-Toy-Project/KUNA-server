@@ -6,9 +6,9 @@ import konkuk.shop.domain.category.entity.Category;
 import konkuk.shop.domain.category.repository.CategoryRepository;
 import konkuk.shop.domain.image.entity.Thumbnail;
 import konkuk.shop.domain.item.application.ItemService;
-import konkuk.shop.domain.item.dto.RequestAddItemDto;
-import konkuk.shop.domain.item.dto.ResponseItemDetail;
-import konkuk.shop.domain.item.dto.ResponseMyItem;
+import konkuk.shop.domain.item.dto.ItemAddDto;
+import konkuk.shop.domain.item.dto.ItemDetailDto;
+import konkuk.shop.domain.item.dto.ItemInfoDto;
 import konkuk.shop.domain.item.entity.Item;
 import konkuk.shop.domain.item.entity.ItemState;
 import konkuk.shop.domain.item.repository.ItemRepository;
@@ -84,7 +84,7 @@ class ItemServiceTest {
     @DisplayName("상품 추가 테스트")
     void addItem() {
         //given
-        RequestAddItemDto form = new RequestAddItemDto(itemName, price, sale, categoryId, null, new ArrayList<>(), new ArrayList<>());
+        ItemAddDto.Request form = new ItemAddDto.Request(itemName, price, sale, categoryId, null, new ArrayList<>(), new ArrayList<>());
 
         given(adminMemberRepository.findByMemberId(1L)).willReturn(Optional.of(new AdminMember()));
         given(categoryRepository.findById(categoryId)).willReturn(Optional.of(new Category()));
@@ -108,8 +108,8 @@ class ItemServiceTest {
         given(itemRepository.findByCategoryId(categoryId)).willReturn(items);
 
         //when
-        List<ResponseMyItem> result = itemService.findItemListByCategory(categoryId);
-        ResponseMyItem response = result.get(0);
+        List<ItemInfoDto> result = itemService.findItemListByCategory(categoryId);
+        ItemInfoDto response = result.get(0);
 
         //then
         assertThat(response.getItemState()).isEqualTo(ItemState.NORMALITY.toString());
@@ -143,7 +143,7 @@ class ItemServiceTest {
         given(itemRepository.findById(itemId)).willReturn(Optional.of(item));
 
         //when
-        ResponseItemDetail result = itemService.findItemById(itemId);
+        ItemDetailDto result = itemService.findItemById(itemId);
 
         //then
         assertThat(result.getItemState()).isEqualTo(ItemState.NORMALITY.toString());
@@ -165,8 +165,8 @@ class ItemServiceTest {
         given(itemRepository.findAll()).willReturn(items);
 
         //when
-        List<ResponseMyItem> result = itemService.findItemBySearchWord("test");
-        ResponseMyItem response = result.get(0);
+        List<ItemInfoDto> result = itemService.findItemBySearchWord("test");
+        ItemInfoDto response = result.get(0);
 
         //then
         assertThat(response.getItemState()).isEqualTo(ItemState.NORMALITY.toString());
@@ -190,8 +190,8 @@ class ItemServiceTest {
         given(itemRepository.findByAdminMember(any(AdminMember.class))).willReturn(items);
 
         //when
-        List<ResponseMyItem> result = itemService.findItemByUserId(memberId);
-        ResponseMyItem response = result.get(0);
+        List<ItemInfoDto> result = itemService.findItemByUserId(memberId);
+        ItemInfoDto response = result.get(0);
 
         //then
         assertThat(response.getItemState()).isEqualTo(ItemState.NORMALITY.toString());
@@ -215,8 +215,8 @@ class ItemServiceTest {
         given(itemRepository.findAll()).willReturn(items);
 
         //when
-        List<ResponseMyItem> result = itemService.findAllItem();
-        ResponseMyItem response = result.get(0);
+        List<ItemInfoDto> result = itemService.findAllItem();
+        ItemInfoDto response = result.get(0);
 
         //then
         assertThat(response.getItemState()).isEqualTo(ItemState.NORMALITY.toString());

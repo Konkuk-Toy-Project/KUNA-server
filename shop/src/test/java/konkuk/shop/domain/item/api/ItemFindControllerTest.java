@@ -1,80 +1,36 @@
-package konkuk.shop.controller;
+package konkuk.shop.domain.item.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import konkuk.shop.WithAuthUser;
-import konkuk.shop.domain.item.api.ItemController;
-import konkuk.shop.domain.item.dto.RequestAddItemDto;
-import konkuk.shop.domain.item.dto.RequestAddOptionForm;
-import konkuk.shop.domain.item.dto.ResponseItemDetail;
-import konkuk.shop.global.security.TokenProvider;
 import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.dto.ItemDetailDto;
+import konkuk.shop.global.security.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ItemController.class)
-class ItemControllerTest {
-    private final String email = "asdf@asdf.com";
+@WebMvcTest(ItemFindController.class)
+class ItemFindControllerTest {
+
     @MockBean
     ItemService itemService;
+
     @MockBean
     TokenProvider tokenProvider;
+
     @Autowired
     private MockMvc mockMvc;
-
-    @Test
-    @DisplayName("아이템 등록 테스트")
-    @WithAuthUser(email = email)
-    void registryItem() throws Exception {
-        given(itemService.addItem(any(Long.class), any(RequestAddItemDto.class))).willReturn(4L);
-
-        String content = new ObjectMapper()
-                .writeValueAsString(new RequestAddItemDto());
-
-        mockMvc.perform(
-                        post("/item")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.itemId").value(4))
-                .andDo(print());
-
-        verify(itemService).addItem(any(Long.class), any(RequestAddItemDto.class));
-    }
-
-    @Test
-    @DisplayName("옵션 추가 테스트")
-    @WithAuthUser(email = email)
-    void registryOption() throws Exception {
-        doNothing().when(itemService).saveOption(any(Long.class), eq(new ArrayList<>()), any(Long.class));
-
-        String content = new ObjectMapper()
-                .writeValueAsString(new RequestAddOptionForm());
-
-        mockMvc.perform(
-                        post("/item/3/option")
-                                .content(content)
-                                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
 
     @Test
     @DisplayName("카테고리로 아이템 찾기 테스트")
@@ -92,7 +48,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("상세 아이템 정보 요청 테스트")
     void findItemDetailByItemId() throws Exception {
-        given(itemService.findItemById(any(Long.class))).willReturn(new ResponseItemDetail());
+        given(itemService.findItemById(any(Long.class))).willReturn(new ItemDetailDto());
 
         mockMvc.perform(
                         get("/item/3"))

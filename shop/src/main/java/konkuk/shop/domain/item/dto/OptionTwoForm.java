@@ -1,9 +1,11 @@
 package konkuk.shop.domain.item.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class OptionTwoForm {
     String name;
-    Integer stock;
+    int stock;
 }

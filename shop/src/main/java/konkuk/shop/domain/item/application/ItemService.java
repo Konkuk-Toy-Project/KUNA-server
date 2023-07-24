@@ -11,7 +11,10 @@ import konkuk.shop.domain.image.repository.DetailImageRepository;
 import konkuk.shop.domain.image.repository.ItemImageRepository;
 import konkuk.shop.domain.image.repository.ThumbnailRepository;
 import konkuk.shop.domain.item.dto.*;
-import konkuk.shop.domain.item.entity.*;
+import konkuk.shop.domain.item.entity.Item;
+import konkuk.shop.domain.item.entity.ItemState;
+import konkuk.shop.domain.item.entity.Option1;
+import konkuk.shop.domain.item.entity.Option2;
 import konkuk.shop.domain.item.repository.ItemRepository;
 import konkuk.shop.domain.item.repository.Option1Repository;
 import konkuk.shop.domain.item.repository.Option2Repository;
@@ -54,7 +57,7 @@ public class ItemService {
     private String detailPath;
 
     @Transactional
-    public Long addItem(Long userId, RequestAddItemDto form) {
+    public Long addItem(Long userId, ItemAddDto.Request form) {
         log.info("name={}, price={}, sale={}, categoryId={}", form.getName(), form.getPrice(), form.getSale(), form.getCategoryId());
 
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
@@ -81,7 +84,7 @@ public class ItemService {
         List<MultipartFile> itemImages = form.getItemImages();
         List<MultipartFile> detailImages = form.getDetailImages();
         try {
-            if (thumbnail!=null && thumbnail.getSize() != 0) {
+            if (thumbnail != null && thumbnail.getSize() != 0) {
                 String thumbnailFullName = createStoreFileName(thumbnail.getOriginalFilename());
                 thumbnail.transferTo(new File(thumbnailPath + thumbnailFullName));
                 Thumbnail saveThumbnail = thumbnailRepository.save(new Thumbnail(thumbnail.getOriginalFilename(), thumbnailFullName, item));
@@ -129,10 +132,10 @@ public class ItemService {
     }
 
 
-    public List<ResponseMyItem> findItemListByCategory(Long categoryId) {
+    public List<ItemInfoDto> findItemListByCategory(Long categoryId) {
         log.info("카테고리별 아이템 목록 조회. categoryId={}", categoryId);
         return itemRepository.findByCategoryId(categoryId).stream()
-                .map(e -> ResponseMyItem.builder()
+                .map(e -> ItemInfoDto.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
@@ -150,7 +153,7 @@ public class ItemService {
     public void saveOption(Long userId, List<OptionOneForm> option1s, Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
-        if(!item.getAdminMember().getMember().getId().equals(userId))
+        if (!item.getAdminMember().getMember().getId().equals(userId))
             throw new ApplicationException(ErrorCode.NO_AUTHORITY_ACCESS_ITEM);
 
         log.info("item 옵션 추가. itemId={}", itemId);
@@ -169,7 +172,7 @@ public class ItemService {
         }
     }
 
-    public ResponseItemDetail findItemById(Long itemId) {
+    public ItemDetailDto findItemById(Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
 
@@ -189,7 +192,7 @@ public class ItemService {
                 .collect(Collectors.toList());
 
 
-        return ResponseItemDetail.builder()
+        return ItemDetailDto.builder()
                 .itemId(itemId)
                 .itemImageUrl(itemImages)
                 .itemState(item.getItemState().toString())
@@ -212,11 +215,11 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public List<ResponseMyItem> findItemBySearchWord(String searchWord) {
+    public List<ItemInfoDto> findItemBySearchWord(String searchWord) {
         log.info("상품 검색 기능 사용. searchWord={}", searchWord);
         return itemRepository.findAll().stream()
                 .filter(e -> e.getName().toLowerCase().contains(searchWord))
-                .map(e -> ResponseMyItem.builder()
+                .map(e -> ItemInfoDto.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
@@ -231,14 +234,14 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public List<ResponseMyItem> findItemByUserId(Long userId) {
+    public List<ItemInfoDto> findItemByUserId(Long userId) {
         AdminMember adminMember = adminMemberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ADMIN_MEMBER));
 
         log.info("아이템 조회 요청. memberId={}, adminMemberId={}", userId, adminMember.getId());
 
         return itemRepository.findByAdminMember(adminMember).stream()
-                .map(e -> ResponseMyItem.builder()
+                .map(e -> ItemInfoDto.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())
@@ -252,10 +255,10 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public List<ResponseMyItem> findAllItem() {
+    public List<ItemInfoDto> findAllItem() {
         log.info("모든 상품 조회");
         return itemRepository.findAll().stream()
-                .map(e -> ResponseMyItem.builder()
+                .map(e -> ItemInfoDto.builder()
                         .itemState(e.getItemState().toString())
                         .name(e.getName())
                         .price(e.getPrice())

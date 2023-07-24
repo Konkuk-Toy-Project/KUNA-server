@@ -1,4 +1,4 @@
-package konkuk.shop.controller;
+package konkuk.shop.domain.member.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.WithAuthUser;

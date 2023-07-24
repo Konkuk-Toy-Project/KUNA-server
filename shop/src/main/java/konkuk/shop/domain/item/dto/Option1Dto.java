@@ -1,16 +1,16 @@
 package konkuk.shop.domain.item.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class Option1Dto {
-    String name;
-    Integer stock;
-    Long option1Id;
-    List<Option2Dto> option2 = new ArrayList<>();
+    private String name;
+    private int stock;
+    private Long option1Id;
+    private List<Option2Dto> option2 = new ArrayList<>();
 }

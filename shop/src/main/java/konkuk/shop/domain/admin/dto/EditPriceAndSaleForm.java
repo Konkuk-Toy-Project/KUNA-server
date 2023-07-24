@@ -1,10 +1,10 @@
-package konkuk.shop.domain.item.dto;
+package konkuk.shop.domain.admin.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class EditPriceAndSaleForm {

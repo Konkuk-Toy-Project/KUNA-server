@@ -2,9 +2,9 @@ package konkuk.shop.domain.admin.api;
 
 
 import konkuk.shop.domain.admin.dto.RequestAnswerQnaForm;
-import konkuk.shop.domain.item.dto.EditPriceAndSaleForm;
+import konkuk.shop.domain.admin.dto.EditPriceAndSaleForm;
 import konkuk.shop.domain.admin.dto.ResponseQnaList;
-import konkuk.shop.domain.item.dto.ResponseMyItem;
+import konkuk.shop.domain.item.dto.ItemInfoDto;
 import konkuk.shop.domain.item.application.ItemService;
 import konkuk.shop.domain.qna.application.QnaService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +28,8 @@ public class AdminController {
     private final ItemService itemService;
 
     @GetMapping("/items")
-    public ResponseEntity<List<ResponseMyItem>> myItemList(@AuthenticationPrincipal Long userId) {
-        List<ResponseMyItem> result = itemService.findItemByUserId(userId);
+    public ResponseEntity<List<ItemInfoDto>> myItemList(@AuthenticationPrincipal Long userId) {
+        List<ItemInfoDto> result = itemService.findItemByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
