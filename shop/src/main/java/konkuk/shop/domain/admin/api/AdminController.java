@@ -1,11 +1,11 @@
 package konkuk.shop.domain.admin.api;
 
 
+import konkuk.shop.domain.admin.application.AdminManageItemService;
 import konkuk.shop.domain.admin.dto.RequestAnswerQnaForm;
 import konkuk.shop.domain.admin.dto.EditPriceAndSaleForm;
 import konkuk.shop.domain.admin.dto.ResponseQnaList;
 import konkuk.shop.domain.item.dto.ItemInfoDto;
-import konkuk.shop.domain.item.application.ItemService;
 import konkuk.shop.domain.qna.application.QnaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +25,11 @@ public class AdminController {
      * 어드민 페이지 -> 스프링 시큐리티 권한 통해서 접근 가능?
      */
     private final QnaService qnaService;
-    private final ItemService itemService;
+    private final AdminManageItemService adminManageItemService;
 
     @GetMapping("/items")
     public ResponseEntity<List<ItemInfoDto>> myItemList(@AuthenticationPrincipal Long userId) {
-        List<ItemInfoDto> result = itemService.findItemByUserId(userId);
+        List<ItemInfoDto> result = adminManageItemService.findItemByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -53,7 +53,7 @@ public class AdminController {
     @PutMapping("/price/{itemId}")
     public void editPriceByItemId(@AuthenticationPrincipal Long userId, @PathVariable Long itemId,
                                   @RequestBody EditPriceAndSaleForm form) {
-        itemService.editPriceByItemId(userId, itemId, form.getPrice(), form.getSale());
+        adminManageItemService.editPriceByItemId(userId, itemId, form.getPrice(), form.getSale());
     }
 
 }

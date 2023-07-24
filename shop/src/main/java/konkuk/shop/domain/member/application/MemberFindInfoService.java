@@ -3,7 +3,7 @@ package konkuk.shop.domain.member.application;
 import konkuk.shop.domain.admin.entity.AdminMember;
 import konkuk.shop.domain.admin.repository.AdminMemberRepository;
 import konkuk.shop.domain.member.entity.Member;
-import konkuk.shop.domain.member.exception.AdminNotFoundException;
+import konkuk.shop.domain.admin.exception.AdminNotFoundException;
 import konkuk.shop.domain.member.exception.UserNotFoundException;
 import konkuk.shop.domain.member.repository.MemberRepository;
 import konkuk.shop.dto.FindMemberInfoByUserIdDto;

@@ -115,9 +115,9 @@ public class OrderService {
 
         for (OrderItemForm orderItemform : orderItems) {
             Item item = itemRepository.findById(orderItemform.getItemId())
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM));
             Option1 option1 = option1Repository.findById(orderItemform.getOption1Id())
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION1_BY_ID));
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION1));
 
             int itemPrice = Integer.parseInt(String.valueOf(Math.round((100 - item.getSale()) * 0.01 * item.getPrice())));
             OrderItem orderItem = OrderItem.builder()
@@ -137,7 +137,7 @@ public class OrderService {
 
             if (orderItemform.getOption2Id() != null) {
                 Option2 option2 = option2Repository.findById(orderItemform.getOption2Id())
-                        .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION2_BY_ID));
+                        .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION2));
 
                 if (option2.getStock() < orderItemform.getCount())
                     throw new ApplicationException(ErrorCode.NO_STOCK_ITEM);

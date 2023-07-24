@@ -93,13 +93,13 @@ public class InitItemDB {
         }
 
         Member member = findMember();
-        Item item1 = itemRepository.findById(96L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
-        Item item2 = itemRepository.findById(109L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
+        Item item1 = itemRepository.findById(96L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM));
+        Item item2 = itemRepository.findById(109L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM));
         initOrder(member, item1, item2);
         initCoupon(member);
         Member testMember3 = initMember();
 
-        Item item3 = itemRepository.findById(14L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
+        Item item3 = itemRepository.findById(14L).orElseThrow(()-> new ApplicationException(ErrorCode.NO_FIND_ITEM));
         initQna(adminMember, testMember3, item3);
 
         log.info("====init item Success!=====");

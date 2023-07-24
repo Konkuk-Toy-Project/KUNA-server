@@ -1,6 +1,6 @@
 package konkuk.shop.domain.item.api;
 
-import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.application.ItemFindService;
 import konkuk.shop.domain.item.dto.ItemDetailDto;
 import konkuk.shop.domain.item.dto.ItemInfoDto;
 import lombok.RequiredArgsConstructor;
@@ -16,29 +16,29 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/item")
 public class ItemFindController {
-    private final ItemService itemService;
+    private final ItemFindService itemFindService;
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ItemInfoDto>> findItemListByCategory(@PathVariable Long categoryId) {
-        List<ItemInfoDto> response = itemService.findItemListByCategory(categoryId);
+        List<ItemInfoDto> response = itemFindService.findItemListByCategory(categoryId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDetailDto> findItemDetailByItemId(@PathVariable Long itemId) {
-        ItemDetailDto response = itemService.findItemById(itemId);
+        ItemDetailDto response = itemFindService.findItemById(itemId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
     public ResponseEntity<List<ItemInfoDto>> findAllItem() {
-        List<ItemInfoDto> response = itemService.findAllItem();
+        List<ItemInfoDto> response = itemFindService.findAllItem();
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/search/{searchWord}")
     public ResponseEntity<List<ItemInfoDto>> findItemBySearchWord(@PathVariable String searchWord) {
-        List<ItemInfoDto> response = itemService.findItemBySearchWord(searchWord.toLowerCase());
+        List<ItemInfoDto> response = itemFindService.findItemBySearchWord(searchWord.toLowerCase());
         return ResponseEntity.ok(response);
     }
 

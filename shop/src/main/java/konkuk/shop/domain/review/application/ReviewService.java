@@ -48,7 +48,7 @@ public class ReviewService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         Item item = itemRepository.findById(form.getItemId())
-                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM));
 
         OrderItem orderItem = orderItemRepository.findById(form.getOrderItemId())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ORDER_ITEM));

@@ -33,7 +33,7 @@ public class PreferenceService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM));
         PreferenceItem savePreferenceItem = preferenceRepository.save(new PreferenceItem(member, item));
 
         member.getPreferenceItems().add(savePreferenceItem);

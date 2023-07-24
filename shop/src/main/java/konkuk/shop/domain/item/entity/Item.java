@@ -70,6 +70,20 @@ public class Item {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    public static Item initialItemToRegistry(String name, Integer price, Integer sale, Category category, AdminMember adminMember) {
+        return Item.builder()
+                .itemState(ItemState.NORMALITY)
+                .adminMember(adminMember)
+                .name(name)
+                .preferenceCount(0)
+                .registryDate(LocalDateTime.now())
+                .version(1)
+                .sale(sale)
+                .price(price)
+                .category(category)
+                .build();
+    }
+
     public void setThumbnail(Thumbnail thumbnail) {
         this.thumbnail = thumbnail;
     }

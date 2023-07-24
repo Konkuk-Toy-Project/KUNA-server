@@ -29,17 +29,17 @@ public enum ErrorCode {
     NOT_PHONE_FORM(HttpStatus.BAD_REQUEST, "M013", "전화번호가 형식에 맞지 않습니다."),
     NOT_BIRTH_FORM(HttpStatus.BAD_REQUEST, "M014", "생년월일이 형식에 맞지 않습니다."),
 
-    NO_FIND_ITEM_BY_ID(HttpStatus.BAD_REQUEST, "I001", "존재하지 않는 아이템입니다."),
+    NO_FIND_ITEM(HttpStatus.BAD_REQUEST, "I001", "존재하지 않는 아이템입니다."),
     NO_STOCK_ITEM(HttpStatus.BAD_REQUEST, "I002", "해당 옵션의 재고가 부족합니다."),
     NO_AUTHORITY_ACCESS_ITEM(HttpStatus.BAD_REQUEST, "I003", "해당 상품을 수정할 권한이 없습니다."),
 
-    NO_FIND_OPTION1_BY_ID(HttpStatus.BAD_REQUEST, "P001", "존재하지 않는 옵션1입니다."),
-    NO_FIND_OPTION2_BY_ID(HttpStatus.BAD_REQUEST, "P002", "존재하지 않는 옵션2입니다."),
+    NO_FIND_OPTION1(HttpStatus.BAD_REQUEST, "P001", "존재하지 않는 옵션1입니다."),
+    NO_FIND_OPTION2(HttpStatus.BAD_REQUEST, "P002", "존재하지 않는 옵션2입니다."),
     NO_MATCH_OPTION1_WITH_ITEM(HttpStatus.BAD_REQUEST, "P003", "해당 상품에는 없는 옵션1입니다."),
     NO_MATCH_OPTION2_WITH_OPTION1(HttpStatus.BAD_REQUEST, "P004", "해당 옵션1에는 없는 옵션2입니다."),
     NECESSARY_OPTION2(HttpStatus.BAD_REQUEST, "P005", "해당 상품은 옵션2가 반드시 있어야합니다."),
 
-    NO_FIND_THUMBNAIL_BY_ID(HttpStatus.BAD_REQUEST, "T001", "존재하지 않는 썸네일입니다."),
+    NO_FIND_THUMBNAIL(HttpStatus.BAD_REQUEST, "T001", "존재하지 않는 썸네일입니다."),
     FAIL_STORE_IMAGE(HttpStatus.BAD_REQUEST, "T002", "이미지 저장 실패"),
     FAIL_CALL_IMAGE(HttpStatus.BAD_REQUEST, "T003", "이미지 불러오기 실패"),
 

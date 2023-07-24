@@ -36,9 +36,9 @@ public class CartService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM));
         Option1 option1 = option1Repository.findById(option1Id)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION1_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION1));
         Option2 option2 = null;
 
         // 1. option2가 있어야 하는데 없는 경우
@@ -49,7 +49,7 @@ public class CartService {
         // 2. option2가 없어야 하는데 있는 경우 또는 잘못된 id인 경우
         if (option2Id != null) {
             option2 = option2Repository.findById(option2Id)
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION2_BY_ID));
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_OPTION2));
             if (!option2.getOption1().getId().equals(option1.getId()))
                 throw new ApplicationException(ErrorCode.NO_MATCH_OPTION2_WITH_OPTION1);
         }

@@ -17,7 +17,7 @@ import konkuk.shop.domain.image.entity.Thumbnail;
 import konkuk.shop.domain.image.repository.DetailImageRepository;
 import konkuk.shop.domain.image.repository.ItemImageRepository;
 import konkuk.shop.domain.image.repository.ThumbnailRepository;
-import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.application.ItemRegistryService;
 import konkuk.shop.domain.item.entity.Item;
 import konkuk.shop.domain.item.entity.ItemState;
 import konkuk.shop.domain.item.entity.Option1;
@@ -61,7 +61,7 @@ import java.util.List;
 public class InitDB {
     private final MemberUpdateAccountService memberUpdateAccountService;
     private final CategoryService categoryService;
-    private final ItemService itemService;
+    private final ItemRegistryService itemRegistryService;
     private final ThumbnailRepository thumbnailRepository;
     private final DetailImageRepository detailImageRepository;
     private final ItemImageRepository itemImageRepository;

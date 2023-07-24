@@ -1,6 +1,6 @@
 package konkuk.shop.domain.item.api;
 
-import konkuk.shop.domain.item.application.ItemService;
+import konkuk.shop.domain.item.application.ItemRegistryService;
 import konkuk.shop.domain.item.dto.ItemAddDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/item")
 public class ItemRegistryController {
-    private final ItemService itemService;
+    private final ItemRegistryService itemRegistryService;
 
     @PostMapping
     public ResponseEntity<ItemAddDto.Response> registryItem(@AuthenticationPrincipal Long userId,
                                                             ItemAddDto.Request form) {
-        Long itemId = itemService.addItem(userId, form);
+        Long itemId = itemRegistryService.addItem(userId, form);
         ItemAddDto.Response response = new ItemAddDto.Response(itemId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

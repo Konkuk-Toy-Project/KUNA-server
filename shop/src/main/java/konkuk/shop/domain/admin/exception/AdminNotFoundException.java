@@ -1,4 +1,4 @@
-package konkuk.shop.domain.member.exception;
+package konkuk.shop.domain.admin.exception;
 
 
 import konkuk.shop.global.exception.ErrorCode;

@@ -23,7 +23,7 @@ jacocoTestReport {
 
 group = 'konkuk'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = "17"
 
 configurations {
 	compileOnly {
@@ -60,3 +60,4 @@ test {
 		destinationFile = file("$buildDir/jacoco/jacoco.exec")
 	}
 }
+targetCompatibility = JavaVersion.VERSION_17

@@ -35,7 +35,7 @@ public class QnaService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_MEMBER));
         Item item = itemRepository.findById(form.getItemId())
-                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM_BY_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_FIND_ITEM));
 
         log.info("qna 등록 요청. memberId={}, isSecret={}", userId, form.isSecret());
         Qna qna = new Qna(item, member, item.getAdminMember(), form.getQuestion(), form.isSecret(), form.getTitle());
