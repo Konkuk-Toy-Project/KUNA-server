@@ -42,7 +42,7 @@ class PreferenceControllerTest {
 
     @Test
     @DisplayName("찜 상품 추가 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void addPreferenceItem() throws Exception {
         given(preferenceService.savePreferenceItem(any(Long.class), eq(itemId))).willReturn(preferenceId);
 
@@ -61,7 +61,7 @@ class PreferenceControllerTest {
 
     @Test
     @DisplayName("찜 상품 조회 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void getPreferenceItem() throws Exception {
         given(preferenceService.findPreferenceByMemberId(any(Long.class))).willReturn(new ArrayList<PreferenceDto>());
 
@@ -76,7 +76,7 @@ class PreferenceControllerTest {
 
     @Test
     @DisplayName("찜 상품 삭제 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void deletePreferenceItem() throws Exception {
         doNothing().when(preferenceService).deletePreference(any(Long.class), any(Long.class));
 
@@ -89,7 +89,7 @@ class PreferenceControllerTest {
 
     @Test
     @DisplayName("해당 아이템이 찜 상품인지 확인 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void isPreferenceItem() throws Exception {
         given(preferenceService.isPreference(any(Long.class), eq(itemId))).willReturn(new IsPreference(true, true, preferenceId));
 

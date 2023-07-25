@@ -38,7 +38,7 @@ class CartControllerTest {
 
     @Test
     @DisplayName("장바구니에 아이템 추가 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void addItemInCart() throws Exception {
         given(cartService.addItem(any(Long.class), any(Long.class), any(Long.class), any(Long.class), any(Integer.class)))
                 .willReturn(1L);
@@ -60,7 +60,7 @@ class CartControllerTest {
 
     @Test
     @DisplayName("장바구니 아이템 삭제 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void deleteItemInCart() throws Exception {
         doNothing().when(cartService).deleteItemInCart(any(Long.class), any(Long.class));
 
@@ -74,7 +74,7 @@ class CartControllerTest {
 
     @Test
     @DisplayName("장바구니 아이템 조회 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void findAllByUserIdInCart() throws Exception {
         given(cartService.findAllByUserId(any(Long.class))).willReturn(new ArrayList<>());
 
@@ -88,7 +88,7 @@ class CartControllerTest {
 
     @Test
     @DisplayName("장바구니 아이템 개수 수정 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void changeCount() throws Exception {
         doNothing().when(cartService).changeCount(any(Long.class), any(Long.class), any(Integer.class));
 

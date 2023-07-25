@@ -11,15 +11,15 @@ public class WithAuthUserSecurityContextFactory implements WithSecurityContextFa
 
     @Override
     public SecurityContext createSecurityContext(WithAuthUser annotation) {
-        String email = annotation.email();
 
-        AbstractAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                1L, //인증된 사용자 정보. 문자열이 아니어도 아무것이나 넣을 수 있다. 보통 UserDetails라는 오브젝트를 넣는다.
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                1L,
                 null, AuthorityUtils.NO_AUTHORITIES
         );
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(token);
-        return context;
+        
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        return securityContext;
     }
 }

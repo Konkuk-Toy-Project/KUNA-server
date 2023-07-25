@@ -75,7 +75,7 @@ public class InitItemDB {
     @Value("${init.item}")
     private String initItemPath;
 
-    @EventListener(ApplicationReadyEvent.class)
+    //@EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initDB() throws IOException {
         log.info("initialize Item database");

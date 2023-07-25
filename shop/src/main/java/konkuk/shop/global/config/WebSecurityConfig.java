@@ -1,49 +1,55 @@
 package konkuk.shop.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import konkuk.shop.global.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
-@Slf4j
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final ObjectMapper objectMapper;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // http 시큐리티 빌더
-        http    .cors() // cors 허용
-            .and()
-                .csrf().disable() // csrf는 현재 사용하지 않으므로 disable
-                .httpBasic().disable() // token을 사용하므로 basic 인증 disable
-                .formLogin().disable()
-                .headers().frameOptions().disable()// h2 오류 방지
-            .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //session 기반이 아님을 선언
-            .and()
-                .authorizeRequests()
-                .antMatchers("/member/signup", "/member/duplication/email", "/member/login", "/member/find/**",
-                          "/coupon", "/h2-console/**", "/review/**", "/qna/**", "/item/**", "/image/**", "/category", "/table", "/member/isLogin", "/preference/isPreference/**").permitAll()
-                .anyRequest().authenticated(); //이외의 모든 경로는 인증 해야 함
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> web.ignoring()
+//                .requestMatchers("/favicon.ico", "/error")
+//                .requestMatchers(toH2Console());
+//    }
 
-        // filter 등록
-        // 매 요청마다 CorsFilter 실행한 후에 jwtAuthenticationFilter 실행된다.
-        http.addFilterAfter(
-                jwtAuthenticationFilter,
-                CorsFilter.class
-        );
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/member/signup", "/member/duplication/email", "/member/login", "/member/find/**",
+                                "/coupon", "/review/**", "/qna/**", "/item/**", "/image/**",
+                                "/category", "/table", "/member/isLogin", "/preference/isPreference/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class)
+                .build();
     }
 
     // CORS 허용 설정 Bean
@@ -60,5 +66,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+
+//    @Bean
+//    public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
+//        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/member/login", objectMapper);
+//        filter.setAuthenticationSuccessHandler((request, response, authentication) -> {
+//            response.setContentType("application/json;charset=UTF-8");
+//            response.getWriter().write("{\"success\":true}");
+//        });
+//        filter.setAuthenticationFailureHandler((request, response, exception) -> {
+//            response.setContentType("application/json;charset=UTF-8");
+//            response.getWriter().write("{\"success\":false}");
+//        });
+//        return filter;
+//    }
 }
 

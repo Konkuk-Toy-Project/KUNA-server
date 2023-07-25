@@ -5,7 +5,7 @@ import konkuk.shop.domain.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @NoArgsConstructor

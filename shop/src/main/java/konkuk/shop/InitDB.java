@@ -80,7 +80,7 @@ public class InitDB {
     private final MemberSignupService memberSignupService;
     private final MemberFindInfoService memberFindInfoService;
 
-    @EventListener(ApplicationReadyEvent.class)
+    //@EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void initDB() {
         log.info("initialize database");

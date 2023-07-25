@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminController.class)
 class AdminControllerTest {
-    private final String email = "asdf@asdf.com";
 
     @MockBean
     private QnaService qnaService;
@@ -44,7 +43,7 @@ class AdminControllerTest {
 
     @Test
     @DisplayName("등록한 아아템 리스트 조회 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void myItemList() throws Exception {
         given(adminManageItemService.findItemByUserId(any(Long.class))).willReturn(new ArrayList<>());
 
@@ -58,7 +57,7 @@ class AdminControllerTest {
 
     @Test
     @DisplayName("관리 아이템 qna 조회 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void findQna() throws Exception {
         given(qnaService.findQnaByAdminMember(any(Long.class), any(Boolean.class)))
                 .willReturn(new ArrayList<>());
@@ -73,7 +72,7 @@ class AdminControllerTest {
 
     @Test
     @DisplayName("qna 답변 등록 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void saveAnswer() throws Exception {
         doNothing().when(qnaService).saveAnswer(any(Long.class), any(Long.class), any(String.class));
 
@@ -90,7 +89,7 @@ class AdminControllerTest {
 
     @Test
     @DisplayName("상품 가격 조정 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void editPriceByItemId() throws Exception {
         doNothing().when(adminManageItemService).editPriceByItemId(any(Long.class), any(Long.class), any(Integer.class), any(Integer.class));
 

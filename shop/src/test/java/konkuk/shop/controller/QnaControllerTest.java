@@ -37,7 +37,7 @@ class QnaControllerTest {
 
     @Test
     @DisplayName("Qna 등록 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void addQna() throws Exception {
         given(qnaService.saveQna(any(Long.class), any(RequestAddQnaForm.class))).willReturn(1L);
 
@@ -57,7 +57,7 @@ class QnaControllerTest {
 
     @Test
     @DisplayName("Qna 찾기 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void findQnaByItemId() throws Exception {
         given(qnaService.findQnaByItemId(any(Long.class), any(Long.class))).willReturn(new ArrayList<>());
 

@@ -3,8 +3,8 @@ package konkuk.shop.global.validation.validator;
 import konkuk.shop.global.validation.annotation.UserPasswordValid;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 @Slf4j
 public class UserPasswordValidator implements ConstraintValidator<UserPasswordValid, String> {

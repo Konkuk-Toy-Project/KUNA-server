@@ -40,7 +40,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("주문하기 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void addOrder() throws Exception {
         given(orderService.addOrder(any(Long.class), any(RequestAddOrderForm.class))).willReturn(new AddOrderDto());
 
@@ -64,7 +64,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("주문 상세정보 요청 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void getOrderDetail() throws Exception {
         given(orderService.findOrderDetailList(any(Long.class), any(Long.class))).willReturn(new FindOrderDto());
 
@@ -90,7 +90,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("주문 목록 요청 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void getOrderList() throws Exception {
         given(orderService.findOrderList(any(Long.class))).willReturn(new ArrayList<>());
 
@@ -104,7 +104,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("주문 상품 리스트 요청 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void getOrderItems() throws Exception {
         given(orderService.findOrderItemList(any(Long.class))).willReturn(new ArrayList<>());
 

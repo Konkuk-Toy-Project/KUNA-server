@@ -37,7 +37,7 @@ class ReviewControllerTest {
 
     @Test
     @DisplayName("리뷰 추가 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void addReview() throws Exception {
         given(reviewService.saveReview(any(Long.class), any(AddReviewForm.class))).willReturn(1L);
 

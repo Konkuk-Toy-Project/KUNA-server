@@ -41,7 +41,7 @@ class OptionRegistryControllerTest {
 
     @Test
     @DisplayName("옵션 추가 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void registryOption() throws Exception {
         doNothing().when(optionRegistryService).saveOption(any(Long.class), eq(new ArrayList<>()), any(Long.class));
 

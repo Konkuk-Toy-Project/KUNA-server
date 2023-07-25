@@ -58,7 +58,7 @@ class CouponControllerTest {
 
     @Test
     @DisplayName("사용자가 쿠폰 등록 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void registryCoupon() throws Exception {
         given(couponService.registryCoupon(any(Long.class), any(String.class))).willReturn(new ResponseGetCoupon());
 
@@ -81,7 +81,7 @@ class CouponControllerTest {
 
     @Test
     @DisplayName("쿠폰 조회 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void getCoupon() throws Exception {
         given(couponService.getCoupon(any(Long.class))).willReturn(new ArrayList<>());
 

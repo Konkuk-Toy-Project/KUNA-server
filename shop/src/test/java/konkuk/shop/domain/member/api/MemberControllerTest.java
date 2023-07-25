@@ -196,7 +196,7 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("비밀번호 변경 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void changePassword() throws Exception {
         doNothing().when(memberUpdateAccountService)
                 .changePassword(any(Long.class), any(String.class));
@@ -214,7 +214,7 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("포인트 찾기 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void findPoint() throws Exception {
         final int point = 1234;
         given(memberFindInfoService.findPointByMemberId(any(Long.class)))
@@ -230,7 +230,7 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("로그인 회원 정보 얻기 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void findLoginMemberInfo() throws Exception {
         FindMemberInfoByUserIdDto userInfo = new FindMemberInfoByUserIdDto(name, phone, email, birth, MemberRole.BRONZE);
         given(memberFindInfoService.findInfoByUserId(any(Long.class)))
@@ -249,7 +249,7 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("로그인 여부 테스트(로그인 완료)")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void isLoginTrue() throws Exception {
         given(memberFindInfoService.existsMemberById(any(Long.class)))
                 .willReturn(true);

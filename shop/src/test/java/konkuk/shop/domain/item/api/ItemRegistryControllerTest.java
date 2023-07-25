@@ -36,7 +36,7 @@ class ItemRegistryControllerTest {
 
     @Test
     @DisplayName("아이템 등록 테스트")
-    @WithAuthUser(email = email)
+    @WithAuthUser
     void registryItem() throws Exception {
         given(itemRegistryService.addItem(any(Long.class), any(ItemAddDto.Request.class))).willReturn(4L);
 
